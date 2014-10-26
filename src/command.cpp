@@ -1,4 +1,5 @@
 #include "command.h"
+#include "utility.h"
 
 namespace lf {
 
@@ -9,7 +10,7 @@ bool arguments::exists(std::string n) const
 
 std::string arguments::operator[](std::string n) const
 {
-    iterator i = find(n);
+    const_iterator i = find(n);
     if (i != end()) {
         return i->second;
     }
@@ -18,8 +19,15 @@ std::string arguments::operator[](std::string n) const
 
 arguments arguments::construct(std::string str)
 {
-    /// @todo
-    return arguments();
+    arguments args;
+    std::vector<std::string> v;
+    utility::split(v, str, " ");
+    std::vector<std::string>::const_iterator i = v.begin();
+    while(i != v.end()) {
+        std::pair<std::string, std::string> p = utility::split(*i, "=");
+        args[p.first] = p.second;
+    }
+    return args;
 }
 
 command::command(std::string n, std::string d)

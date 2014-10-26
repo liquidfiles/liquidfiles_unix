@@ -1,6 +1,9 @@
 #include "command_processor.h"
 #include "command.h"
 #include "exceptions.h"
+#include "utility.h"
+
+#include <cassert>
 
 namespace lf {
 
@@ -36,9 +39,20 @@ command* command_processor::get_command(std::string name)
     return 0;
 }
 
-void command_processor::execute(std::string command)
+void command_processor::execute(std::string str)
 {
-    /// @todo
+    std::pair<std::string, std::string> p = utility::split(str, " ");
+    command* c = get_command(p.first);
+    if (c != 0) {
+        /// @todo Write error to messenger.
+        return;
+    }
+    arguments args = arguments::construct(p.second);
+    try {
+        c->execute(args);
+    } catch(lf::exception& e) {
+        /// @todo Write error to messenger.
+    }
 }
 
 }
