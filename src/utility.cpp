@@ -24,7 +24,7 @@ std::pair<std::string, std::string>
 split(const std::string& s, const std::string& d)
 {
     int i = s.find_first_of(d);
-    return i == s.npos ? std::make_pair(s, "") :
+    return i == s.npos ? std::make_pair(s, std::string()) :
         std::make_pair(s.substr(0, i), s.substr(i + 1));
 }
 

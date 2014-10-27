@@ -6,6 +6,7 @@
 namespace lf {
 
 class command;
+class messenger;
 
 /**
  * @class command_processor
@@ -26,6 +27,7 @@ private:
     command_processor();
     command_processor(const command_processor&);
     command_processor& operator=(const command_processor&);
+    ~command_processor();
 
 private:
     static command_processor* s_instance;
@@ -66,6 +68,7 @@ public:
 private:
     typedef std::map<std::string, command*> registry;
     registry m_commands;
+    messenger& m_messenger;
 };
 
 }

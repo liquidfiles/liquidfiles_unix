@@ -1,6 +1,7 @@
 #include "command_processor.h"
 #include "command.h"
 #include "exceptions.h"
+#include "messenger.h"
 #include "utility.h"
 
 #include <cassert>
@@ -18,7 +19,17 @@ command_processor& command_processor::get()
 }
 
 command_processor::command_processor()
+    : m_messenger(messenger::get())
 {
+}
+
+command_processor::~command_processor()
+{
+    registry::iterator i = m_commands.begin();
+    while (i != m_commands.end()) {
+        delete i->second;
+    }
+    m_commands.clear();
 }
 
 void command_processor::register_command(command* c)
@@ -43,15 +54,18 @@ void command_processor::execute(std::string str)
 {
     std::pair<std::string, std::string> p = utility::split(str, " ");
     command* c = get_command(p.first);
-    if (c != 0) {
-        /// @todo Write error to messenger.
+    if (c == 0) {
+        m_messenger << "Command '" << p.first
+            << "' does not exist.";
+        m_messenger.endline();
         return;
     }
     arguments args = arguments::construct(p.second);
     try {
         c->execute(args);
     } catch(lf::exception& e) {
-        /// @todo Write error to messenger.
+        m_messenger << "Error: " << e.message();
+        m_messenger.endline();
     }
 }
 

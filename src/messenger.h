@@ -1,0 +1,59 @@
+#pragma once
+
+#include <iostream>
+
+namespace lf {
+
+/**
+ * @class messenger.
+ * @brief Class to write output messages, logs and errors.
+ */
+class messenger : public std::ostream
+{
+    /// @name Singleton interface.
+    /// @{
+public:
+    /// @brief Access to singleton instance of messenger.
+    static messenger& get()
+    {
+        if (s_instance == 0) {
+            s_instance = new messenger();
+        }
+        return *s_instance;
+    }
+
+private:
+    messenger()
+    {
+    }
+
+    messenger(const messenger&);
+    messenger& operator=(const messenger&);
+
+private:
+    static messenger* s_instance;
+    /// @}
+
+    /// @name Output.
+    /// @{
+public:
+    /**
+     * @brief Writes given object to the stream.
+     * @param t Object to write.
+     */
+    template <typename T>
+    messenger& operator <<(const T& t)
+    {
+        std::cout << t;
+        return *this;
+    }
+
+    /// @brief Puts end of line to stream and flushes it.
+    void endline()
+    {
+        std::cout << std::endl;
+    }
+    /// @}
+};
+
+}

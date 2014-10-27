@@ -1,4 +1,5 @@
-SRCS = .
+SRCS = command.cpp command_processor.cpp main.cpp messenger.cpp send_command.cpp utility.cpp
+
 TOP = ..
 
 CPLUSPLUS = g++
@@ -8,8 +9,8 @@ MV		  = mv
 MKDIR     = mkdir -p
 
 INCPATH		= -I
-CXXFLAGS_X	= -O2 -mfpmath=sse -msse3
-CXXFLAGS	=  -pipe -fPIC -std=c++0x -msse3
+#CXXFLAGS_X	= -mfpmath=sse -msse3
+CXXFLAGS	= -O2 #-fPIC -std=c++0x -msse3
 LIB_PATH	= -L
 LIBS	    = -l
 
@@ -21,8 +22,6 @@ TARGET_BIN = $(BINDIR)/liquidfiles
 OBJDIR := $(TOP)/obj
 BINDIR := $(TOP)/bin
 LIBDIR := $(TOP)/lib
-
-SRCS = command.cpp command_processor.cpp main.cpp utility.cpp
 
 src-cpp:=$(filter %.cpp,$(SRCS))
 SRCDEPENDS:= $(src-cpp:%.cpp=$(OBJDIR)/%.mk)
@@ -46,7 +45,7 @@ $(LD) $(LIB_PATH) $(LIBS) $$(cat $(OBJDIR)/.objs) -o $$TMP_EXEC; \
 $(MV) -f $$TMP_EXEC $@
 
 $(OBJDIR)/%.o : %.cpp $(OBJDIR)/.dir
-	cd $(@D) ; $(CPLUSPLUS) $(INCPATH) -I$(CURDIR) -I$(CURDIR)/../.. $(CXXFLAGS_X) $(CXXFLAGS) -o $(@F) -c $(CURDIR)/$<
+	cd $(@D) ; $(CPLUSPLUS) $(INCPATH) -I$(CURDIR) $(CXXFLAGS) -o $(@F) -c $(CURDIR)/$<
 
 $(OBJDIR)/.objs: $(CXXLIBOBJS) $(OBJDIR)/.dir
 	@echo "$(CXXLIBOBJS)" > $(OBJDIR)/.objs
