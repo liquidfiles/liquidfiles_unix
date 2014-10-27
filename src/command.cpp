@@ -26,6 +26,7 @@ arguments arguments::construct(std::string str)
     while(i != v.end()) {
         std::pair<std::string, std::string> p = utility::split(*i, "=");
         args[p.first] = p.second;
+        ++i;
     }
     return args;
 }
