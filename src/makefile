@@ -1,4 +1,4 @@
-SRCS = command.cpp command_processor.cpp main.cpp messenger.cpp send_command.cpp utility.cpp
+SRCS = command.cpp command_processor.cpp engine.cpp main.cpp messenger.cpp send_command.cpp utility.cpp
 
 TOP = ..
 

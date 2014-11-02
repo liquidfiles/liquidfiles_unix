@@ -1,18 +1,24 @@
 #include "command_processor.h"
+#include "engine.h"
+#include "messenger.h"
 #include "send_command.h"
 
 #include <string>
 
 int main(int argc, char** argv)
 {
-    lf::command_processor& p = lf::command_processor::get();
-    p.register_command(new lf::send_command());
+    lf::engine e;
+    lf::command_processor p(lf::messenger::get());
+    p.register_command(new lf::send_command(e));
 
     std::string c;
-    for (int i = 1; i < argc; ++i) {
-        c += argv[i];
-        c += " ";
+    if (argc > 1) {
+        c = argv[1];
     }
-    p.execute(c);
+    std::vector<std::string> args;
+    for (int i = 2; i < argc; ++i) {
+        args.push_back(argv[i]);
+    }
+    p.execute(c, args);
     return 0;
 }

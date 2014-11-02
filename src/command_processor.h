@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 namespace lf {
 
@@ -17,20 +18,19 @@ class messenger;
  */
 class command_processor
 {
-    /// @name Singleton interface.
+    /// @name Construction
     /// @{
 public:
-    /// @brief Access to singleton instance of command_processor.
-    static command_processor& get();
+    /// @brief Constructor.
+    /// @param m Messenger.
+    command_processor(messenger& m);
 
-private:
-    command_processor();
-    command_processor(const command_processor&);
-    command_processor& operator=(const command_processor&);
+    /// @brief Destructor.
     ~command_processor();
 
 private:
-    static command_processor* s_instance;
+    command_processor(const command_processor&);
+    command_processor& operator=(const command_processor&);
     /// @}
 
     /// @name Command register interface
@@ -60,9 +60,17 @@ public:
      *         
      *        This function parses given string, gets command name and
      *        executes it by given arguments.
-     * @param command Command string.
+     * @param cn Command string.
      */
-    void execute(std::string command);
+    void execute(const std::string& cn);
+
+    /**
+     * @brief Executes the given command by given arguments.
+     * @param cn Command name.
+     * @param args Arguments strings.
+     */
+    void execute(const std::string& cn,
+            const std::vector<std::string>& args);
     /// @}
 
 private:

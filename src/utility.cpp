@@ -4,6 +4,11 @@ namespace lf {
 
 namespace utility {
 
+bool is_named_argument(const std::string& a)
+{
+    return a.find_first_of("=") != a.npos;
+}
+
 void split(std::vector<std::string>& out,
         const std::string& s, const std::string& d)
 {

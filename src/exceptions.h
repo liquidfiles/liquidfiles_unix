@@ -32,4 +32,14 @@ public:
     }
 };
 
+class missing_argument : public exception
+{
+public:
+    missing_argument(std::string a)
+        : exception(std::string("Argument '") + a +
+                    std::string("' is required."))
+    {
+    }
+};
+
 }

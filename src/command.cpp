@@ -17,15 +17,30 @@ std::string arguments::operator[](std::string n) const
     return std::string();
 }
 
-arguments arguments::construct(std::string str)
+const std::set<std::string>& arguments::get_unnamed_arguments() const
+{
+    return m_unnamed_arguments;
+}
+
+arguments arguments::construct(const std::string& str)
 {
     arguments args;
     std::vector<std::string> v;
     utility::split(v, str, " ");
-    std::vector<std::string>::const_iterator i = v.begin();
-    while(i != v.end()) {
-        std::pair<std::string, std::string> p = utility::split(*i, "=");
-        args[p.first] = p.second;
+    return construct(v);
+}
+
+arguments arguments::construct(const std::vector<std::string>& str)
+{
+    arguments args;
+    std::vector<std::string>::const_iterator i = str.begin();
+    while(i != str.end()) {
+        if (utility::is_named_argument(*i)) {
+            std::pair<std::string, std::string> p = utility::split(*i, "=");
+            args.insert(std::make_pair(p.first, p.second));
+        } else {
+            args.m_unnamed_arguments.insert(*i);
+        }
         ++i;
     }
     return args;

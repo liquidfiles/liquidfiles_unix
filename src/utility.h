@@ -9,6 +9,12 @@ namespace lf {
 namespace utility {
 
 /**
+ * @brief Checks whether argument represented by given string is named.
+ * @param a Argument string.
+ */
+bool is_named_argument(const std::string& a);
+
+/**
  * @brief Splits string to tokens and stores results in output vector.
  * @param s Original string.
  * @param d Delimiter.

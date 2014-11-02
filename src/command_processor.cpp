@@ -8,18 +8,8 @@
 
 namespace lf {
 
-command_processor* command_processor::s_instance = 0;
-
-command_processor& command_processor::get()
-{
-    if (s_instance == 0) {
-        s_instance = new command_processor();
-    }
-    return *s_instance;
-}
-
-command_processor::command_processor()
-    : m_messenger(messenger::get())
+command_processor::command_processor(messenger& m)
+    : m_messenger(m)
 {
 }
 
@@ -28,6 +18,7 @@ command_processor::~command_processor()
     registry::iterator i = m_commands.begin();
     while (i != m_commands.end()) {
         delete i->second;
+        ++i;
     }
     m_commands.clear();
 }
@@ -50,7 +41,7 @@ command* command_processor::get_command(std::string name)
     return 0;
 }
 
-void command_processor::execute(std::string str)
+void command_processor::execute(const std::string& str)
 {
     std::pair<std::string, std::string> p = utility::split(str, " ");
     command* c = get_command(p.first);
@@ -63,6 +54,25 @@ void command_processor::execute(std::string str)
     arguments args = arguments::construct(p.second);
     try {
         c->execute(args);
+    } catch(lf::exception& e) {
+        m_messenger << "Error: " << e.message();
+        m_messenger.endline();
+    }
+}
+
+void command_processor::execute(const std::string& cn,
+        const std::vector<std::string>& args)
+{
+    command* c = get_command(cn);
+    if (c == 0) {
+        m_messenger << "Command '" << cn 
+            << "' does not exist.";
+        m_messenger.endline();
+        return;
+    }
+    arguments a = arguments::construct(args);
+    try {
+        c->execute(a);
     } catch(lf::exception& e) {
         m_messenger << "Error: " << e.message();
         m_messenger.endline();

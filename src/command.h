@@ -1,7 +1,9 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include <string>
+#include <vector>
 
 namespace lf {
 
@@ -21,8 +23,18 @@ public:
     std::string operator[](std::string n) const;
 
 public:
+    /// @brief Access to unnamed arguments.
+    const std::set<std::string>& get_unnamed_arguments() const;
+
+public:
     /// @brief Constructs and returns arguments from given string.
-    static arguments construct(std::string str);
+    static arguments construct(const std::string& str);
+
+    /// @brief Constructs and returns arguments from given strings.
+    static arguments construct(const std::vector<std::string>& str);
+
+private:
+    std::set<std::string> m_unnamed_arguments;
 };
 
 /**
