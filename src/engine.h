@@ -1,5 +1,7 @@
 #pragma once
 
+#include <curl/curl.h>
+
 #include <set>
 #include <string>
 
@@ -7,9 +9,7 @@ namespace lf {
 
 /**
  * @class engine
- * @brief API for liquidfiles.
- *
- *        engine is main class to do operations with liquidfiles.
+ * @brief API for liquidfiles.  * *        engine is main class to do operations with liquidfiles.
  *        It provides interface to send, receive files and other operations
  *        supported by liquidfiles.
  */
@@ -29,8 +29,9 @@ private:
     /// @name API
     /// @{
 public:
-    enum silence {
+    enum report_level {
         SILENT,
+        NORMAL,
         VERBOSE
     };
 
@@ -53,11 +54,24 @@ public:
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
      */
-    void send(const std::string& server, const std::string& user, 
-            const std::string& key, const std::string& subject,
+    std::string send(std::string server, const std::string& user, 
+            std::string key, const std::string& subject,
             const std::string& message, const files& fs,
-            silence s, validate_cert v);
+            report_level s, validate_cert v);
     /// @}
+
+private:
+    std::string attach(std::string server, const std::string& file,
+            report_level s);
+
+    std::string send_attachments(std::string server, const std::string& user,
+            const std::string& subject, const std::string& message,
+            const files& fs, report_level s);
+
+    void init_curl(std::string key, report_level s, validate_cert v);
+
+private:
+    CURL* m_curl;
 };
 
 }

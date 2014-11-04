@@ -42,4 +42,13 @@ public:
     }
 };
 
+class curl_error : public exception
+{
+public:
+    curl_error(std::string a)
+        : exception(a)
+    {
+    }
+};
+
 }

@@ -24,21 +24,26 @@ void send_command::execute(const arguments& args)
     if (api_key == "") {
         throw missing_argument("--api_key");
     }
+    engine::report_level rl = engine::NORMAL;
+    std::string rls = args["--report_level"];
+    if (rls == "silent") {
+        rl = engine::SILENT;
+    } else if (rls == "verbose") {
+        rl = engine::VERBOSE;
+    } else if (rls != "" && rls != "normal") {
+        throw exception("Invalid value for argument '--report_level'.\n"
+                "    Valid values: silent, normal, verbose.");
+    }
     std::string subject = args["--subject"];
     std::string message = args["--message"];
     std::set<std::string> unnamed_args = args.get_unnamed_arguments();
-    engine::silence silent = engine::VERBOSE;
-    if (unnamed_args.find("-s") != unnamed_args.end()) {
-        silent = engine::SILENT;
-        unnamed_args.erase("-s");
-    }
     engine::validate_cert val = engine::VALIDATE;
     if (unnamed_args.find("-k") != unnamed_args.end()) {
         val = engine::NOT_VALIDATE;
         unnamed_args.erase("-k");
     }
     m_engine.send(server, user, api_key, subject, message, unnamed_args,
-            silent, val);
+            rl, val);
 }
 
 }

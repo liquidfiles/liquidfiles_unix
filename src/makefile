@@ -1,4 +1,4 @@
-SRCS = command.cpp command_processor.cpp engine.cpp main.cpp messenger.cpp send_command.cpp utility.cpp
+SRCS = command.cpp command_processor.cpp engine.cpp help_command.cpp main.cpp messenger.cpp send_command.cpp utility.cpp
 
 TOP = ..
 
@@ -11,8 +11,8 @@ MKDIR     = mkdir -p
 INCPATH		= -I
 #CXXFLAGS_X	= -mfpmath=sse -msse3
 CXXFLAGS	= -O2 #-fPIC -std=c++0x -msse3
-LIB_PATH	= -L
-LIBS	    = -l
+LIB_PATH	= 
+LIBS	    = -lcurl
 
 TARGET_BIN = $(BINDIR)/liquidfiles
 
@@ -41,7 +41,7 @@ $(OBJDIR)/%.mk : %.cpp $(OBJDIR)/.dir
 $(TARGET_BIN): $(BINDIR)/.dir $(OBJDIR)/.objs
 	TMP_EXEC=`mktemp /tmp/lf_XXXXXX`; \
 chmod ugo+r $$TMP_EXEC; \
-$(LD) $(LIB_PATH) $(LIBS) $$(cat $(OBJDIR)/.objs) -o $$TMP_EXEC; \
+$(LD) $$(cat $(OBJDIR)/.objs) $(LIB_PATH) $(LIBS) -o $$TMP_EXEC; \
 $(MV) -f $$TMP_EXEC $@
 
 $(OBJDIR)/%.o : %.cpp $(OBJDIR)/.dir
