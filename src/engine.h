@@ -53,6 +53,7 @@ public:
      * @param fs Files list to send.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error, upload_error, send_error.
      */
     std::string send(std::string server, const std::string& user, 
             std::string key, const std::string& subject,
@@ -69,6 +70,10 @@ private:
             const files& fs, report_level s);
 
     void init_curl(std::string key, report_level s, validate_cert v);
+
+private:
+    std::string process_send_responce(const std::string& r, report_level s) const;
+    void process_attach_responce(const std::string& r, report_level s) const;
 
 private:
     CURL* m_curl;

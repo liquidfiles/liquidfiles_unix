@@ -53,6 +53,8 @@ public:
      */
     command(std::string n, std::string d);
     
+    virtual ~command();
+
 private:
     command(const command&);
     command& operator=(const command&);

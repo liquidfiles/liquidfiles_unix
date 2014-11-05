@@ -23,6 +23,5 @@ int main(int argc, char** argv)
     for (int i = 2; i < argc; ++i) {
         args.push_back(argv[i]);
     }
-    p.execute(c, args);
-    return 0;
+    return p.execute(c, args);
 }

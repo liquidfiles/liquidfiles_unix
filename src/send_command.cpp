@@ -31,8 +31,8 @@ void send_command::execute(const arguments& args)
     } else if (rls == "verbose") {
         rl = engine::VERBOSE;
     } else if (rls != "" && rls != "normal") {
-        throw exception("Invalid value for argument '--report_level'.\n"
-                "    Valid values: silent, normal, verbose.");
+        throw invalid_argument_value("--report_level",
+                "silent, normal, verbose");
     }
     std::string subject = args["--subject"];
     std::string message = args["--message"];

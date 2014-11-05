@@ -62,14 +62,14 @@ public:
      *        executes it by given arguments.
      * @param cn Command string.
      */
-    void execute(const std::string& cn);
+    int execute(const std::string& cn);
 
     /**
      * @brief Executes the given command by given arguments.
      * @param cn Command name.
      * @param args Arguments strings.
      */
-    void execute(const std::string& cn,
+    int execute(const std::string& cn,
             const std::vector<std::string>& args);
     /// @}
 

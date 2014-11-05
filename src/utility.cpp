@@ -12,8 +12,8 @@ bool is_named_argument(const std::string& a)
 void split(std::vector<std::string>& out,
         const std::string& s, const std::string& d)
 {
-    int i = 0;
-    int e = 0;
+    size_t i = 0;
+    size_t e = 0;
     while ((e = s.find_first_of(d, i)) != s.npos) {
         if (e != i) {
             out.push_back(s.substr(i, e - i));
@@ -28,7 +28,7 @@ void split(std::vector<std::string>& out,
 std::pair<std::string, std::string>
 split(const std::string& s, const std::string& d)
 {
-    int i = s.find_first_of(d);
+    size_t i = s.find_first_of(d);
     return i == s.npos ? std::make_pair(s, std::string()) :
         std::make_pair(s.substr(0, i), s.substr(i + 1));
 }

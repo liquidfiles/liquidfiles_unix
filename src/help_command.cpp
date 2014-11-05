@@ -46,7 +46,13 @@ void help_command::print_help() const
 "send    Sends file to specified user.\n"
 "help    Prints help.\n"
 "\n"
-"Type 'liquidfiles help <command_name>' to see command specific options and usage.";
+"Type 'liquidfiles help <command_name>' to see command specific options and usage.\n"
+"\n"
+"Abnormal exit codes:\n"
+"1  Command line arguments are invalid - Invalid command name, missing required argument, invalid value for specific argument.\n"
+"2  CURL error - Can't connect to host, connection timeout, certificate check failure, etc.\n"
+"3  Error during file upload - Invalid API key, Invalid filename, etc.\n"
+"4  Error during file send to user.";
     lf::messenger::get().endline();
 }
 

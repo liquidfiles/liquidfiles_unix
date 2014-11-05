@@ -41,7 +41,7 @@ command* command_processor::get_command(std::string name)
     return 0;
 }
 
-void command_processor::execute(const std::string& str)
+int command_processor::execute(const std::string& str)
 {
     std::pair<std::string, std::string> p = utility::split(str, " ");
     command* c = get_command(p.first);
@@ -49,7 +49,7 @@ void command_processor::execute(const std::string& str)
         m_messenger << "Command '" << p.first
             << "' does not exist.";
         m_messenger.endline();
-        return;
+        return 1;
     }
     arguments args = arguments::construct(p.second);
     try {
@@ -57,10 +57,12 @@ void command_processor::execute(const std::string& str)
     } catch(lf::exception& e) {
         m_messenger << "Error: " << e.message();
         m_messenger.endline();
+        return e.code();
     }
+    return 0;
 }
 
-void command_processor::execute(const std::string& cn,
+int command_processor::execute(const std::string& cn,
         const std::vector<std::string>& args)
 {
     command* c = get_command(cn);
@@ -68,7 +70,7 @@ void command_processor::execute(const std::string& cn,
         m_messenger << "Command '" << cn 
             << "' does not exist.";
         m_messenger.endline();
-        return;
+        return 1;
     }
     arguments a = arguments::construct(args);
     try {
@@ -76,7 +78,9 @@ void command_processor::execute(const std::string& cn,
     } catch(lf::exception& e) {
         m_messenger << "Error: " << e.message();
         m_messenger.endline();
+        return e.code();
     }
+    return 0;
 }
 
 }

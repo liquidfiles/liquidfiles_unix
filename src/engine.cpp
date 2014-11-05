@@ -1,11 +1,14 @@
 #include "engine.h"
 #include "exceptions.h"
+#include "messenger.h"
 
 #include <vector>
 
 namespace lf {
 
 namespace {
+
+unsigned s_normal_attach_responce_size = 22;
 
 std::string s_data;
 
@@ -31,6 +34,9 @@ void engine::init_curl(std::string key, report_level s, validate_cert v)
     curl_easy_setopt(m_curl, CURLOPT_USERPWD, key.c_str());
     if (v == NOT_VALIDATE) {
         curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYPEER, false);
+    }
+    if (s == VERBOSE) {
+        curl_easy_setopt(m_curl, CURLOPT_VERBOSE, 1L);
     }
 }
 
@@ -76,12 +82,17 @@ std::string engine::attach(std::string server, const std::string& file,
                CURLFORM_FILE, file.c_str(),
                CURLFORM_END);
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, formpost);
+    if (s >= NORMAL) {
+        messenger::get() << "Uploading file '" << file << "'.";
+        messenger::get().endline();
+    }
     CURLcode res = curl_easy_perform(m_curl);
     curl_formfree(formpost);
     if(res != CURLE_OK) {
         throw curl_error(std::string(curl_easy_strerror(res)));
     }
     std::string r = s_data;
+    process_attach_responce(r, s);
     s_data.clear();
     return r;
 }
@@ -93,8 +104,8 @@ std::string engine::send_attachments(std::string server,
 {
     server += "/message";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_slist* slist =
-        curl_slist_append(slist, "Content-Type: text/xml");
+    struct curl_slist* slist = 0;
+    slist = curl_slist_append(slist, "Content-Type: text/xml");
     curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
     std::string data = std::string(
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
@@ -117,6 +128,10 @@ std::string engine::send_attachments(std::string server,
   </message>\n";
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
     curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str()); 
+    if (s >= NORMAL) {
+        messenger::get() << "Sending message to user '" << user << "'";
+        messenger::get().endline();
+    }
     CURLcode res = curl_easy_perform(m_curl);
     curl_slist_free_all(slist);
     if(res != CURLE_OK) {
@@ -124,7 +139,38 @@ std::string engine::send_attachments(std::string server,
     }
     std::string r = s_data;
     s_data.clear();
-    return r;
+    return process_send_responce(r, s);
+}
+
+void engine::process_attach_responce(const std::string& r, report_level s) const
+{
+    if (r.size() == s_normal_attach_responce_size) {
+        if (s >= NORMAL) {
+            messenger::get() << "File uploaded successfully. ID: " << r;
+            messenger::get().endline();
+        }
+        return;
+    }
+    throw upload_error(r);
+}
+
+std::string engine::process_send_responce(const std::string& r,
+        report_level s) const
+{
+    size_t f = r.rfind("Message ID: ");
+    if (f != std::string::npos) {
+        size_t e = r.find('\n', f + 12);
+        if (e != std::string::npos) {
+            std::string q = r.substr(f + 12, e - f - 12);
+            if (s >= NORMAL) {
+                messenger::get() << "Message sent successfully. ID: " << q;
+                messenger::get().endline();
+            }
+            return q;
+        }
+    }
+    throw send_error(r);
+    return "";
 }
 
 }

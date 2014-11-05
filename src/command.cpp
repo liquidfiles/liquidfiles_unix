@@ -52,4 +52,8 @@ command::command(std::string n, std::string d)
 {
 }
 
+command::~command()
+{
+}
+
 }
