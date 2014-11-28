@@ -14,16 +14,16 @@ AC_PROG_CC
 clean_CPPFLAGS=$CPPFLAGS
 clean_LDFLAGS=$LDFLAGS
 clean_LIBS=$LIBS
-CURL_LIBS=""
+CURL_LIBS="-lcurl"
 AC_ARG_WITH(curl,
 AC_HELP_STRING([--with-curl=PATH],[search for curl in PATH]),
                [OPT_CURL="$withval"])
 
 if test "$OPT_CURL" = "" ; then
-  OPT_CURL="$PWD/ext/`uname`/`uname -m`"
-  CURL_LIBS="-lcurl -lidn -lrtmp -lldap -lsasl2 -llber -lssl -lcrypto -lgcrypt -lgpg-error -lgnutls -lz -ltasn1 -lpthread -lgss -lp11-kit -ldl -lc "
-else 
-  CURL_LIBS="-lcurl "
+  if test -d "$PWD/ext/`uname`/`uname -m`" ; then
+    OPT_CURL="$PWD/ext/`uname`/`uname -m`"
+    CURL_LIBS="-lcurl -lidn -lrtmp -lldap -lsasl2 -llber -lssl -lcrypto -lgcrypt -lgpg-error -lgnutls -lz -ltasn1 -lpthread -lgss -lp11-kit -ldl -lc "
+  fi
 fi
 
 dnl Add a nonempty path to the compiler flags
