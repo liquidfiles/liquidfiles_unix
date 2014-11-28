@@ -5358,7 +5358,10 @@ fi
 
 
 if test "$OPT_CURL" = "" ; then
-    OPT_CURL=""
+  OPT_CURL="$PWD/ext/`uname`/`uname -m`"
+  CURL_LIBS="-lcurl -lidn -lrtmp -lldap -lsasl2 -llber -lssl -lcrypto -lgcrypt -lgpg-error -lgnutls -lz -ltasn1 -lpthread -lgss -lp11-kit -ldl -lc "
+else
+  CURL_LIBS="-lcurl "
 fi
 
 if test -n "$OPT_CURL"; then
@@ -5781,8 +5784,7 @@ fi
 if test "$HAVE_CURL_H" == "1"
 then
 
-  CURL_LIBS="-lcurl"
-  LIBS="-lcurl $clean_LIBS"
+  LIBS=$CURL_LIBS$clean_LIBS
 
     AMFIXLIB="1"
   { $as_echo "$as_me:${as_lineno-$LINENO}: found curl.h header" >&5

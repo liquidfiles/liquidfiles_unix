@@ -20,8 +20,10 @@ AC_HELP_STRING([--with-curl=PATH],[search for curl in PATH]),
                [OPT_CURL="$withval"])
 
 if test "$OPT_CURL" = "" ; then
-dnl  OPT_CURL="$PWD/ext/`uname`/`uname -m`"
-    OPT_CURL=""
+  OPT_CURL="$PWD/ext/`uname`/`uname -m`"
+  CURL_LIBS="-lcurl -lidn -lrtmp -lldap -lsasl2 -llber -lssl -lcrypto -lgcrypt -lgpg-error -lgnutls -lz -ltasn1 -lpthread -lgss -lp11-kit -ldl -lc "
+else 
+  CURL_LIBS="-lcurl "
 fi
 
 dnl Add a nonempty path to the compiler flags
@@ -45,8 +47,7 @@ if test "$HAVE_CURL_H" == "1"
 then
   dnl both header and lib were found!
 
-  CURL_LIBS="-lcurl"
-  LIBS="-lcurl $clean_LIBS"
+  LIBS=$CURL_LIBS$clean_LIBS
 
   dnl replace 'HAVE_CURL' in the automake makefile.ams
   AMFIXLIB="1"
