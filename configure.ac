@@ -22,7 +22,7 @@ AC_HELP_STRING([--with-curl=PATH],[search for curl in PATH]),
 if test "$OPT_CURL" = "" ; then
   if test -d "$PWD/ext/`uname`/`uname -m`" ; then
     OPT_CURL="$PWD/ext/`uname`/`uname -m`"
-    CURL_LIBS="-lcurl -lidn -lrtmp -lldap -lsasl2 -llber -lssl -lcrypto -lgcrypt -lgpg-error -lgnutls -lz -ltasn1 -lpthread -lgss -lp11-kit -ldl -lc "
+    CURL_LIBS=`cat $OPT_CURL/lib/.libs` 
   fi
 fi
 
