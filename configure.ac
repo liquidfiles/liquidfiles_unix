@@ -19,12 +19,14 @@ AC_ARG_WITH(curl,
 AC_HELP_STRING([--with-curl=PATH],[search for curl in PATH]),
                [OPT_CURL="$withval"])
 
-if test "$OPT_CURL" = "" ; then
-  if test -d "$PWD/ext/`uname`/`uname -m`" ; then
-    OPT_CURL="$PWD/ext/`uname`/`uname -m`"
-    CURL_LIBS=`cat $OPT_CURL/lib/.libs` 
-  fi
+AC_ARG_ENABLE(static,
+AC_HELP_STRING([--enable-static],[Link with curl static library]),
+               [STATIC="1"])
+
+if test "$STATIC" = "1" ; then
+  LDFLAGS="$LDFLAGS -static"
 fi
+
 
 dnl Add a nonempty path to the compiler flags
 if test -n "$OPT_CURL"; then

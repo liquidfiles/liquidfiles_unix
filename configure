@@ -719,6 +719,7 @@ enable_option_checking
 enable_silent_rules
 enable_dependency_tracking
 with_curl
+enable_static
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1353,6 +1354,7 @@ Optional Features:
                           do not reject slow dependency extractors
   --disable-dependency-tracking
                           speeds up one-time build
+  --enable-static         Link with curl static library
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -5357,12 +5359,16 @@ if test "${with_curl+set}" = set; then :
 fi
 
 
-if test "$OPT_CURL" = "" ; then
-  if test -d "$PWD/ext/`uname`/`uname -m`" ; then
-    OPT_CURL="$PWD/ext/`uname`/`uname -m`"
-    CURL_LIBS=`cat $OPT_CURL/lib/.libs`
-  fi
+# Check whether --enable-static was given.
+if test "${enable_static+set}" = set; then :
+  enableval=$enable_static; STATIC="1"
 fi
+
+
+if test "$STATIC" = "1" ; then
+  LDFLAGS="$LDFLAGS -static"
+fi
+
 
 if test -n "$OPT_CURL"; then
    CPPFLAGS="$CPPFLAGS -I$OPT_CURL/include"
