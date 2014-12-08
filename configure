@@ -5352,6 +5352,7 @@ clean_CPPFLAGS=$CPPFLAGS
 clean_LDFLAGS=$LDFLAGS
 clean_LIBS=$LIBS
 CURL_LIBS="-lcurl"
+CURL_CONFIG_PATH="curl-config"
 
 # Check whether --with-curl was given.
 if test "${with_curl+set}" = set; then :
@@ -5365,14 +5366,16 @@ if test "${enable_static+set}" = set; then :
 fi
 
 
-if test "$STATIC" = "1" ; then
-  LDFLAGS="$LDFLAGS -static"
-fi
-
 
 if test -n "$OPT_CURL"; then
    CPPFLAGS="$CPPFLAGS -I$OPT_CURL/include"
    LDFLAGS="$LDFLAGS -L$OPT_CURL/lib$libsuff"
+   CURL_CONFIG_PATH="$OPT_CURL/bin/curl-config"
+fi
+
+if test "$STATIC" = "1" ; then
+  CURL_LIBS=`$CURL_CONFIG_PATH --static-libs`
+  CURL_LIBS="$CURL_LIBS -lpthread"
 fi
 
 

@@ -15,6 +15,7 @@ clean_CPPFLAGS=$CPPFLAGS
 clean_LDFLAGS=$LDFLAGS
 clean_LIBS=$LIBS
 CURL_LIBS="-lcurl"
+CURL_CONFIG_PATH="curl-config"
 AC_ARG_WITH(curl,
 AC_HELP_STRING([--with-curl=PATH],[search for curl in PATH]),
                [OPT_CURL="$withval"])
@@ -23,15 +24,17 @@ AC_ARG_ENABLE(static,
 AC_HELP_STRING([--enable-static],[Link with curl static library]),
                [STATIC="1"])
 
-if test "$STATIC" = "1" ; then
-  LDFLAGS="$LDFLAGS -static"
-fi
-
 
 dnl Add a nonempty path to the compiler flags
 if test -n "$OPT_CURL"; then
    CPPFLAGS="$CPPFLAGS -I$OPT_CURL/include"
    LDFLAGS="$LDFLAGS -L$OPT_CURL/lib$libsuff"
+   CURL_CONFIG_PATH="$OPT_CURL/bin/curl-config"
+fi
+
+if test "$STATIC" = "1" ; then
+  CURL_LIBS=`$CURL_CONFIG_PATH --static-libs`
+  CURL_LIBS="$CURL_LIBS -lpthread"
 fi
 
 AC_CHECK_HEADER(curl/curl.h,
