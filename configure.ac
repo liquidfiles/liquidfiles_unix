@@ -29,7 +29,11 @@ dnl Add a nonempty path to the compiler flags
 if test -n "$OPT_CURL"; then
    CPPFLAGS="$CPPFLAGS -I$OPT_CURL/include"
    LDFLAGS="$LDFLAGS -L$OPT_CURL/lib$libsuff"
-   CURL_CONFIG_PATH="$OPT_CURL/bin/curl-config"
+   CURL_CONFIG_PATH="$OPT_CURL/curl-config"
+   $CURL_CONFIG_PATH --static-libs > /dev/null
+   if test $? != 0; then
+       CURL_CONFIG_PATH="$OPT_CURL/bin/curl-config"
+   fi
 fi
 
 if test "$STATIC" = "1" ; then
