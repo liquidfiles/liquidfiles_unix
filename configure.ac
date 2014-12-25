@@ -29,16 +29,24 @@ dnl Add a nonempty path to the compiler flags
 if test -n "$OPT_CURL"; then
    CPPFLAGS="$CPPFLAGS -I$OPT_CURL/include"
    LDFLAGS="$LDFLAGS -L$OPT_CURL/lib$libsuff"
-   CURL_CONFIG_PATH="$OPT_CURL/curl-config"
-   $CURL_CONFIG_PATH --static-libs > /dev/null
-   if test $? != 0; then
-       CURL_CONFIG_PATH="$OPT_CURL/bin/curl-config"
+   if test -e $OPT_CURL/curl-config; then
+     CURL_CONFIG_PATH="$OPT_CURL/curl-config"
+   else
+     CURL_CONFIG_PATH="$OPT_CURL/bin/curl-config"
    fi
 fi
 
 if test "$STATIC" = "1" ; then
   CURL_LIBS=`$CURL_CONFIG_PATH --static-libs`
-  CURL_LIBS="$CURL_LIBS -lpthread"
+  if test -n "$OPT_CURL" ; then
+    if test -e $OPT_CURL/lib/libssl.a ; then
+      CURL_LIBS=${CURL_LIBS//-lssl/$OPT_CURL/lib/libssl.a}
+    fi
+    if test -e $OPT_CURL/lib/libcrypto.a ; then
+      CURL_LIBS=${CURL_LIBS//-lcrypto/$OPT_CURL/lib/libcrypto.a}
+    fi
+  fi
+  CURL_LIBS="$CURL_LIBS -lpthread -ldl"
 fi
 
 AC_CHECK_HEADER(curl/curl.h,
