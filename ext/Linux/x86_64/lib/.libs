@@ -1,1 +1,0 @@
--lcurl -lidn -lrtmp -lldap -lsasl2 -llber -lssl -lcrypto -lgcrypt -lgpg-error -lgnutls -lz -ltasn1 -lpthread -lgss -lp11-kit -ldl -lc 
