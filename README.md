@@ -1,16 +1,13 @@
 # Installing LiquidFiles Unix Command Line Utility
 ## Introduction
-This BETA version of the utility has the send feature only.  LiquidFIles roadmap is to include all CLI features as per the already supported 
-Windows CLI utility. Refer to [Liquidfiles support site] (http://support.liquidfiles.net/entries/22100711-Command-line-utility-Windows-) for 
-further information.
+This BETA version of the utility has the send feature only.  LiquidFIles roadmap is to include all CLI features as per the already supported Windows CLI utility. Refer to [Liquidfiles support site] http://support.liquidfiles.net/entries/22100711-Command-line-utility-Windows-) for further information.
 
 LiquidFiles Unix command line utility extends the functionality of your LiquidFiles server to command line use and scripting from supported 
 Unix and Linux servers.
 
-This document describes the typical installation steps for the LiquidFiles Unix client including dependent libraries. LiquidFiles can be 
-installed using static or shared libraries to enable portability within your environment.
+This document describes the typical installation steps for the LiquidFiles Unix client including dependent libraries. LiquidFiles can be installed using static or shared libraries to enable portability within your environment.
 
-For command line help, use:  liquidfiles help <command> (e.g. liquidfiles help send).
+For command line help, use:  'liquidfiles help' <command> (e.g. liquidfiles help send).
 
 ## Installation
 LiquidFiles can be installed statically or to use shared libraries where all system dependencies are met. LiquidFiles relies heavily on OpenSSL 
@@ -34,26 +31,29 @@ If you already have OpenSSL or Curl libraries installed, you may skip some of th
 the default paths, you will not require the prefix option that allows user specified path for installation.
 
 Install OpenSSL first:
+
 1. Download latest OpenSSL version from official site.
-2. Extract archive	(e.g. tar –xz <openssl-VERSION>.tar.gz)
-3. Go to directory	(e.g. cd <openssl-VERSION>)
-4. Configure		(./config shared)
-5. Make			make
-6. Install		make install
+2. Extract archive (e.g. tar –xz <openssl-VERSION>.tar.gz)
+3. Go to directory (e.g. cd <openssl-VERSION>)
+4. run Configure './config shared'
+5. in the directory run 'make'
+6. then run 'make install'
 
 After installing OpenSSL, you need to install Curl:
+
 1. Download latest curl version from official site.
 2. Extract archive	(e.g. tar –xz <curl-VERSION>.tar.gz)
 3. Go to directory	(e.g. cd <curl-VERSION>)
-4. Configure*		(./configure)
-5. Make			make
-6. Install		make install
+4. run Configure** './configure'
+5. in the directory run 'make'
+6. then run 'make install'
+
 **Note - if your OpenSSL is installed in a non-system path, then you need to specify --with-ssl=$PATH_SSL  option.  
 Refer to OpenSSL installation instructions and options for further information.**
 
 #### Installing liquidfiles command line utility
 1. Download LiquidFiles [Source Code] (github_link_here) and unpack the files, then enter the directory
-2. Configure*		./configure
+2. Run Configure* './configure'
 3. Make			make
 4. Install		make install
 **Note - if your OpenSSL and Curl is installed in non-system path, then you need to specify using the install options
@@ -75,37 +75,39 @@ Then specify this single path for building the LiquidFiles package into a direct
 assume this is the case to provide a reliable installation option.
 
 #### Installing dependencies
-To install OpenSSL:
+To install OpenSSL
+
 1. Download latest OpenSSL version from official site.
-2. Extract archive		(e.g. tar –xz <openssl-VERSION>.tar.gz)
-3. Go to directory		(e.g. cd <openssl-VERSION>)
-4. Configure shared libs	(e.g. ./config shared --prefix=$PATH_X)
-5. Make				(make)
-6. Install			(make install)
-7. Make clean			(make clean)
+2. Extract archive (e.g. tar –xz <openssl-VERSION>.tar.gz)
+3. Go to directory (e.g. cd <openssl-VERSION>)
+4. Configure shared libs (e.g. ./config shared --prefix=$PATH_X)
+5. in the directory run 'make'
+6. then run 'make install'
+7. then run 'make clean'
 8. Configure static libs	(./config no-shared --prefix=$PATH_X)
-9. Make				make
-10. Install			make install
+9. in the directory run 'make'
+10. then run 'make install'
 
 **NOTE - For some cases, Curl static build is also not passed with only static OpenSSL.  In these cases you need to build 
 OpenSSL both statically and shared, in some instances you may be able to skip step 7-10 above, if in doubt do both.**
 
-After having OpenSSL, you need to install curl:
+After having OpenSSL, you need to install curl
+
 1. Download latest curl version from official site.
-2. Extract archive		(e.g. tar –xz <curl-VERSION>.tar.gz)
-3. Go to directory		(cd <curl-VERSION>)
-4. Configure static files	(e.g. ./configure --with-static --prefix=$PATH_X --with-ssl=$PATH_X --disable-shared)
-5. Make				make
-6. Install			make install
+2. Extract archive (e.g. tar –xz <curl-VERSION>.tar.gz)
+3. Go to directory (cd <curl-VERSION>)
+4. Configure static files (e.g. ./configure --with-static --prefix=$PATH_X --with-ssl=$PATH_X --disable-shared)
+5. in the directory run 'make'
+6. then run 'make install'
 
 **Note - Using these instructions, you will need the external path however if your OpenSSL is on system default paths, 
 then you may not need to specify --with-ssl option, or if you have specified custom path you need to substitute.**
 
 #### Installing liquidfiles
 1. Download LiquidFiles Unix CLI Source
-2. Configure static LiquidFiles*	(e.g. ./configure --with-curl=$EXT_PATH --prefix=$LF_EXT_PATH --enable-static)
-3. Make					make
-4. Install				make install
+2. Configure static LiquidFiles** (e.g. ./configure --with-curl=$EXT_PATH --prefix=$LF_EXT_PATH --enable-static)
+3. in the directory run 'make'
+4. then run 'make install'
 
 **Note - Using these instructions, you will need the external path however if your Curl is on system default paths, then 
-you don’t need to specify --with-curl option.
+you don’t need to specify --with-curl option.**
