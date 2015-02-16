@@ -59,6 +59,9 @@ public:
             std::string key, const std::string& subject,
             const std::string& message, const files& fs,
             report_level s, validate_cert v);
+
+    void messages(std::string server, std::string key, report_level s,
+            validate_cert v);
     /// @}
 
 private:

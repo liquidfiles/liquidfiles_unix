@@ -173,4 +173,9 @@ std::string engine::process_send_responce(const std::string& r,
     return "";
 }
 
+void engine::messages(std::string server, std::string key, report_level s,
+        validate_cert v)
+{
+}
+
 }

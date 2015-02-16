@@ -91,7 +91,8 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_liquidfiles_OBJECTS = command.$(OBJEXT) command_processor.$(OBJEXT) \
 	engine.$(OBJEXT) help_command.$(OBJEXT) main.$(OBJEXT) \
-	messenger.$(OBJEXT) send_command.$(OBJEXT) utility.$(OBJEXT)
+	messages_command.$(OBJEXT) messenger.$(OBJEXT) \
+	send_command.$(OBJEXT) utility.$(OBJEXT)
 liquidfiles_OBJECTS = $(am_liquidfiles_OBJECTS)
 liquidfiles_DEPENDENCIES =
 AM_V_P = $(am__v_P_@AM_V@)
@@ -256,7 +257,7 @@ top_srcdir = @top_srcdir@
 
 # what flags you want to pass to the C compiler & linker
 AM_CPPFLAGS = -Wall
-liquidfiles_SOURCES = command.cpp command_processor.cpp engine.cpp help_command.cpp main.cpp messenger.cpp send_command.cpp utility.cpp command.h command_processor.h engine.h help_command.h messenger.h send_command.h utility.h
+liquidfiles_SOURCES = command.cpp command_processor.cpp engine.cpp help_command.cpp main.cpp messages_command.cpp messenger.cpp send_command.cpp utility.cpp command.h command_processor.h engine.h help_command.h messenger.h send_command.h utility.h
 liquidfiles_LDADD = 
 all: all-am
 
@@ -271,9 +272,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign src/Makefile
+	  $(AUTOMAKE) --gnu src/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -350,6 +351,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/engine.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/help_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messages_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messenger.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/send_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utility.Po@am__quote@

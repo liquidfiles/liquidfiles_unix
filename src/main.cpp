@@ -1,6 +1,7 @@
 #include "command_processor.h"
 #include "engine.h"
 #include "help_command.h"
+#include "messages_command.h"
 #include "messenger.h"
 #include "send_command.h"
 
@@ -11,6 +12,7 @@ int main(int argc, char** argv)
     lf::engine e;
     lf::command_processor p(lf::messenger::get());
     p.register_command(new lf::send_command(e));
+    p.register_command(new lf::messages_command(e));
     p.register_command(new lf::help_command());
 
     if (argc == 1) {
