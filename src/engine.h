@@ -60,6 +60,14 @@ public:
             const std::string& message, const files& fs,
             report_level s, validate_cert v);
 
+    /**
+     * @brief Lists all the messages.
+     * @param server Server URL.
+     * @param key API Key of Liquidfiles.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error.
+     */
     void messages(std::string server, std::string key, report_level s,
             validate_cert v);
     /// @}

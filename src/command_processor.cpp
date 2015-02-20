@@ -41,18 +41,26 @@ command* command_processor::get_command(std::string name)
     return 0;
 }
 
+std::vector<std::string> command_processor::get_command_names() const
+{
+    std::vector<std::string> res;
+    registry::const_iterator i = m_commands.begin();
+    while(i != m_commands.end()) {
+        res.push_back(i->first);
+        ++i;
+    }
+    return res;
+}
+
 int command_processor::execute(const std::string& str)
 {
     std::pair<std::string, std::string> p = utility::split(str, " ");
-    command* c = get_command(p.first);
-    if (c == 0) {
-        m_messenger << "Command '" << p.first
-            << "' does not exist.";
-        m_messenger.endline();
-        return 1;
-    }
-    arguments args = arguments::construct(p.second);
     try {
+        command* c = get_command(p.first);
+        if (c == 0) {
+            throw invalid_command_name(p.first);
+        }
+        arguments args = arguments::construct(p.second);
         c->execute(args);
     } catch(lf::exception& e) {
         m_messenger << "Error: " << e.message();
@@ -65,15 +73,12 @@ int command_processor::execute(const std::string& str)
 int command_processor::execute(const std::string& cn,
         const std::vector<std::string>& args)
 {
-    command* c = get_command(cn);
-    if (c == 0) {
-        m_messenger << "Command '" << cn 
-            << "' does not exist.";
-        m_messenger.endline();
-        return 1;
-    }
-    arguments a = arguments::construct(args);
     try {
+        command* c = get_command(cn);
+        if (c == 0) {
+            throw invalid_command_name(cn);
+        }
+        arguments a = arguments::construct(args);
         c->execute(a);
     } catch(lf::exception& e) {
         m_messenger << "Error: " << e.message();

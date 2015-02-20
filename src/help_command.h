@@ -6,6 +6,8 @@
 
 namespace lf {
 
+class command_processor;
+
 /**
  * @class help_command.
  * @brief Class for 'help' command.
@@ -14,7 +16,7 @@ class help_command : public command
 {
 public:
     /// @brief Constructor.
-    help_command();
+    help_command(command_processor& p);
 
 public:
     /// @brief Executes command by given arguments.
@@ -24,7 +26,7 @@ private:
     void print_help() const;
 
 private:
-    std::map<std::string, std::string> m_content;
+    command_processor& m_command_processor;
 };
 
 }

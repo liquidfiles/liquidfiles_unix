@@ -50,6 +50,12 @@ public:
      * @note If command with given name does not exist, NULL is returned.
      */
     command* get_command(std::string name);
+
+public:
+    /**
+     * @brief Returns the list of all commands.
+     */
+    std::vector<std::string> get_command_names() const;
     /// @}
 
     /// @name Execution

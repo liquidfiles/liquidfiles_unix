@@ -13,7 +13,7 @@ int main(int argc, char** argv)
     lf::command_processor p(lf::messenger::get());
     p.register_command(new lf::send_command(e));
     p.register_command(new lf::messages_command(e));
-    p.register_command(new lf::help_command());
+    p.register_command(new lf::help_command(p));
 
     if (argc == 1) {
         p.execute("help");

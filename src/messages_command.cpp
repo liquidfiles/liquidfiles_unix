@@ -5,7 +5,16 @@
 namespace lf {
 
 messages_command::messages_command(engine& e)
-    : command("messages", "Lists the available messages.")
+    : command("messages",
+            "[-k] [--report_level=<level>] --server=<url> --api_key=<key>",
+            "Lists the available messages.",
+            "    -k - If specified, don't validate server certificate.\n"
+            "    --report_level - Level of reporting. Valid values:\n"
+            "                     silent, normal, verbose.\n"
+            "                     Default value: normal.\n"
+            "    --server - The server URL.\n"
+            "    --api_key - API key of liquidfiles, to login to system.\n"
+            )
     , m_engine(e)
 {
 }

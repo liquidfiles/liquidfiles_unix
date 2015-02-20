@@ -86,4 +86,13 @@ public:
     }
 };
 
+class invalid_command_name : public exception
+{
+public:
+    invalid_command_name(std::string a)
+        : exception(std::string("Command with name '") + a + "' does not exist.", 1)
+    {
+    }
+};
+
 }

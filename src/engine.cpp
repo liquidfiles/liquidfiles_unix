@@ -176,6 +176,21 @@ std::string engine::process_send_responce(const std::string& r,
 void engine::messages(std::string server, std::string key, report_level s,
         validate_cert v)
 {
+    init_curl(key, s, v);
+    server += "/message";
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    if (s >= NORMAL) {
+        messenger::get() << "Getting messages from the server.";
+        messenger::get().endline();
+    }
+    CURLcode res = curl_easy_perform(m_curl);
+    if(res != CURLE_OK) {
+        throw curl_error(std::string(curl_easy_strerror(res)));
+    }
+    std::string r = s_data;
+    s_data.clear();
+    messenger::get() << r;
+    messenger::get().endline();
 }
 
 }
