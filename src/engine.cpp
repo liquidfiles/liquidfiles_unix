@@ -1,6 +1,7 @@
 #include "engine.h"
 #include "exceptions.h"
 #include "messenger.h"
+#include "xml.h"
 
 #include <vector>
 
@@ -67,6 +68,29 @@ std::string engine::send(std::string server, const std::string& user,
     }
     return send_attachments(server, user, subject, message,
             attachments, s);
+}
+
+void engine::messages(std::string server, std::string key, report_level s,
+        validate_cert v)
+{
+    init_curl(key, s, v);
+    server += "/message";
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    struct curl_slist* slist = 0;
+    slist = curl_slist_append(slist, "Content-Type: text/xml");
+    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    if (s >= NORMAL) {
+        messenger::get() << "Getting messages from the server.";
+        messenger::get().endline();
+    }
+    CURLcode res = curl_easy_perform(m_curl);
+    curl_slist_free_all(slist);
+    if(res != CURLE_OK) {
+        throw curl_error(std::string(curl_easy_strerror(res)));
+    }
+    std::string r = s_data;
+    s_data.clear();
+    process_messages_responce(r, s);
 }
 
 std::string engine::attach(std::string server, const std::string& file,
@@ -173,24 +197,11 @@ std::string engine::process_send_responce(const std::string& r,
     return "";
 }
 
-void engine::messages(std::string server, std::string key, report_level s,
-        validate_cert v)
+void engine::process_messages_responce(const std::string& r,
+        report_level s) const
 {
-    init_curl(key, s, v);
-    server += "/message";
-    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    if (s >= NORMAL) {
-        messenger::get() << "Getting messages from the server.";
-        messenger::get().endline();
-    }
-    CURLcode res = curl_easy_perform(m_curl);
-    if(res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
-    std::string r = s_data;
-    s_data.clear();
-    messenger::get() << r;
-    messenger::get().endline();
+    xml::document<> d;
+    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
 }
 
 }

@@ -9,7 +9,9 @@ namespace lf {
 
 /**
  * @class engine
- * @brief API for liquidfiles.  * *        engine is main class to do operations with liquidfiles.
+ * @brief API for liquidfiles.
+ * 
+ *        engine is main class to do operations with liquidfiles.
  *        It provides interface to send, receive files and other operations
  *        supported by liquidfiles.
  */
@@ -85,6 +87,7 @@ private:
 private:
     std::string process_send_responce(const std::string& r, report_level s) const;
     void process_attach_responce(const std::string& r, report_level s) const;
+    void process_messages_responce(const std::string& r, report_level s) const;
 
 private:
     CURL* m_curl;
