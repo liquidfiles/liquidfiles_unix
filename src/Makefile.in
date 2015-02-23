@@ -89,10 +89,11 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_liquidfiles_OBJECTS = command.$(OBJEXT) command_processor.$(OBJEXT) \
-	engine.$(OBJEXT) help_command.$(OBJEXT) main.$(OBJEXT) \
-	messages_command.$(OBJEXT) messenger.$(OBJEXT) \
-	send_command.$(OBJEXT) utility.$(OBJEXT)
+am_liquidfiles_OBJECTS = attachment_responce.$(OBJEXT) \
+	command.$(OBJEXT) command_processor.$(OBJEXT) engine.$(OBJEXT) \
+	help_command.$(OBJEXT) main.$(OBJEXT) \
+	message_responce.$(OBJEXT) messages_command.$(OBJEXT) \
+	messenger.$(OBJEXT) send_command.$(OBJEXT) utility.$(OBJEXT)
 liquidfiles_OBJECTS = $(am_liquidfiles_OBJECTS)
 liquidfiles_DEPENDENCIES =
 AM_V_P = $(am__v_P_@AM_V@)
@@ -257,7 +258,7 @@ top_srcdir = @top_srcdir@
 
 # what flags you want to pass to the C compiler & linker
 AM_CPPFLAGS = -Wall
-liquidfiles_SOURCES = command.cpp command_processor.cpp engine.cpp help_command.cpp main.cpp messages_command.cpp messenger.cpp send_command.cpp utility.cpp command.h command_processor.h engine.h help_command.h messenger.h send_command.h utility.h
+liquidfiles_SOURCES = attachment_responce.cpp command.cpp command_processor.cpp engine.cpp help_command.cpp main.cpp message_responce.cpp messages_command.cpp messenger.cpp send_command.cpp utility.cpp command.h command_processor.h engine.h help_command.h messenger.h send_command.h utility.h
 liquidfiles_LDADD = 
 all: all-am
 
@@ -346,11 +347,13 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/attachment_responce.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/command_processor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/engine.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/help_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/message_responce.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messages_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messenger.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/send_command.Po@am__quote@

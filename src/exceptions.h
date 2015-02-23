@@ -95,4 +95,13 @@ public:
     }
 };
 
+class invalid_message_id : public exception
+{
+public:
+    invalid_message_id(std::string a)
+        : exception(std::string("Messsage with id '") + a + "' does not exist.", 1)
+    {
+    }
+};
+
 }

@@ -3,6 +3,7 @@
 #include "exceptions.h"
 #include "messenger.h"
 #include "utility.h"
+#include "xml.h"
 
 #include <cassert>
 
@@ -66,6 +67,10 @@ int command_processor::execute(const std::string& str)
         m_messenger << "Error: " << e.message();
         m_messenger.endline();
         return e.code();
+    } catch(xml::parse_error& e) {
+        m_messenger << "Xml error: " << e.what();
+        m_messenger.endline();
+        return 4;
     }
     return 0;
 }
@@ -84,6 +89,10 @@ int command_processor::execute(const std::string& cn,
         m_messenger << "Error: " << e.message();
         m_messenger.endline();
         return e.code();
+    } catch(xml::parse_error& e) {
+        m_messenger << "Xml error: " << e.what();
+        m_messenger.endline();
+        return 4;
     }
     return 0;
 }

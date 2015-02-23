@@ -1,5 +1,6 @@
 #include "engine.h"
 #include "exceptions.h"
+#include "message_responce.h"
 #include "messenger.h"
 #include "xml.h"
 
@@ -91,6 +92,34 @@ void engine::messages(std::string server, std::string key, report_level s,
     std::string r = s_data;
     s_data.clear();
     process_messages_responce(r, s);
+}
+
+void engine::message(std::string server, std::string key, std::string id,
+        report_level s, validate_cert v)
+{
+    init_curl(key, s, v);
+    server += "/message/";
+    server += id;
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    struct curl_slist* slist = 0;
+    slist = curl_slist_append(slist, "Content-Type: text/xml");
+    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    if (s >= NORMAL) {
+        messenger::get() << "Getting message from the server.";
+        messenger::get().endline();
+    }
+    CURLcode res = curl_easy_perform(m_curl);
+    curl_slist_free_all(slist);
+    if(res != CURLE_OK) {
+        throw curl_error(std::string(curl_easy_strerror(res)));
+    }
+    std::string r = s_data;
+    s_data.clear();
+    try {
+        process_message_responce(r, s);
+    } catch (xml::parse_error&) {
+        throw invalid_message_id(id);
+    }
 }
 
 std::string engine::attach(std::string server, const std::string& file,
@@ -200,8 +229,19 @@ std::string engine::process_send_responce(const std::string& r,
 void engine::process_messages_responce(const std::string& r,
         report_level s) const
 {
+    messenger::get() << r;
+    messenger::get().endline();
     xml::document<> d;
     d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
+}
+
+void engine::process_message_responce(const std::string& r,
+        report_level s) const
+{
+    xml::document<> d;
+    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
+    message_responce* m = message_responce::read(&d);
+    m->write();
 }
 
 }

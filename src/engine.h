@@ -72,6 +72,18 @@ public:
      */
     void messages(std::string server, std::string key, report_level s,
             validate_cert v);
+
+    /**
+     * @brief List the given message.
+     * @param server Server URL.
+     * @param key API Key of Liquidfiles.
+     * @param id Message id.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error.
+     */
+    void message(std::string server, std::string key, std::string id,
+            report_level s, validate_cert v);
     /// @}
 
 private:
@@ -88,6 +100,7 @@ private:
     std::string process_send_responce(const std::string& r, report_level s) const;
     void process_attach_responce(const std::string& r, report_level s) const;
     void process_messages_responce(const std::string& r, report_level s) const;
+    void process_message_responce(const std::string& r, report_level s) const;
 
 private:
     CURL* m_curl;

@@ -6,15 +6,15 @@ namespace xml
 {
 
 //! Iterator of child nodes of node
-template<class Ch>
+template<class Ch = char>
 class node_iterator
 {
 
 public:
 
-    typedef typename node<Ch> value_type;
-    typedef typename node<Ch> &reference;
-    typedef typename node<Ch> *pointer;
+    typedef node<Ch> value_type;
+    typedef node<Ch> &reference;
+    typedef node<Ch> *pointer;
     typedef std::ptrdiff_t difference_type;
     typedef std::bidirectional_iterator_tag iterator_category;
     
@@ -68,12 +68,12 @@ public:
         return tmp;
     }
 
-    bool operator ==(const node_iterator<Ch> &rhs)
+    bool operator ==(const node_iterator<Ch> &rhs) const
     {
         return m_node == rhs.m_node;
     }
 
-    bool operator !=(const node_iterator<Ch> &rhs)
+    bool operator !=(const node_iterator<Ch> &rhs) const
     {
         return m_node != rhs.m_node;
     }
@@ -85,15 +85,15 @@ private:
 };
 
 //! Iterator of child attributes of node
-template<class Ch>
+template<class Ch = char>
 class attribute_iterator
 {
 
 public:
 
-    typedef typename attribute<Ch> value_type;
-    typedef typename attribute<Ch> &reference;
-    typedef typename attribute<Ch> *pointer;
+    typedef attribute<Ch> value_type;
+    typedef attribute<Ch> &reference;
+    typedef attribute<Ch> *pointer;
     typedef std::ptrdiff_t difference_type;
     typedef std::bidirectional_iterator_tag iterator_category;
     

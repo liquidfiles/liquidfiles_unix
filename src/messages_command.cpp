@@ -45,7 +45,12 @@ void messages_command::execute(const arguments& args)
         val = engine::NOT_VALIDATE;
         unnamed_args.erase("-k");
     }
-    m_engine.messages(server, api_key, rl, val);
+    std::string id = args["--message_id"];
+    if (id == "") {
+        m_engine.messages(server, api_key, rl, val);
+    } else {
+        m_engine.message(server, api_key, id, rl, val);
+    }
 }
 
 }
