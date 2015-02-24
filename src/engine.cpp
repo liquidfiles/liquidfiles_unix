@@ -1,5 +1,6 @@
 #include "engine.h"
 #include "exceptions.h"
+#include "messages_responce.h"
 #include "message_responce.h"
 #include "messenger.h"
 #include "xml.h"
@@ -229,10 +230,10 @@ std::string engine::process_send_responce(const std::string& r,
 void engine::process_messages_responce(const std::string& r,
         report_level s) const
 {
-    messenger::get() << r;
-    messenger::get().endline();
     xml::document<> d;
     d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
+    messages_responce* m = messages_responce::read(&d);
+    m->write();
 }
 
 void engine::process_message_responce(const std::string& r,
