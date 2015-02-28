@@ -33,14 +33,16 @@ public:
 
 public:
     /**
-     * @brief Writes message to console.
+     * @brief Gets the string of responce to print.
      */
-    void write() const;
+    std::string to_string() const;
 
 private:
     std::string m_id;
     std::string m_sender;
     std::vector<std::string> m_recipients;
+    std::vector<std::string> m_ccs;
+    std::vector<std::string> m_bccs;
     std::string m_creation_time;
     std::string m_expire_time;
     std::string m_authorization_description;

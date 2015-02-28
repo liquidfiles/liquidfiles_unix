@@ -27,9 +27,9 @@ public:
 
 public:
     /**
-     * @brief Writes attachment info to console.
+     * @brief Gets the string of responce to print.
      */
-    void write() const;
+    std::string to_string() const;
     
 private:
     std::string m_filename;

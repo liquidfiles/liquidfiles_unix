@@ -36,8 +36,7 @@ void help_command::print_help() const
 "1  Command line arguments are invalid - Invalid command name, missing required argument, invalid value for specific argument.\n"
 "2  CURL error - Can't connect to host, connection timeout, certificate check failure, etc.\n"
 "3  Error during file upload - Invalid API key, Invalid filename, etc.\n"
-"4  Error during file send to user.";
-    lf::messenger::get().endline();
+"4  Error during file send to user." << endl;
 }
 
 void help_command::execute(const arguments& args)
@@ -59,8 +58,7 @@ void help_command::execute(const arguments& args)
         c->usage() << "\n\n"
         "Description:\n\t" << c->description() << "\n\n"
         "Arguments:\n\t" <<
-        c->arg_descriptions() << "\n";
-        messenger::get().endline();
+        c->arg_descriptions() << "\n" << endl;
     }
 }
 

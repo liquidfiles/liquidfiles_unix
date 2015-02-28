@@ -82,8 +82,7 @@ void engine::messages(std::string server, std::string key, report_level s,
     slist = curl_slist_append(slist, "Content-Type: text/xml");
     curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
     if (s >= NORMAL) {
-        messenger::get() << "Getting messages from the server.";
-        messenger::get().endline();
+        messenger::get() << "Getting messages from the server." << endl;
     }
     CURLcode res = curl_easy_perform(m_curl);
     curl_slist_free_all(slist);
@@ -106,8 +105,7 @@ void engine::message(std::string server, std::string key, std::string id,
     slist = curl_slist_append(slist, "Content-Type: text/xml");
     curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
     if (s >= NORMAL) {
-        messenger::get() << "Getting message from the server.";
-        messenger::get().endline();
+        messenger::get() << "Getting message from the server." << endl;
     }
     CURLcode res = curl_easy_perform(m_curl);
     curl_slist_free_all(slist);
@@ -137,8 +135,7 @@ std::string engine::attach(std::string server, const std::string& file,
                CURLFORM_END);
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, formpost);
     if (s >= NORMAL) {
-        messenger::get() << "Uploading file '" << file << "'.";
-        messenger::get().endline();
+        messenger::get() << "Uploading file '" << file << "'." << endl;
     }
     CURLcode res = curl_easy_perform(m_curl);
     curl_formfree(formpost);
@@ -183,8 +180,7 @@ std::string engine::send_attachments(std::string server,
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
     curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str()); 
     if (s >= NORMAL) {
-        messenger::get() << "Sending message to user '" << user << "'";
-        messenger::get().endline();
+        messenger::get() << "Sending message to user '" << user << "'" << endl;
     }
     CURLcode res = curl_easy_perform(m_curl);
     curl_slist_free_all(slist);
@@ -200,8 +196,7 @@ void engine::process_attach_responce(const std::string& r, report_level s) const
 {
     if (r.size() == s_normal_attach_responce_size) {
         if (s >= NORMAL) {
-            messenger::get() << "File uploaded successfully. ID: " << r;
-            messenger::get().endline();
+            messenger::get() << "File uploaded successfully. ID: " << r << endl;
         }
         return;
     }
@@ -217,8 +212,7 @@ std::string engine::process_send_responce(const std::string& r,
         if (e != std::string::npos) {
             std::string q = r.substr(f + 12, e - f - 12);
             if (s >= NORMAL) {
-                messenger::get() << "Message sent successfully. ID: " << q;
-                messenger::get().endline();
+                messenger::get() << "Message sent successfully. ID: " << q << endl;
             }
             return q;
         }
@@ -230,6 +224,7 @@ std::string engine::process_send_responce(const std::string& r,
 void engine::process_messages_responce(const std::string& r,
         report_level s) const
 {
+    messenger::get() << r << endl;
     xml::document<> d;
     d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
     messages_responce* m = messages_responce::read(&d);
@@ -240,9 +235,10 @@ void engine::process_message_responce(const std::string& r,
         report_level s) const
 {
     xml::document<> d;
+    messenger::get() << r << endl;
     d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
     message_responce* m = message_responce::read(&d);
-    m->write();
+    messenger::get() << m->to_string();
 }
 
 }

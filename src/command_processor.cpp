@@ -64,12 +64,10 @@ int command_processor::execute(const std::string& str)
         arguments args = arguments::construct(p.second);
         c->execute(args);
     } catch(lf::exception& e) {
-        m_messenger << "Error: " << e.message();
-        m_messenger.endline();
+        m_messenger << "Error: " << e.message() << endl;
         return e.code();
     } catch(xml::parse_error& e) {
-        m_messenger << "Xml error: " << e.what();
-        m_messenger.endline();
+        m_messenger << "Xml error: " << e.what() << endl;
         return 4;
     }
     return 0;
@@ -86,12 +84,10 @@ int command_processor::execute(const std::string& cn,
         arguments a = arguments::construct(args);
         c->execute(a);
     } catch(lf::exception& e) {
-        m_messenger << "Error: " << e.message();
-        m_messenger.endline();
+        m_messenger << "Error: " << e.message() << endl;
         return e.code();
     } catch(xml::parse_error& e) {
-        m_messenger << "Xml error: " << e.what();
-        m_messenger.endline();
+        m_messenger << "Xml error: " << e.what() << endl;
         return 4;
     }
     return 0;

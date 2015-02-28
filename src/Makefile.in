@@ -94,7 +94,8 @@ am_liquidfiles_OBJECTS = attachment_responce.$(OBJEXT) \
 	help_command.$(OBJEXT) main.$(OBJEXT) \
 	messages_responce.$(OBJEXT) message_responce.$(OBJEXT) \
 	messages_command.$(OBJEXT) messenger.$(OBJEXT) \
-	send_command.$(OBJEXT) utility.$(OBJEXT)
+	send_command.$(OBJEXT) table_printer.$(OBJEXT) \
+	utility.$(OBJEXT)
 liquidfiles_OBJECTS = $(am_liquidfiles_OBJECTS)
 liquidfiles_DEPENDENCIES =
 AM_V_P = $(am__v_P_@AM_V@)
@@ -126,18 +127,6 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-AM_V_CC = $(am__v_CC_@AM_V@)
-am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
-am__v_CC_0 = @echo "  CC      " $@;
-am__v_CC_1 = 
-CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CCLD = $(am__v_CCLD_@AM_V@)
-am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
-am__v_CCLD_0 = @echo "  CCLD    " $@;
-am__v_CCLD_1 = 
 SOURCES = $(liquidfiles_SOURCES)
 DIST_SOURCES = $(liquidfiles_SOURCES)
 am__can_run_installinfo = \
@@ -259,7 +248,20 @@ top_srcdir = @top_srcdir@
 
 # what flags you want to pass to the C compiler & linker
 AM_CPPFLAGS = -Wall
-liquidfiles_SOURCES = attachment_responce.cpp command.cpp command_processor.cpp engine.cpp help_command.cpp main.cpp messages_responce.cpp message_responce.cpp messages_command.cpp messenger.cpp send_command.cpp utility.cpp command.h command_processor.h engine.h help_command.h messenger.h send_command.h utility.h
+liquidfiles_SOURCES = attachment_responce.cpp \
+					  command.cpp \
+					  command_processor.cpp \
+					  engine.cpp \
+					  help_command.cpp \
+					  main.cpp \
+					  messages_responce.cpp \
+					  message_responce.cpp \
+					  messages_command.cpp \
+					  messenger.cpp \
+					  send_command.cpp \
+					  table_printer.cpp \
+					  utility.cpp 
+
 liquidfiles_LDADD = 
 all: all-am
 
@@ -359,6 +361,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messages_responce.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messenger.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/send_command.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/table_printer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utility.Po@am__quote@
 
 .cpp.o:

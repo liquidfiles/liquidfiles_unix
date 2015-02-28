@@ -4,6 +4,10 @@
 
 namespace lf {
 
+class endl_type{};
+
+extern endl_type endl;
+
 /**
  * @class messenger.
  * @brief Class to write output messages, logs and errors.
@@ -37,6 +41,13 @@ private:
     /// @name Output.
     /// @{
 public:
+    /// @brief Puts end of line to stream and flushes it.
+    messenger& operator<<(endl_type input)
+    {
+        std::cout << std::endl;
+        return *this;
+    }
+
     /**
      * @brief Writes given object to the stream.
      * @param t Object to write.
@@ -46,12 +57,6 @@ public:
     {
         std::cout << t;
         return *this;
-    }
-
-    /// @brief Puts end of line to stream and flushes it.
-    void endline()
-    {
-        std::cout << std::endl;
     }
     /// @}
 };
