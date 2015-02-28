@@ -142,14 +142,21 @@ std::string message_responce::to_string() const
         m << "Attachments:\n";
         table_printer tp(&m);
         tp.add_column("N", 4);
-        tp.add_column("Attachment", 100);
+        tp.add_column("Attachment", 140);
         tp.print_header();
         std::vector<attachment_responce*>::const_iterator j = m_attachments.begin();
         int x = 1;
         while (j != m_attachments.end()) {
-            tp << x++ << (*j++)->to_string();
+            tp << x++;
+            std::stringstream ss((*j++)->to_string());
+            std::string s;
+            std::getline(ss, s);
+            tp << s;
+            while (std::getline(ss, s)) {
+                tp << " " << s;
+            }
+            tp.print_footer();
         }
-        tp.print_footer();
     }
     return m.str();
 }

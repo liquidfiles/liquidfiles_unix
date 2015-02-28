@@ -224,18 +224,16 @@ std::string engine::process_send_responce(const std::string& r,
 void engine::process_messages_responce(const std::string& r,
         report_level s) const
 {
-    messenger::get() << r << endl;
     xml::document<> d;
     d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
     messages_responce* m = messages_responce::read(&d);
-    m->write();
+    messenger::get() << m->to_string();
 }
 
 void engine::process_message_responce(const std::string& r,
         report_level s) const
 {
     xml::document<> d;
-    messenger::get() << r << endl;
     d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
     message_responce* m = message_responce::read(&d);
     messenger::get() << m->to_string();

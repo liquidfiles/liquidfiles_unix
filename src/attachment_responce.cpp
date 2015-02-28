@@ -43,11 +43,21 @@ attachment_responce* attachment_responce::read(xml::node<>* s)
 std::string attachment_responce::to_string() const
 {
     std::stringstream m;
-    m << "Filename: " << m_filename << "\n";
-    m << "Content Type: " << m_content_type << "\n";
-    m << "Checksum: " << m_checksum << "\n";
-    m << "CRC32: " << m_crc32 << "\n";
-    m << "URL: " << m_url << "\n";
+    if (!m_filename.empty()) {
+        m << "Filename: " << m_filename << "\n";
+    }
+    if (!m_content_type.empty()) {
+        m << "Content Type: " << m_content_type << "\n";
+    }
+    if (!m_checksum.empty()) {
+        m << "Checksum: " << m_checksum << "\n";
+    }
+    if (!m_crc32.empty()) {
+        m << "CRC32: " << m_crc32 << "\n";
+    }
+    if (!m_url.empty()) {
+        m << "URL: " << m_url << "\n";
+    }
     m << "Size: " << m_size << "\n";
     return m.str();
 }
