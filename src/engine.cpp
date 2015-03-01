@@ -3,6 +3,7 @@
 #include "messages_responce.h"
 #include "message_responce.h"
 #include "messenger.h"
+#include "utility.h"
 #include "xml.h"
 
 #include <vector>
@@ -119,6 +120,15 @@ void engine::message(std::string server, std::string key, std::string id,
     } catch (xml::parse_error&) {
         throw invalid_message_id(id);
     }
+}
+
+void engine::download(std::string url, std::string key, report_level s,
+        validate_cert v)
+{
+    init_curl(key, s, v);
+    std::string filename = utility::get_filename(url);
+    curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
+    messenger::get() << filename << endl;
 }
 
 std::string engine::attach(std::string server, const std::string& file,

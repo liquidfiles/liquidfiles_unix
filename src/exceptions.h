@@ -104,4 +104,13 @@ public:
     }
 };
 
+class invalid_url : public exception
+{
+public:
+    invalid_url(std::string a)
+        : exception(std::string("Given URL '") + a + "' is invalid.", 1)
+    {
+    }
+};
+
 }

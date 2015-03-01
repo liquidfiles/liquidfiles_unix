@@ -84,6 +84,15 @@ public:
      */
     void message(std::string server, std::string key, std::string id,
             report_level s, validate_cert v);
+
+    /**
+     * @brief Downloads the file from the given url.
+     * @param url URL of the file.
+     * @param key API Key of Liquidfiles.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     */
+    void download(std::string url, std::string key, report_level s, validate_cert v);
     /// @}
 
 private:

@@ -1,4 +1,5 @@
 #include "utility.h"
+#include "exceptions.h"
 
 namespace lf {
 
@@ -31,6 +32,15 @@ split(const std::string& s, const std::string& d)
     size_t i = s.find_first_of(d);
     return i == s.npos ? std::make_pair(s, std::string()) :
         std::make_pair(s.substr(0, i), s.substr(i + 1));
+}
+
+std::string get_filename(std::string url)
+{
+    std::string::size_type i = url.find_last_of('/');
+    if (i == std::string::npos) {
+        throw invalid_url(url);
+    }
+    return url.substr(i + 1);
 }
 
 }
