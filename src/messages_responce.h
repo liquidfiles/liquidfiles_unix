@@ -15,19 +15,11 @@ namespace lf {
 class messages_responce
 {
 public:
-    /// @brief Constructor.
-    messages_responce()
-    {
-    }
-
-    ~messages_responce();
-
-public:
     /**
      * @brief Generates messages_responce from xml node.
      * @param s Xml node.
      */
-    static messages_responce* read(xml::node<>* s);
+    void read(xml::node<>* s);
 
 public:
     /**

@@ -90,7 +90,8 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_liquidfiles_OBJECTS = attachment_responce.$(OBJEXT) \
-	command.$(OBJEXT) command_processor.$(OBJEXT) engine.$(OBJEXT) \
+	command.$(OBJEXT) command_processor.$(OBJEXT) \
+	download_command.$(OBJEXT) engine.$(OBJEXT) \
 	help_command.$(OBJEXT) main.$(OBJEXT) \
 	messages_responce.$(OBJEXT) message_responce.$(OBJEXT) \
 	messages_command.$(OBJEXT) messenger.$(OBJEXT) \
@@ -251,6 +252,7 @@ AM_CPPFLAGS = -Wall
 liquidfiles_SOURCES = attachment_responce.cpp \
 					  command.cpp \
 					  command_processor.cpp \
+					  download_command.cpp \
 					  engine.cpp \
 					  help_command.cpp \
 					  main.cpp \
@@ -353,6 +355,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/attachment_responce.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/command_processor.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/download_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/engine.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/help_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@

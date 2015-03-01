@@ -7,6 +7,7 @@ bin_PROGRAMS = liquidfiles
 liquidfiles_SOURCES = attachment_responce.cpp \
 					  command.cpp \
 					  command_processor.cpp \
+					  download_command.cpp \
 					  engine.cpp \
 					  help_command.cpp \
 					  main.cpp \

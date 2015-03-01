@@ -1,4 +1,5 @@
 #include "engine.h"
+#include "attachment_responce.h"
 #include "exceptions.h"
 #include "messages_responce.h"
 #include "message_responce.h"
@@ -6,6 +7,7 @@
 #include "utility.h"
 #include "xml.h"
 
+#include <cstdio>
 #include <vector>
 
 namespace lf {
@@ -16,9 +18,12 @@ unsigned s_normal_attach_responce_size = 22;
 
 std::string s_data;
 
-size_t data_get(void* ptr, size_t size, size_t nmemb, void*)
+size_t data_get(void* ptr, size_t size, size_t nmemb, FILE* stream)
 {
     s_data += std::string(static_cast<char*>(ptr), static_cast<char*>(ptr) + nmemb);
+    if (stream != 0) {
+        fwrite(ptr, size, nmemb, stream);
+    }
     return size * nmemb;
 }
 
@@ -34,6 +39,7 @@ void engine::init_curl(std::string key, report_level s, validate_cert v)
         throw curl_error("Failed to initialize CURL");
     }
     curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, &data_get);
+    curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, 0);
     key += ":x";
     curl_easy_setopt(m_curl, CURLOPT_USERPWD, key.c_str());
     if (v == NOT_VALIDATE) {
@@ -122,13 +128,70 @@ void engine::message(std::string server, std::string key, std::string id,
     }
 }
 
-void engine::download(std::string url, std::string key, report_level s,
+void engine::download(const std::set<std::string>& urls, std::string key, report_level s,
         validate_cert v)
 {
     init_curl(key, s, v);
-    std::string filename = utility::get_filename(url);
-    curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
-    messenger::get() << filename << endl;
+    std::set<std::string>::const_iterator i = urls.begin();
+    struct curl_slist* slist = 0;
+    slist = curl_slist_append(slist, "Content-Type: text/xml");
+    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    while (i != urls.end()) {
+        std::string filename = utility::get_filename(*i);
+        if (s >= NORMAL) {
+            messenger::get() << "Downloading file '" << filename << "'" << endl;
+        }
+        FILE* fp = fopen(filename.c_str(),"wb");
+        curl_easy_setopt(m_curl, CURLOPT_URL, i->c_str());
+        curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, fp);
+        CURLcode res = curl_easy_perform(m_curl);
+        fclose(fp);
+        curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, 0);
+        if (res != CURLE_OK) {
+            throw curl_error(std::string(curl_easy_strerror(res)));
+        }
+        s_data.clear();
+        ++i;
+    }
+    curl_slist_free_all(slist);
+}
+
+void engine::download(std::string server, std::string key, std::string id,
+        report_level s, validate_cert v)
+{
+    init_curl(key, s, v);
+    server += "/message/";
+    server += id;
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    struct curl_slist* slist = 0;
+    slist = curl_slist_append(slist, "Content-Type: text/xml");
+    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    if (s >= NORMAL) {
+        messenger::get() << "Retrieving attachments of message." << endl;
+    }
+    CURLcode res = curl_easy_perform(m_curl);
+    curl_slist_free_all(slist);
+    if (res != CURLE_OK) {
+        throw curl_error(std::string(curl_easy_strerror(res)));
+    }
+    std::string r = s_data;
+    s_data.clear();
+    try {
+        xml::document<> d;
+        d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
+        message_responce m;
+        m.read(&d);
+        const std::vector<attachment_responce>& a = m.attachments();
+        std::set<std::string> urls;
+        std::vector<attachment_responce>::const_iterator i = a.begin();
+        while (i != a.end()) {
+            urls.insert(i->url());
+            ++i;
+        }
+        download(urls, key, s, v);
+    } catch (xml::parse_error&) {
+        throw invalid_message_id(id);
+    }
 }
 
 std::string engine::attach(std::string server, const std::string& file,
@@ -236,8 +299,9 @@ void engine::process_messages_responce(const std::string& r,
 {
     xml::document<> d;
     d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
-    messages_responce* m = messages_responce::read(&d);
-    messenger::get() << m->to_string();
+    messages_responce m;
+    m.read(&d);
+    messenger::get() << m.to_string();
 }
 
 void engine::process_message_responce(const std::string& r,
@@ -245,8 +309,9 @@ void engine::process_message_responce(const std::string& r,
 {
     xml::document<> d;
     d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
-    message_responce* m = message_responce::read(&d);
-    messenger::get() << m->to_string();
+    message_responce m;
+    m.read(&d);
+    messenger::get() << m.to_string();
 }
 
 }

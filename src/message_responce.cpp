@@ -1,6 +1,5 @@
 #include "message_responce.h"
 
-#include "attachment_responce.h"
 #include "xml_iterators.h"
 #include "messenger.h"
 #include "table_printer.h"
@@ -10,17 +9,8 @@
 
 namespace lf {
 
-message_responce::~message_responce()
+void message_responce::read(xml::node<>* s)
 {
-    std::vector<attachment_responce*>::iterator i = m_attachments.begin();
-    while (i != m_attachments.end()) {
-        delete *i;
-    }
-}
-
-message_responce* message_responce::read(xml::node<>* s)
-{
-    message_responce* r = new message_responce();
     xml::node_iterator<> i(s->first_node());
     xml::node_iterator<> e;
     while(i != e) {
@@ -29,17 +19,17 @@ message_responce* message_responce::read(xml::node<>* s)
         xml::node<>* nn = &*i;
         ++i;
         if (n == "id") {
-            r->m_id = v;
+            m_id = v;
             continue;
         }
         if (n == "sender") {
-            r->m_sender = v;
+            m_sender = v;
             continue;
         }
         if (n == "recipients") {
             xml::node_iterator<> ri(nn);
             while(ri != e) {
-                r->m_recipients.push_back(std::string(ri->value(), 
+                m_recipients.push_back(std::string(ri->value(), 
                             ri->value_size()));
                 ++ri;
             }
@@ -48,7 +38,7 @@ message_responce* message_responce::read(xml::node<>* s)
         if (n == "ccs") {
             xml::node_iterator<> ri(nn);
             while(ri != e) {
-                r->m_ccs.push_back(std::string(ri->value(), 
+                m_ccs.push_back(std::string(ri->value(), 
                             ri->value_size()));
                 ++ri;
             }
@@ -57,47 +47,46 @@ message_responce* message_responce::read(xml::node<>* s)
         if (n == "bccs") {
             xml::node_iterator<> ri(nn);
             while(ri != e) {
-                r->m_bccs.push_back(std::string(ri->value(), 
+                m_bccs.push_back(std::string(ri->value(), 
                             ri->value_size()));
                 ++ri;
             }
             continue;
         }
         if (n == "created_at") {
-            r->m_creation_time = v;
+            m_creation_time = v;
             continue;
         }
         if (n == "expires_at") {
-            r->m_expire_time = v;
+            m_expire_time = v;
             continue;
         }
         if (n == "authorization") {
-            r->m_authorization = std::atoi(v.c_str());;
+            m_authorization = std::atoi(v.c_str());;
             continue;
         }
         if (n == "authorization_description") {
-            r->m_authorization_description = v;
+            m_authorization_description = v;
             continue;
         }
         if (n == "subject") {
-            r->m_subject = v;
+            m_subject = v;
             continue;
         }
         if (n == "message") {
-            r->m_message = v;
+            m_message = v;
             continue;
         }
         if (n == "attachments") {
             xml::node_iterator<> ri(nn);
             while(ri != e) {
-                attachment_responce* a = attachment_responce::read(&*ri);
-                r->m_attachments.push_back(a);
+                m_attachments.push_back(attachment_responce());
+                m_attachments.back().read(&*ri);
                 ++ri;
             }
             continue;
         }
     }
-    return r;
 }
 
 std::string message_responce::to_string() const
@@ -144,11 +133,11 @@ std::string message_responce::to_string() const
         tp.add_column("N", 4);
         tp.add_column("Attachment", 140);
         tp.print_header();
-        std::vector<attachment_responce*>::const_iterator j = m_attachments.begin();
+        std::vector<attachment_responce>::const_iterator j = m_attachments.begin();
         int x = 1;
         while (j != m_attachments.end()) {
             tp << x++;
-            std::stringstream ss((*j++)->to_string());
+            std::stringstream ss((j++)->to_string());
             std::string s;
             std::getline(ss, s);
             tp << s;

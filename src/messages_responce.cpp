@@ -4,20 +4,15 @@
 
 namespace lf {
 
-messages_responce::~messages_responce()
+void messages_responce::read(xml::node<>* s)
 {
-}
-
-messages_responce* messages_responce::read(xml::node<>* s)
-{
-    messages_responce* res = new messages_responce();
     xml::node_iterator<> ii(s->first_node());
     xml::node_iterator<> e;
     while(ii != e) {
         if (std::string(ii->name(), ii->name_size()) == "message") {
             xml::node_iterator<> i(&*ii);
-            res->m_messages.push_back(message_item());
-            message_item& r = res->m_messages.back();
+            m_messages.push_back(message_item());
+            message_item& r = m_messages.back();
             while(i != e) {
                 std::string n(i->name(), i->name_size());
                 std::string v(i->value(), i->value_size());
@@ -64,7 +59,6 @@ messages_responce* messages_responce::read(xml::node<>* s)
         }
         ++ii;
     }
-    return res;
 }
 
 std::string messages_responce::to_string() const

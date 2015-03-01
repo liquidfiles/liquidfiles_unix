@@ -86,13 +86,25 @@ public:
             report_level s, validate_cert v);
 
     /**
-     * @brief Downloads the file from the given url.
-     * @param url URL of the file.
+     * @brief Downloads the files from the given urls.
+     * @param urls URLs of the files.
      * @param key API Key of Liquidfiles.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
      */
-    void download(std::string url, std::string key, report_level s, validate_cert v);
+    void download(const std::set<std::string>& urls, std::string key, report_level s, validate_cert v);
+
+    /**
+     * @brief Downloads all attachments of the given message.
+     * @param server Server URL.
+     * @param key API Key of Liquidfiles.
+     * @param id Message id.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error.
+     */
+    void download(std::string server, std::string key, std::string id,
+            report_level s, validate_cert v);
     /// @}
 
 private:

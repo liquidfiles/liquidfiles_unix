@@ -13,23 +13,54 @@ namespace lf {
 class attachment_responce
 {
 public:
-    /// @brief Constructor.
-    attachment_responce()
-    {
-    }
-
-public:
     /**
      * @brief Generates attachment_responce from xml node.
      * @param s Xml node.
      */
-    static attachment_responce* read(xml::node<>* s);
+    void read(xml::node<>* s);
 
 public:
     /**
      * @brief Gets the string of responce to print.
      */
     std::string to_string() const;
+
+public:
+    /// @brief Access to filiename.
+    const std::string& filename() const
+    {
+        return m_filename;
+    }
+
+    /// @brief Access to content type.
+    const std::string& content_type() const
+    {
+        return m_content_type;
+    }
+    
+    /// @brief Access to checksum.
+    const std::string& checksum() const
+    {
+        return m_checksum;
+    }
+
+    /// @brief Access to crc32.
+    const std::string& crc32() const
+    {
+        return m_crc32;
+    }
+
+    /// @brief Access to url string.
+    const std::string& url() const
+    {
+        return m_url;
+    }
+
+    /// @brief Access to size.
+    int size() const
+    {
+        return m_size;
+    }
     
 private:
     std::string m_filename;

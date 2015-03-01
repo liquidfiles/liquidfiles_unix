@@ -7,9 +7,8 @@
 
 namespace lf {
 
-attachment_responce* attachment_responce::read(xml::node<>* s)
+void attachment_responce::read(xml::node<>* s)
 {
-    attachment_responce* r = new attachment_responce();
     xml::node_iterator<> i(s);
     xml::node_iterator<> e;
     while(i != e) {
@@ -17,27 +16,26 @@ attachment_responce* attachment_responce::read(xml::node<>* s)
         std::string v(i->value(), i->value_size());
         ++i;
         if (n == "filename") {
-            r->m_filename = v;
+            m_filename = v;
             continue;
         }
         if (n == "checksum") {
-            r->m_checksum = v;
+            m_checksum = v;
             continue;
         }
         if (n == "crc32") {
-            r->m_crc32 = v;
+            m_crc32 = v;
             continue;
         }
         if (n == "url") {
-            r->m_url = v;
+            m_url = v;
             continue;
         }
         if (n == "size") {
-            r->m_size = std::atoi(v.c_str());
+            m_size = std::atoi(v.c_str());
             continue;
         }
     }
-    return r;
 }
 
 std::string attachment_responce::to_string() const
