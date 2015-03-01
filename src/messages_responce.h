@@ -33,7 +33,7 @@ public:
     /**
      * @brief Writes messages to console.
      */
-    void write() const;
+    std::string to_string() const;
 
 private:
     struct message_item {
