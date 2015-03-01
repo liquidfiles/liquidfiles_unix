@@ -87,7 +87,7 @@ void engine::messages(std::string server, std::string key, report_level s,
     }
     CURLcode res = curl_easy_perform(m_curl);
     curl_slist_free_all(slist);
-    if(res != CURLE_OK) {
+    if (res != CURLE_OK) {
         throw curl_error(std::string(curl_easy_strerror(res)));
     }
     std::string r = s_data;
@@ -110,7 +110,7 @@ void engine::message(std::string server, std::string key, std::string id,
     }
     CURLcode res = curl_easy_perform(m_curl);
     curl_slist_free_all(slist);
-    if(res != CURLE_OK) {
+    if (res != CURLE_OK) {
         throw curl_error(std::string(curl_easy_strerror(res)));
     }
     std::string r = s_data;
@@ -149,7 +149,7 @@ std::string engine::attach(std::string server, const std::string& file,
     }
     CURLcode res = curl_easy_perform(m_curl);
     curl_formfree(formpost);
-    if(res != CURLE_OK) {
+    if (res != CURLE_OK) {
         throw curl_error(std::string(curl_easy_strerror(res)));
     }
     std::string r = s_data;
@@ -194,7 +194,7 @@ std::string engine::send_attachments(std::string server,
     }
     CURLcode res = curl_easy_perform(m_curl);
     curl_slist_free_all(slist);
-    if(res != CURLE_OK) {
+    if (res != CURLE_OK) {
         throw curl_error(std::string(curl_easy_strerror(res)));
     }
     std::string r = s_data;
