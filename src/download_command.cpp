@@ -6,7 +6,9 @@ namespace lf {
 
 download_command::download_command(engine& e)
     : command("download",
-            "[-k] [--report_level=<level>] --api_key=<key> (--server=<server> --message_id=<id>) | (<url>...)",
+            "[-k] [--report_level=<level>] --api_key=<key> --download_to=<path>\n"
+            " (--server=<server> --message_id=<id>) | (<url>...) | \n",
+            " (--sent_in_the_last=<HOURS>) | (--sent_after=<YYYYMMDD>)"
             "Download given files.",
             "    -k - If specified, don't validate server certificate.\n"
             "    --report_level - Level of reporting. Valid values:\n"
@@ -16,6 +18,9 @@ download_command::download_command(engine& e)
             "    --server - If specified together with --message_id argument,\n"
             "               downloads the attachments of given message.\n"
             "    --message_id - Message id to download attachments of it.\n"
+            "    --download_to - Directory path to download files there.\n"
+            "    --sent_in_the_last - Download files sent in the last specified \n"
+            "                         hours."
             "    <url>... - Urls of files to download.\n"
             )
     , m_engine(e)
@@ -28,6 +33,7 @@ void download_command::execute(const arguments& args)
     if (api_key == "") {
         throw missing_argument("--api_key");
     }
+    std::string path = args["--download_to"];
     engine::report_level rl = engine::NORMAL;
     std::string rls = args["--report_level"];
     if (rls == "silent") {
@@ -47,9 +53,9 @@ void download_command::execute(const arguments& args)
         unnamed_args.erase("-k");
     }
     if (id.empty() || server.empty()) {
-        m_engine.download(unnamed_args, api_key, rl, val);
+        m_engine.download(unnamed_args, path, api_key, rl, val);
     } else {
-        m_engine.download(server, api_key, id, rl, val);
+        m_engine.download(server, path, api_key, id, rl, val);
     }
 }
 

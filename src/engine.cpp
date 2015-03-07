@@ -79,11 +79,18 @@ std::string engine::send(std::string server, const std::string& user,
             attachments, s);
 }
 
-void engine::messages(std::string server, std::string key, report_level s,
-        validate_cert v)
+void engine::messages(std::string server, std::string key, std::string l,
+        std::string f, report_level s, validate_cert v)
 {
     init_curl(key, s, v);
     server += "/message";
+    if (!l.empty()) {
+        server += "?sent_in_the_last=";
+        server += l;
+    } else if (!f.empty()) {
+        server += "?sent_after=";
+        server += f;
+    }
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
     struct curl_slist* slist = 0;
     slist = curl_slist_append(slist, "Content-Type: text/xml");
@@ -128,8 +135,8 @@ void engine::message(std::string server, std::string key, std::string id,
     }
 }
 
-void engine::download(const std::set<std::string>& urls, std::string key, report_level s,
-        validate_cert v)
+void engine::download(const std::set<std::string>& urls, std::string path,
+        std::string key, report_level s, validate_cert v)
 {
     init_curl(key, s, v);
     std::set<std::string>::const_iterator i = urls.begin();
@@ -140,6 +147,9 @@ void engine::download(const std::set<std::string>& urls, std::string key, report
         std::string filename = utility::get_filename(*i);
         if (s >= NORMAL) {
             messenger::get() << "Downloading file '" << filename << "'" << endl;
+        }
+        if (!path.empty()) {
+            filename = path + "/" + filename;
         }
         FILE* fp = fopen(filename.c_str(),"wb");
         curl_easy_setopt(m_curl, CURLOPT_URL, i->c_str());
@@ -156,8 +166,8 @@ void engine::download(const std::set<std::string>& urls, std::string key, report
     curl_slist_free_all(slist);
 }
 
-void engine::download(std::string server, std::string key, std::string id,
-        report_level s, validate_cert v)
+void engine::download(std::string server, std::string path, std::string key,
+        std::string id, report_level s, validate_cert v)
 {
     init_curl(key, s, v);
     server += "/message/";
@@ -188,7 +198,7 @@ void engine::download(std::string server, std::string key, std::string id,
             urls.insert(i->url());
             ++i;
         }
-        download(urls, key, s, v);
+        download(urls, path, key, s, v);
     } catch (xml::parse_error&) {
         throw invalid_message_id(id);
     }

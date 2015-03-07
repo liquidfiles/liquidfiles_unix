@@ -66,12 +66,14 @@ public:
      * @brief Lists all the messages.
      * @param server Server URL.
      * @param key API Key of Liquidfiles.
+     * @param l Hours, to get messages from the last specified hours.
+     * @param f Date, to get messages from that date.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
      * @throw curl_error.
      */
-    void messages(std::string server, std::string key, report_level s,
-            validate_cert v);
+    void messages(std::string server, std::string key, std::string l,
+            std::string f, report_level s, validate_cert v);
 
     /**
      * @brief List the given message.
@@ -88,23 +90,26 @@ public:
     /**
      * @brief Downloads the files from the given urls.
      * @param urls URLs of the files.
+     * @param path Path to output directory.
      * @param key API Key of Liquidfiles.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
      */
-    void download(const std::set<std::string>& urls, std::string key, report_level s, validate_cert v);
+    void download(const std::set<std::string>& urls, std::string path,
+            std::string key, report_level s, validate_cert v);
 
     /**
      * @brief Downloads all attachments of the given message.
      * @param server Server URL.
+     * @param path Path to output directory.
      * @param key API Key of Liquidfiles.
      * @param id Message id.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
      * @throw curl_error.
      */
-    void download(std::string server, std::string key, std::string id,
-            report_level s, validate_cert v);
+    void download(std::string server, std::string path, std::string key,
+            std::string id, report_level s, validate_cert v);
     /// @}
 
 private:

@@ -29,6 +29,8 @@ void messages_command::execute(const arguments& args)
     if (api_key == "") {
         throw missing_argument("--api_key");
     }
+    std::string l = args["--sent_in_the_last"];
+    std::string f = args["--sent_after"];
     engine::report_level rl = engine::NORMAL;
     std::string rls = args["--report_level"];
     if (rls == "silent") {
@@ -47,7 +49,7 @@ void messages_command::execute(const arguments& args)
     }
     std::string id = args["--message_id"];
     if (id == "") {
-        m_engine.messages(server, api_key, rl, val);
+        m_engine.messages(server, api_key, l, f, rl, val);
     } else {
         m_engine.message(server, api_key, id, rl, val);
     }
