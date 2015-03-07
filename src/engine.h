@@ -110,6 +110,20 @@ public:
      */
     void download(std::string server, std::string path, std::string key,
             std::string id, report_level s, validate_cert v);
+
+    /**
+     * @brief Downloads all attachments of the given messages.
+     * @param server Server URL.
+     * @param path Path to output directory.
+     * @param key API Key of Liquidfiles.
+     * @param l Hours, to get messages from the last specified hours.
+     * @param f Date, to get messages from that date.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error.
+     */
+    void download(std::string server, std::string path, std::string key,
+            std::string l, std::string f, report_level s, validate_cert v);
     /// @}
 
 private:
@@ -127,6 +141,8 @@ private:
     void process_attach_responce(const std::string& r, report_level s) const;
     void process_messages_responce(const std::string& r, report_level s) const;
     void process_message_responce(const std::string& r, report_level s) const;
+    std::string message_impl(std::string server, std::string key, std::string id,
+            report_level s, validate_cert v, std::string log);
 
 private:
     CURL* m_curl;

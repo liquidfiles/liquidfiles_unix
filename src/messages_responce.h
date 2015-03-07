@@ -39,6 +39,25 @@ private:
         int m_authorization;
     };
 
+public:
+    typedef std::vector<message_item>::size_type size_type;
+
+    /// @brief Returns the count of messages.
+    size_type size() const
+    {
+        return m_messages.size();
+    }
+
+    /**
+     * @brief Returns the id of i-th message.
+     * @param i Index of message.
+     */
+    std::string id(size_type i)
+    {
+        return m_messages[i].m_id;
+    }
+
+private:
     std::vector<message_item> m_messages;
 };
 

@@ -111,23 +111,8 @@ void engine::messages(std::string server, std::string key, std::string l,
 void engine::message(std::string server, std::string key, std::string id,
         report_level s, validate_cert v)
 {
-    init_curl(key, s, v);
-    server += "/message/";
-    server += id;
-    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_slist* slist = 0;
-    slist = curl_slist_append(slist, "Content-Type: text/xml");
-    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
-    if (s >= NORMAL) {
-        messenger::get() << "Getting message from the server." << endl;
-    }
-    CURLcode res = curl_easy_perform(m_curl);
-    curl_slist_free_all(slist);
-    if (res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
-    std::string r = s_data;
-    s_data.clear();
+    std::string r =  message_impl(server, key, id, s, v,
+            "Getting message from the server.");
     try {
         process_message_responce(r, s);
     } catch (xml::parse_error&) {
@@ -169,23 +154,8 @@ void engine::download(const std::set<std::string>& urls, std::string path,
 void engine::download(std::string server, std::string path, std::string key,
         std::string id, report_level s, validate_cert v)
 {
-    init_curl(key, s, v);
-    server += "/message/";
-    server += id;
-    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_slist* slist = 0;
-    slist = curl_slist_append(slist, "Content-Type: text/xml");
-    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
-    if (s >= NORMAL) {
-        messenger::get() << "Retrieving attachments of message." << endl;
-    }
-    CURLcode res = curl_easy_perform(m_curl);
-    curl_slist_free_all(slist);
-    if (res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
-    std::string r = s_data;
-    s_data.clear();
+    std::string r =  message_impl(server, key, id, s, v,
+        "Retrieving attachments of message.");
     try {
         xml::document<> d;
         d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
@@ -201,6 +171,42 @@ void engine::download(std::string server, std::string path, std::string key,
         download(urls, path, key, s, v);
     } catch (xml::parse_error&) {
         throw invalid_message_id(id);
+    }
+}
+
+void engine::download(std::string server, std::string path, std::string key,
+            std::string l, std::string f, report_level s, validate_cert v)
+{
+    init_curl(key, s, v);
+    std::string ss = server;
+    ss += "/message";
+    if (!l.empty()) {
+        ss += "?sent_in_the_last=";
+        ss += l;
+    } else if (!f.empty()) {
+        ss += "?sent_after=";
+        ss += f;
+    }
+    curl_easy_setopt(m_curl, CURLOPT_URL, ss.c_str());
+    struct curl_slist* slist = 0;
+    slist = curl_slist_append(slist, "Content-Type: text/xml");
+    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    if (s >= NORMAL) {
+        messenger::get() << "Getting messages from the server." << endl;
+    }
+    CURLcode res = curl_easy_perform(m_curl);
+    curl_slist_free_all(slist);
+    if (res != CURLE_OK) {
+        throw curl_error(std::string(curl_easy_strerror(res)));
+    }
+    std::string r = s_data;
+    s_data.clear();
+    xml::document<> d;
+    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
+    messages_responce m;
+    m.read(&d);
+    for (unsigned i = 0; i < m.size(); ++i) {
+        download(server, path, key, m.id(i), s, v);
     }
 }
 
@@ -322,6 +328,29 @@ void engine::process_message_responce(const std::string& r,
     message_responce m;
     m.read(&d);
     messenger::get() << m.to_string();
+}
+
+std::string engine::message_impl(std::string server, std::string key,
+        std::string id, report_level s, validate_cert v, std::string log)
+{
+    init_curl(key, s, v);
+    server += "/message/";
+    server += id;
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    struct curl_slist* slist = 0;
+    slist = curl_slist_append(slist, "Content-Type: text/xml");
+    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    if (s >= NORMAL) {
+        messenger::get() << log << endl;
+    }
+    CURLcode res = curl_easy_perform(m_curl);
+    curl_slist_free_all(slist);
+    if (res != CURLE_OK) {
+        throw curl_error(std::string(curl_easy_strerror(res)));
+    }
+    std::string r = s_data;
+    s_data.clear();
+    return r;
 }
 
 }

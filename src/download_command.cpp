@@ -45,6 +45,8 @@ void download_command::execute(const arguments& args)
         throw invalid_argument_value("--report_level",
                 "silent, normal, verbose");
     }
+    std::string l = args["--sent_in_the_last"];
+    std::string f = args["--sent_after"];
     std::string server = args["--server"];
     std::string id = args["--message_id"];
     std::set<std::string> unnamed_args = args.get_unnamed_arguments();
@@ -53,11 +55,15 @@ void download_command::execute(const arguments& args)
         val = engine::NOT_VALIDATE;
         unnamed_args.erase("-k");
     }
-    if (id.empty() || server.empty()) {
-        m_engine.download(unnamed_args, path, api_key, rl, val);
-    } else {
-        m_engine.download(server, path, api_key, id, rl, val);
+    if (!server.empty()) {
+        if (!id.empty()) {
+            m_engine.download(server, path, api_key, id, rl, val);
+        }
+        if (!l.empty() || !f.empty()) {
+            m_engine.download(server, path, api_key, l, f, rl, val);
+        }
     }
+    m_engine.download(unnamed_args, path, api_key, rl, val);
 }
 
 }
