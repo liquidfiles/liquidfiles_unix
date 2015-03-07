@@ -6,22 +6,23 @@ namespace lf {
 
 download_command::download_command(engine& e)
     : command("download",
-            "[-k] [--report_level=<level>] --api_key=<key> --download_to=<path>\n"
-            " (--server=<server> --message_id=<id>) | (<url>...) | \n",
-            " (--sent_in_the_last=<HOURS>) | (--sent_after=<YYYYMMDD>)"
+            "[-k] [--report_level=<level>] --api_key=<key> [--download_to=<path>]\n"
+            " ((--server=<server> (--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)) \n"
+            " | <url>...)",
             "Download given files.",
             "    -k - If specified, don't validate server certificate.\n"
             "    --report_level - Level of reporting. Valid values:\n"
             "                     silent, normal, verbose.\n"
             "                     Default value: normal.\n"
             "    --api_key - API key of liquidfiles, to login to system.\n"
+            "    --download_to - Directory path to download files there.\n"
             "    --server - If specified together with --message_id argument,\n"
             "               downloads the attachments of given message.\n"
             "    --message_id - Message id to download attachments of it.\n"
-            "    --download_to - Directory path to download files there.\n"
-            "    --sent_in_the_last - Download files sent in the last specified \n"
-            "                         hours."
-            "    <url>... - Urls of files to download.\n"
+            "    --sent_in_the_last - Download files sent in the last specified\n"
+            "                         hours.\n"
+            "    --sent_after - Download files sent after specified date.\n"
+            "    <url>... - Urls of files to download."
             )
     , m_engine(e)
 {
