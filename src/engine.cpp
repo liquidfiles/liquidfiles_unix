@@ -210,6 +210,41 @@ void engine::download(std::string server, std::string path, std::string key,
     }
 }
 
+std::string engine::file_request(std::string server, const std::string& user,
+        std::string key, const std::string& subject,
+        const std::string& message, report_level s, validate_cert v)
+{
+    init_curl(key, s, v);
+    server += "/requests";
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    struct curl_slist* slist = 0;
+    slist = curl_slist_append(slist, "Content-Type: text/xml");
+    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    std::string data = std::string(
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
+  <request>\
+    <recipient>") + user + std::string("</recipient>\
+    <subject>") + subject + std::string("</subject>\
+    <message>") + message + std::string("</message>\
+    <send_email>true</send_email>\
+");
+    data += "</request>\n";
+    curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str()); 
+    if (s >= NORMAL) {
+        messenger::get() << "Sending file request to user '" << user << "'" << endl;
+    }
+    CURLcode res = curl_easy_perform(m_curl);
+    curl_slist_free_all(slist);
+    if (res != CURLE_OK) {
+        throw curl_error(std::string(curl_easy_strerror(res)));
+    }
+    std::string r = s_data;
+    s_data.clear();
+    messenger::get() << r << endl;
+    return "";
+}
+
 std::string engine::attach(std::string server, const std::string& file,
         report_level s)
 {

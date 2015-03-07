@@ -6,8 +6,8 @@ namespace lf {
 
 messages_command::messages_command(engine& e)
     : command("messages",
-            "[-k] [--report_level=<level>] --server=<url> --api_key=<key>",
-            " (--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)"
+            "[-k] [--report_level=<level>] --server=<url> --api_key=<key>\n"
+            " (--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)",
             "Lists the available messages.",
             "    -k - If specified, don't validate server certificate.\n"
             "    --report_level - Level of reporting. Valid values:\n"

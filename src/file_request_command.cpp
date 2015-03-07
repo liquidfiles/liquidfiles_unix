@@ -1,33 +1,31 @@
-#include "send_command.h"
+#include "file_request_command.h"
 #include "engine.h"
 #include "exceptions.h"
 
 namespace lf {
 
-send_command::send_command(engine& e)
-    : command("send",
+file_request_command::file_request_command(engine& e)
+    : command("file_request",
         "[-k] [--report_level=<level>] --to=<username> --server=<url>\n"
-        "         --api_key=<key> [--subject=<string>] [--message=<string>]\n"
-        "         <file1> [<file2> ...]",
+        "         --api_key=<key> [--subject=<string>] [--message=<string>]",
 
-        "Sends the file(s) to specified user.",
+        "Sends the file request to specified user.",
 
         "    -k - If specified, don't validate server certificate.\n"
         "    --report_level - Level of reporting. Valid values:\n"
         "                     silent, normal, verbose.\n"
         "                     Default value: normal.\n"
-        "    --to - User name or email, to send file.\n"
+        "    --to - User name or email, to send file request.\n"
         "    --server - The server URL.\n"
         "    --api_key - API key of liquidfiles, to login to system.\n"
         "    --subject - Subject of composed email. Default value: \"\".\n"
-        "    --message - Message text of composed email. Default value: \"\".\n"
-        "    <file1>... - File path to send to user."
+        "    --message - Message text of composed email. Default value: \"\"."
             )
     , m_engine(e)
 {
 }
 
-void send_command::execute(const arguments& args)
+void file_request_command::execute(const arguments& args)
 {
     std::string user = args["--to"];
     if (user == "") {
@@ -59,8 +57,7 @@ void send_command::execute(const arguments& args)
         val = engine::NOT_VALIDATE;
         unnamed_args.erase("-k");
     }
-    m_engine.send(server, user, api_key, subject, message, unnamed_args,
-            rl, val);
+    m_engine.file_request(server, user, api_key, subject, message, rl, val);
 }
 
 }

@@ -1,6 +1,7 @@
 #include "command_processor.h"
 #include "download_command.h"
 #include "engine.h"
+#include "file_request_command.h"
 #include "help_command.h"
 #include "messages_command.h"
 #include "messenger.h"
@@ -16,6 +17,7 @@ int main(int argc, char** argv)
     p.register_command(new lf::send_command(e));
     p.register_command(new lf::messages_command(e));
     p.register_command(new lf::download_command(e));
+    p.register_command(new lf::file_request_command(e));
 
     if (argc == 1) {
         p.execute("help");

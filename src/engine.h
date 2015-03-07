@@ -124,6 +124,21 @@ public:
      */
     void download(std::string server, std::string path, std::string key,
             std::string l, std::string f, report_level s, validate_cert v);
+
+    /**
+     * @brief Sends the file request to specified user, by specified server.
+     * @param server Server URL.
+     * @param user User name or email.
+     * @param key API Key of Liquidfiles.
+     * @param subject Subject of composed email.
+     * @param message Message body of email.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error, upload_error, send_error.
+     */
+    std::string file_request(std::string server, const std::string& user, 
+            std::string key, const std::string& subject,
+            const std::string& message, report_level s, validate_cert v);
     /// @}
 
 private:

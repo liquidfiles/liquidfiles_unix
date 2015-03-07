@@ -9,6 +9,7 @@ liquidfiles_SOURCES = attachment_responce.cpp \
 					  command_processor.cpp \
 					  download_command.cpp \
 					  engine.cpp \
+					  file_request_command.cpp \
 					  help_command.cpp \
 					  main.cpp \
 					  messages_responce.cpp \
