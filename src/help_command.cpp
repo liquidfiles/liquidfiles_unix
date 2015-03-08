@@ -53,6 +53,8 @@ void help_command::print_help() const
     cp.print_footer();
     cp << 4 << "Error during file send to user.";
     cp.print_footer();
+    cp << 5 << "Error in file system - Can't open file, etc.";
+    cp.print_footer();
     messenger::get() << sss.str();
 }
 
