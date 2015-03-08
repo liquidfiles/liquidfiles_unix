@@ -86,6 +86,15 @@ public:
     }
 };
 
+class file_error : public exception
+{
+public:
+    file_error(std::string f, std::string e)
+        : exception(std::string("Can't open file '") + f + "'. " + e, 5)
+    {
+    }
+};
+
 class invalid_command_name : public exception
 {
 public:

@@ -6,9 +6,13 @@
 #include "messenger.h"
 #include "utility.h"
 #include "xml.h"
+#include "xml_iterators.h"
 
 #include <cstdio>
+#include <cstring>
 #include <vector>
+
+#include <errno.h>
 
 namespace lf {
 
@@ -63,10 +67,14 @@ engine::~engine()
     }
 }
 
-std::string engine::send(std::string server, const std::string& user,
-        std::string key, const std::string& subject,
-        const std::string& message, const files& fs,
-        report_level s, validate_cert v)
+std::string engine::send(std::string server,
+        const std::string& user,
+        const std::string& key,
+        const std::string& subject,
+        const std::string& message,
+        const files& fs,
+        report_level s,
+        validate_cert v)
 {
     init_curl(key, s, v);
     std::set<std::string> attachments;
@@ -79,37 +87,22 @@ std::string engine::send(std::string server, const std::string& user,
             attachments, s);
 }
 
-void engine::messages(std::string server, std::string key, std::string l,
-        std::string f, report_level s, validate_cert v)
+void engine::messages(std::string server,
+        const std::string& key,
+        const std::string& l,
+        const std::string& f,
+        report_level s,
+        validate_cert v)
 {
-    init_curl(key, s, v);
-    server += "/message";
-    if (!l.empty()) {
-        server += "?sent_in_the_last=";
-        server += l;
-    } else if (!f.empty()) {
-        server += "?sent_after=";
-        server += f;
-    }
-    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_slist* slist = 0;
-    slist = curl_slist_append(slist, "Content-Type: text/xml");
-    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
-    if (s >= NORMAL) {
-        messenger::get() << "Getting messages from the server." << endl;
-    }
-    CURLcode res = curl_easy_perform(m_curl);
-    curl_slist_free_all(slist);
-    if (res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
-    std::string r = s_data;
-    s_data.clear();
+    std::string r = messages_impl(server, key, l, f, s, v);
     process_messages_responce(r, s);
 }
 
-void engine::message(std::string server, std::string key, std::string id,
-        report_level s, validate_cert v)
+void engine::message(std::string server,
+        const std::string& key,
+        const std::string& id,
+        report_level s,
+        validate_cert v)
 {
     std::string r =  message_impl(server, key, id, s, v,
             "Getting message from the server.");
@@ -120,8 +113,11 @@ void engine::message(std::string server, std::string key, std::string id,
     }
 }
 
-void engine::download(const std::set<std::string>& urls, std::string path,
-        std::string key, report_level s, validate_cert v)
+void engine::download(const std::set<std::string>& urls,
+        const std::string& path,
+        const std::string& key,
+        report_level s,
+        validate_cert v)
 {
     init_curl(key, s, v);
     std::set<std::string>::const_iterator i = urls.begin();
@@ -137,6 +133,9 @@ void engine::download(const std::set<std::string>& urls, std::string path,
             filename = path + "/" + filename;
         }
         FILE* fp = fopen(filename.c_str(),"wb");
+        if (fp == 0) {
+            throw file_error(filename, strerror(errno));
+        }
         curl_easy_setopt(m_curl, CURLOPT_URL, i->c_str());
         curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, fp);
         CURLcode res = curl_easy_perform(m_curl);
@@ -151,8 +150,12 @@ void engine::download(const std::set<std::string>& urls, std::string path,
     curl_slist_free_all(slist);
 }
 
-void engine::download(std::string server, std::string path, std::string key,
-        std::string id, report_level s, validate_cert v)
+void engine::download(std::string server,
+        const std::string& path,
+        const std::string& key,
+        const std::string& id,
+        report_level s,
+        validate_cert v)
 {
     std::string r =  message_impl(server, key, id, s, v,
         "Retrieving attachments of message.");
@@ -174,33 +177,15 @@ void engine::download(std::string server, std::string path, std::string key,
     }
 }
 
-void engine::download(std::string server, std::string path, std::string key,
-            std::string l, std::string f, report_level s, validate_cert v)
+void engine::download(std::string server,
+        const std::string& path,
+        const std::string& key,
+        const std::string& l,
+        const std::string& f,
+        report_level s,
+        validate_cert v)
 {
-    init_curl(key, s, v);
-    std::string ss = server;
-    ss += "/message";
-    if (!l.empty()) {
-        ss += "?sent_in_the_last=";
-        ss += l;
-    } else if (!f.empty()) {
-        ss += "?sent_after=";
-        ss += f;
-    }
-    curl_easy_setopt(m_curl, CURLOPT_URL, ss.c_str());
-    struct curl_slist* slist = 0;
-    slist = curl_slist_append(slist, "Content-Type: text/xml");
-    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
-    if (s >= NORMAL) {
-        messenger::get() << "Getting messages from the server." << endl;
-    }
-    CURLcode res = curl_easy_perform(m_curl);
-    curl_slist_free_all(slist);
-    if (res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
-    std::string r = s_data;
-    s_data.clear();
+    std::string r = messages_impl(server, key, l, f, s, v);
     xml::document<> d;
     d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
     messages_responce m;
@@ -210,9 +195,13 @@ void engine::download(std::string server, std::string path, std::string key,
     }
 }
 
-std::string engine::file_request(std::string server, const std::string& user,
-        std::string key, const std::string& subject,
-        const std::string& message, report_level s, validate_cert v)
+std::string engine::file_request(std::string server,
+        const std::string& user,
+        const std::string& key,
+        const std::string& subject,
+        const std::string& message,
+        report_level s,
+        validate_cert v)
 {
     init_curl(key, s, v);
     server += "/requests";
@@ -241,11 +230,11 @@ std::string engine::file_request(std::string server, const std::string& user,
     }
     std::string r = s_data;
     s_data.clear();
-    messenger::get() << r << endl;
-    return "";
+    return process_file_request_responce(r, s);
 }
 
-std::string engine::attach(std::string server, const std::string& file,
+std::string engine::attach(std::string server,
+        const std::string& file,
         report_level s)
 {
     server += "/attachments";
@@ -274,8 +263,10 @@ std::string engine::attach(std::string server, const std::string& file,
 
 std::string engine::send_attachments(std::string server,
         const std::string& user,
-        const std::string& subject, const std::string& message,
-        const files& fs, report_level s)
+        const std::string& subject,
+        const std::string& message,
+        const files& fs,
+        report_level s)
 {
     server += "/message";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
@@ -365,7 +356,7 @@ void engine::process_message_responce(const std::string& r,
     messenger::get() << m.to_string();
 }
 
-std::string engine::message_impl(std::string server, std::string key,
+std::string engine::message_impl(std::string server, const std::string& key,
         std::string id, report_level s, validate_cert v, std::string log)
 {
     init_curl(key, s, v);
@@ -386,6 +377,60 @@ std::string engine::message_impl(std::string server, std::string key,
     std::string r = s_data;
     s_data.clear();
     return r;
+}
+
+std::string engine::messages_impl(std::string server, const std::string& key, std::string l,
+        std::string f, report_level s, validate_cert v)
+{
+    init_curl(key, s, v);
+    server += "/message";
+    if (!l.empty()) {
+        server += "?sent_in_the_last=";
+        server += l;
+    } else if (!f.empty()) {
+        server += "?sent_after=";
+        server += f;
+    }
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    struct curl_slist* slist = 0;
+    slist = curl_slist_append(slist, "Content-Type: text/xml");
+    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    if (s >= NORMAL) {
+        messenger::get() << "Getting messages from the server." << endl;
+    }
+    CURLcode res = curl_easy_perform(m_curl);
+    curl_slist_free_all(slist);
+    if (res != CURLE_OK) {
+        throw curl_error(std::string(curl_easy_strerror(res)));
+    }
+    std::string r = s_data;
+    s_data.clear();
+    return r;
+}
+
+std::string engine::process_file_request_responce(const std::string& r, report_level s) const
+{
+    xml::document<> d;
+    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
+
+    xml::node_iterator<> i(d.first_node());
+    xml::node_iterator<> e;
+    std::string q;
+    while(i != e) {
+        std::string n(i->name(), i->name_size());
+        if (n == "url") {
+            q = std::string(i->value(), i->value_size());
+            if (s >= NORMAL) {
+                    messenger::get() << "Request sent successfully. URL: " << q << endl;
+            }
+            break;
+        }
+        ++i;
+    }
+    if (q.empty()) {
+        throw send_error(r);
+    }
+    return q;
 }
 
 }

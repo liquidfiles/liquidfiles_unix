@@ -57,10 +57,14 @@ public:
      * @param v Validate certificate flag for HTTP request.
      * @throw curl_error, upload_error, send_error.
      */
-    std::string send(std::string server, const std::string& user, 
-            std::string key, const std::string& subject,
-            const std::string& message, const files& fs,
-            report_level s, validate_cert v);
+    std::string send(std::string server,
+            const std::string& user, 
+            const std::string& key,
+            const std::string& subject,
+            const std::string& message,
+            const files& fs,
+            report_level s,
+            validate_cert v);
 
     /**
      * @brief Lists all the messages.
@@ -72,8 +76,12 @@ public:
      * @param v Validate certificate flag for HTTP request.
      * @throw curl_error.
      */
-    void messages(std::string server, std::string key, std::string l,
-            std::string f, report_level s, validate_cert v);
+    void messages(std::string server,
+            const std::string& key,
+            const std::string& l,
+            const std::string& f,
+            report_level s,
+            validate_cert v);
 
     /**
      * @brief List the given message.
@@ -84,8 +92,11 @@ public:
      * @param v Validate certificate flag for HTTP request.
      * @throw curl_error.
      */
-    void message(std::string server, std::string key, std::string id,
-            report_level s, validate_cert v);
+    void message(std::string server,
+            const std::string& key,
+            const std::string& id,
+            report_level s,
+            validate_cert v);
 
     /**
      * @brief Downloads the files from the given urls.
@@ -95,8 +106,11 @@ public:
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
      */
-    void download(const std::set<std::string>& urls, std::string path,
-            std::string key, report_level s, validate_cert v);
+    void download(const std::set<std::string>& urls,
+            const std::string& path,
+            const std::string& key,
+            report_level s,
+            validate_cert v);
 
     /**
      * @brief Downloads all attachments of the given message.
@@ -108,8 +122,12 @@ public:
      * @param v Validate certificate flag for HTTP request.
      * @throw curl_error.
      */
-    void download(std::string server, std::string path, std::string key,
-            std::string id, report_level s, validate_cert v);
+    void download(std::string server,
+            const std::string& path,
+            const std::string& key,
+            const std::string& id,
+            report_level s,
+            validate_cert v);
 
     /**
      * @brief Downloads all attachments of the given messages.
@@ -122,8 +140,13 @@ public:
      * @param v Validate certificate flag for HTTP request.
      * @throw curl_error.
      */
-    void download(std::string server, std::string path, std::string key,
-            std::string l, std::string f, report_level s, validate_cert v);
+    void download(std::string server,
+            const std::string& path,
+            const std::string& key,
+            const std::string& l,
+            const std::string& f,
+            report_level s,
+            validate_cert v);
 
     /**
      * @brief Sends the file request to specified user, by specified server.
@@ -136,9 +159,13 @@ public:
      * @param v Validate certificate flag for HTTP request.
      * @throw curl_error, upload_error, send_error.
      */
-    std::string file_request(std::string server, const std::string& user, 
-            std::string key, const std::string& subject,
-            const std::string& message, report_level s, validate_cert v);
+    std::string file_request(std::string server,
+            const std::string& user, 
+            const std::string& key,
+            const std::string& subject,
+            const std::string& message,
+            report_level s,
+            validate_cert v);
     /// @}
 
 private:
@@ -156,8 +183,11 @@ private:
     void process_attach_responce(const std::string& r, report_level s) const;
     void process_messages_responce(const std::string& r, report_level s) const;
     void process_message_responce(const std::string& r, report_level s) const;
-    std::string message_impl(std::string server, std::string key, std::string id,
+    std::string message_impl(std::string server, const std::string& key, std::string id,
             report_level s, validate_cert v, std::string log);
+    std::string messages_impl(std::string server, const std::string& key, std::string l,
+            std::string f, report_level s, validate_cert v);
+    std::string process_file_request_responce(const std::string& r, report_level s) const;
 
 private:
     CURL* m_curl;
