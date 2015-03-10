@@ -1,6 +1,7 @@
 #pragma once
 
 #include "attachment_responce.h"
+#include "declarations.h"
 #include "xml.h"
 
 #include <string>
@@ -25,8 +26,9 @@ public:
 public:
     /**
      * @brief Gets the string of responce to print.
+     * @param f Format of string.
      */
-    std::string to_string() const;
+    std::string to_string(output_format f) const;
 
 public:
     /// @brief Access to ID.

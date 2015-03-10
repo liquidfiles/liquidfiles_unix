@@ -1,5 +1,6 @@
 #pragma once
 
+#include "declarations.h"
 #include "xml.h"
 
 #include <string>
@@ -23,9 +24,10 @@ public:
 
 public:
     /**
-     * @brief Writes messages to console.
+     * @brief Gets the string representation of responce.
+     * @param f Output format.
      */
-    std::string to_string() const;
+    std::string to_string(output_format f) const;
 
 private:
     struct message_item {

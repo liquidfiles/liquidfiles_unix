@@ -2,7 +2,6 @@
 #include "command_processor.h"
 #include "exceptions.h"
 #include "messenger.h"
-#include "table_printer.h"
 
 namespace lf {
 
@@ -19,43 +18,45 @@ help_command::help_command(command_processor& p)
 void help_command::print_help() const
 {
     lf::messenger::get() << "Usage:\n"
-    "    liquidfiles <command> <command_args>\n"
+    "\tliquidfiles <command> <command_args>\n"
 "\n"
 "Valid commands are:\n";
-    std::stringstream ss;
-    table_printer tp(&ss);
-    tp.add_column("Name", 30);
-    tp.add_column("Description", 70);
-    tp.print_header();
     std::vector<std::string> cs = m_command_processor.get_command_names();
     std::vector<std::string>::const_iterator i = cs.begin();
+    unsigned max_length = 0;
     while (i != cs.end()) {
-        tp << (*i) << m_command_processor.get_command(*i)->description();
-        tp.print_footer();
+        if (i->size() > max_length) {
+            max_length = i->size();
+        }
         ++i;
     }
-    messenger::get() << ss.str();
+    max_length += 5;
+    i = cs.begin();
+    while (i != cs.end()) {
+        if ((*i) != name()) {
+            messenger::get() << '\t' << (*i);
+            for (unsigned j = 0; j < max_length - i->size(); ++j) {
+                messenger::get() << ' ';
+            }
+            messenger::get() << m_command_processor.get_command(*i)->description() << endl;
+        }
+        ++i;
+    }
 
     lf::messenger::get() << "\n"
 "Type 'liquidfiles help <command_name>' to see command specific options and usage.\n"
 "\n"
 "Abnormal exit codes:\n";
-    std::stringstream sss;
-    table_printer cp(&sss);
-    cp.add_column("Code", 5);
-    cp.add_column("Description", 140);
-    cp.print_header();
-    cp << 1 << "Command line arguments are invalid - Invalid command name, missing required argument, invalid value for specific argument.";
-    cp.print_footer();
-    cp << 2 << "CURL error - Can't connect to host, connection timeout, certificate check failure, etc.";
-    cp.print_footer();
-    cp << 3 << "Error during file upload - Invalid API key, Invalid filename, etc.";
-    cp.print_footer();
-    cp << 4 << "Error during file send to user.";
-    cp.print_footer();
-    cp << 5 << "Error in file system - Can't open file, etc.";
-    cp.print_footer();
-    messenger::get() << sss.str();
+    messenger::get() << '\t' << 1 << "     Command line arguments are invalid - "
+        "Invalid command name, missing required argument,"
+        " invalid value for specific argument." << endl;;
+    messenger::get() << '\t' << 2 << "     CURL error - Can't connect to host,"
+        " connection timeout, certificate check failure, etc." << endl;;
+    messenger::get() << '\t' << 3 << "     Error during file upload -"
+        " Invalid API key, Invalid filename, etc." << endl;
+    messenger::get() << '\t' << 4 << "     Error during file send to user." << endl;
+    messenger::get() << '\t' << 5 << "     Error in file system - "
+        "Can't open file, etc." << endl;
 }
 
 void help_command::execute(const arguments& args)

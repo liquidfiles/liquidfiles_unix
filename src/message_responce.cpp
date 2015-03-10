@@ -1,7 +1,6 @@
 #include "message_responce.h"
 
 #include "xml_iterators.h"
-#include "messenger.h"
 #include "table_printer.h"
 
 #include <cstdlib>
@@ -89,7 +88,7 @@ void message_responce::read(xml::node<>* s)
     }
 }
 
-std::string message_responce::to_string() const
+std::string message_responce::to_string(output_format f) const
 {
     std::stringstream m;
     m << "ID: " << m_id << "\n";
@@ -137,7 +136,7 @@ std::string message_responce::to_string() const
         int x = 1;
         while (j != m_attachments.end()) {
             tp << x++;
-            std::stringstream ss((j++)->to_string());
+            std::stringstream ss((j++)->to_string(f));
             std::string s;
             std::getline(ss, s);
             tp << s;

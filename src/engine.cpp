@@ -92,22 +92,24 @@ void engine::messages(std::string server,
         const std::string& l,
         const std::string& f,
         report_level s,
-        validate_cert v)
+        validate_cert v,
+        output_format of)
 {
     std::string r = messages_impl(server, key, l, f, s, v);
-    process_messages_responce(r, s);
+    process_messages_responce(r, s, of);
 }
 
 void engine::message(std::string server,
         const std::string& key,
         const std::string& id,
         report_level s,
-        validate_cert v)
+        validate_cert v,
+        output_format f)
 {
     std::string r =  message_impl(server, key, id, s, v,
             "Getting message from the server.");
     try {
-        process_message_responce(r, s);
+        process_message_responce(r, s, f);
     } catch (xml::parse_error&) {
         throw invalid_message_id(id);
     }
@@ -337,23 +339,23 @@ std::string engine::process_send_responce(const std::string& r,
 }
 
 void engine::process_messages_responce(const std::string& r,
-        report_level s) const
+        report_level s, output_format f) const
 {
     xml::document<> d;
     d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
     messages_responce m;
     m.read(&d);
-    messenger::get() << m.to_string();
+    messenger::get() << m.to_string(f);
 }
 
 void engine::process_message_responce(const std::string& r,
-        report_level s) const
+        report_level s, output_format f) const
 {
     xml::document<> d;
     d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
     message_responce m;
     m.read(&d);
-    messenger::get() << m.to_string();
+    messenger::get() << m.to_string(f);
 }
 
 std::string engine::message_impl(std::string server, const std::string& key,

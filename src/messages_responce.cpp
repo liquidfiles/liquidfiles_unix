@@ -1,4 +1,5 @@
 #include "messages_responce.h"
+#include "csv_stream.h"
 #include "table_printer.h"
 #include "xml_iterators.h"
 
@@ -61,7 +62,7 @@ void messages_responce::read(xml::node<>* s)
     }
 }
 
-std::string messages_responce::to_string() const
+std::string messages_responce::to_string(output_format f) const
 {
     if (m_messages.empty()) {
         return std::string();

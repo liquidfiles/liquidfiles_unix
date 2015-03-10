@@ -1,5 +1,7 @@
 #pragma once
 
+#include "declarations.h"
+
 #include <curl/curl.h>
 
 #include <set>
@@ -74,6 +76,7 @@ public:
      * @param f Date, to get messages from that date.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
+     * @param f Format of output (table or csv).
      * @throw curl_error.
      */
     void messages(std::string server,
@@ -81,7 +84,8 @@ public:
             const std::string& l,
             const std::string& f,
             report_level s,
-            validate_cert v);
+            validate_cert v,
+            output_format of);
 
     /**
      * @brief List the given message.
@@ -90,13 +94,15 @@ public:
      * @param id Message id.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
+     * @param f Format of output (table or csv).
      * @throw curl_error.
      */
     void message(std::string server,
             const std::string& key,
             const std::string& id,
             report_level s,
-            validate_cert v);
+            validate_cert v,
+            output_format f);
 
     /**
      * @brief Downloads the files from the given urls.
@@ -181,8 +187,8 @@ private:
 private:
     std::string process_send_responce(const std::string& r, report_level s) const;
     void process_attach_responce(const std::string& r, report_level s) const;
-    void process_messages_responce(const std::string& r, report_level s) const;
-    void process_message_responce(const std::string& r, report_level s) const;
+    void process_messages_responce(const std::string& r, report_level s, output_format f) const;
+    void process_message_responce(const std::string& r, report_level s, output_format f) const;
     std::string message_impl(std::string server, const std::string& key, std::string id,
             report_level s, validate_cert v, std::string log);
     std::string messages_impl(std::string server, const std::string& key, std::string l,

@@ -38,7 +38,7 @@ void attachment_responce::read(xml::node<>* s)
     }
 }
 
-std::string attachment_responce::to_string() const
+std::string attachment_responce::to_string(output_format f) const
 {
     std::stringstream m;
     if (!m_filename.empty()) {

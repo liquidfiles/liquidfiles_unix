@@ -46,6 +46,14 @@ void messages_command::execute(const arguments& args)
         throw invalid_argument_value("--report_level",
                 "silent, normal, verbose");
     }
+    output_format of = TABLE_FORMAT;
+    std::string ofs = args["--output_format"];
+    if (rls == "csv") {
+        of = CSV_FORMAT;
+    } else if (rls != "" && rls != "table") {
+        throw invalid_argument_value("--output_format",
+                "table, csv");
+    }
     std::set<std::string> unnamed_args = args.get_unnamed_arguments();
     engine::validate_cert val = engine::VALIDATE;
     if (unnamed_args.find("-k") != unnamed_args.end()) {
@@ -54,9 +62,9 @@ void messages_command::execute(const arguments& args)
     }
     std::string id = args["--message_id"];
     if (id == "") {
-        m_engine.messages(server, api_key, l, f, rl, val);
+        m_engine.messages(server, api_key, l, f, rl, val, of);
     } else {
-        m_engine.message(server, api_key, id, rl, val);
+        m_engine.message(server, api_key, id, rl, val, of);
     }
 }
 
