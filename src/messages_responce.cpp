@@ -68,6 +68,37 @@ std::string messages_responce::to_string(output_format f) const
         return std::string();
     }
     std::stringstream m;
+    switch (f) {
+    case CSV_FORMAT:
+        write_csv(m);
+        break;
+    case TABLE_FORMAT:
+        write_table(m);
+    default:
+        break;
+    }
+    return m.str();
+}
+
+void messages_responce::write_csv(std::stringstream& m) const
+{
+    csv_ostream cp(&m);
+    std::vector<message_item>::const_iterator j = m_messages.begin();
+    while (j != m_messages.end()) {
+        cp << j->m_id << j->m_sender;
+        unsigned x = 0;
+        cp << j->m_recipients.size();
+        while (x < j->m_recipients.size()) {
+            cp << j->m_recipients[x++];
+        }
+        cp << j->m_creation_time << j->m_expire_time << j->m_authorization <<
+            j->m_subject;
+        ++j;
+    }
+}
+
+void messages_responce::write_table(std::stringstream& m) const
+{
     table_printer tp(&m);
     tp.add_column("ID", 24);
     tp.add_column("From", 30);
@@ -92,7 +123,6 @@ std::string messages_responce::to_string(output_format f) const
         ++j;
         tp.print_footer();
     }
-    return m.str();
 }
 
 }

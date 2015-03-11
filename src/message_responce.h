@@ -104,6 +104,10 @@ public:
     }
 
 private:
+    void write_table(std::stringstream&) const;
+    void write_csv(std::stringstream&) const;
+
+private:
     std::string m_id;
     std::string m_sender;
     std::vector<std::string> m_recipients;

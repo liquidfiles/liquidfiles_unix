@@ -1,5 +1,6 @@
 #include "attachment_responce.h"
 
+#include "csv_stream.h"
 #include "xml_iterators.h"
 
 #include <cstdlib>
@@ -41,22 +42,34 @@ void attachment_responce::read(xml::node<>* s)
 std::string attachment_responce::to_string(output_format f) const
 {
     std::stringstream m;
-    if (!m_filename.empty()) {
-        m << "Filename: " << m_filename << "\n";
+    switch (f) {
+    case TABLE_FORMAT:
+        if (!m_filename.empty()) {
+            m << "Filename: " << m_filename << "\n";
+        }
+        if (!m_content_type.empty()) {
+            m << "Content Type: " << m_content_type << "\n";
+        }
+        if (!m_checksum.empty()) {
+            m << "Checksum: " << m_checksum << "\n";
+        }
+        if (!m_crc32.empty()) {
+            m << "CRC32: " << m_crc32 << "\n";
+        }
+        if (!m_url.empty()) {
+            m << "URL: " << m_url << "\n";
+        }
+        m << "Size: " << m_size << "\n";
+        break;
+    case CSV_FORMAT:
+    {
+        csv_ostream cp(&m);
+        cp << m_filename << m_content_type << m_checksum << m_crc32 << m_url << m_size;
     }
-    if (!m_content_type.empty()) {
-        m << "Content Type: " << m_content_type << "\n";
+    default:
+        break;
     }
-    if (!m_checksum.empty()) {
-        m << "Checksum: " << m_checksum << "\n";
-    }
-    if (!m_crc32.empty()) {
-        m << "CRC32: " << m_crc32 << "\n";
-    }
-    if (!m_url.empty()) {
-        m << "URL: " << m_url << "\n";
-    }
-    m << "Size: " << m_size << "\n";
+
     return m.str();
 }
 

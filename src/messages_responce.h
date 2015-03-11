@@ -60,6 +60,10 @@ public:
     }
 
 private:
+    void write_csv(std::stringstream&) const;
+    void write_table(std::stringstream&) const;
+
+private:
     std::vector<message_item> m_messages;
 };
 

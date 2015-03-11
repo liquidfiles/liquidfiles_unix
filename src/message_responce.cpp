@@ -1,7 +1,8 @@
 #include "message_responce.h"
 
-#include "xml_iterators.h"
+#include "csv_stream.h"
 #include "table_printer.h"
+#include "xml_iterators.h"
 
 #include <cstdlib>
 #include <sstream>
@@ -91,6 +92,20 @@ void message_responce::read(xml::node<>* s)
 std::string message_responce::to_string(output_format f) const
 {
     std::stringstream m;
+    switch (f) {
+    case TABLE_FORMAT:
+        write_table(m);
+        break;
+    case CSV_FORMAT:
+        write_csv(m);
+    default:
+        break;
+    }
+    return m.str();
+}
+
+void message_responce::write_table(std::stringstream& m) const
+{
     m << "ID: " << m_id << "\n";
     m << "From: " << m_sender << "\n";
     std::vector<std::string>::const_iterator i;
@@ -136,7 +151,7 @@ std::string message_responce::to_string(output_format f) const
         int x = 1;
         while (j != m_attachments.end()) {
             tp << x++;
-            std::stringstream ss((j++)->to_string(f));
+            std::stringstream ss((j++)->to_string(TABLE_FORMAT));
             std::string s;
             std::getline(ss, s);
             tp << s;
@@ -146,7 +161,35 @@ std::string message_responce::to_string(output_format f) const
             tp.print_footer();
         }
     }
-    return m.str();
+}
+
+void message_responce::write_csv(std::stringstream& m) const
+{
+    csv_ostream cp(&m);
+    cp << m_id << m_sender;
+    std::vector<std::string>::const_iterator i;
+    i = m_recipients.begin();
+    cp << m_recipients.size();
+    while (i != m_recipients.end()) {
+        cp << *i++;
+    }
+    cp << m_ccs.size();
+    i = m_ccs.begin();
+    while (i != m_ccs.end()) {
+        cp << *i++;
+    }
+    i = m_bccs.begin();
+    cp << m_bccs.size();
+    while (i != m_bccs.end()) {
+        cp << *i++;
+    }
+    cp << m_creation_time << m_expire_time << m_authorization_description
+        << m_subject << m_message;
+    cp << m_attachments.size();
+    std::vector<attachment_responce>::const_iterator j = m_attachments.begin();
+    while (j != m_attachments.end()) {
+        m << ',' << (j++)->to_string(CSV_FORMAT);
+    }
 }
 
 }

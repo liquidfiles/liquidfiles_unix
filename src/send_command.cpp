@@ -7,21 +7,21 @@ namespace lf {
 send_command::send_command(engine& e)
     : command("send",
         "[-k] [--report_level=<level>] --to=<username> --server=<url>\n"
-        "         --api_key=<key> [--subject=<string>] [--message=<string>]\n"
-        "         <file1> [<file2> ...]",
+        "\t--api_key=<key> [--subject=<string>] [--message=<string>]\n"
+        "\t<file1> [<file2> ...]",
 
         "Sends the file(s) to specified user.",
 
-        "    -k - If specified, don't validate server certificate.\n"
-        "    --report_level - Level of reporting. Valid values:\n"
-        "                     silent, normal, verbose.\n"
-        "                     Default value: normal.\n"
-        "    --to - User name or email, to send file.\n"
-        "    --server - The server URL.\n"
-        "    --api_key - API key of liquidfiles, to login to system.\n"
-        "    --subject - Subject of composed email. Default value: \"\".\n"
-        "    --message - Message text of composed email. Default value: \"\".\n"
-        "    <file1>... - File path to send to user."
+        "\t-k - If specified, don't validate server certificate.\n"
+        "\t--report_level - Level of reporting. Valid values:\n"
+        "\t                 silent, normal, verbose.\n"
+        "\t                 Default value: normal.\n"
+        "\t--to - User name or email, to send file.\n"
+        "\t--server - The server URL.\n"
+        "\t--api_key - API key of liquidfiles, to login to system.\n"
+        "\t--subject - Subject of composed email. Default value: \"\".\n"
+        "\t--message - Message text of composed email. Default value: \"\".\n"
+        "\t<file1>... - File path to send to user."
             )
     , m_engine(e)
 {

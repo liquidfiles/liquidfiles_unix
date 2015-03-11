@@ -7,18 +7,21 @@ namespace lf {
 messages_command::messages_command(engine& e)
     : command("messages",
             "[-k] [--report_level=<level>] --server=<url> --api_key=<key>\n"
-            " (--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)",
+            "\t(--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)",
             "Lists the available messages.",
-            "    -k - If specified, don't validate server certificate.\n"
-            "    --report_level - Level of reporting. Valid values:\n"
-            "                     silent, normal, verbose.\n"
-            "                     Default value: normal.\n"
-            "    --server - The server URL.\n"
-            "    --api_key - API key of liquidfiles, to login to system.\n"
-            "    --message_id - Message id to download attachments of it.\n"
-            "    --sent_in_the_last - Show messages sent in the last specified\n"
-            "                         hours.\n"
-            "    --sent_after - Show messages sent after specified date."
+            "\t-k - If specified, don't validate server certificate.\n"
+            "\t--report_level - Level of reporting. Valid values:\n"
+            "\t                 silent, normal, verbose.\n"
+            "\t                 Default value: normal.\n"
+            "\t--output_format - Specifies output string format. Valid values:\n"
+            "\t                  table, csv.\n"
+            "\t                  Default value: table.\n"
+            "\t--server - The server URL.\n"
+            "\t--api_key - API key of liquidfiles, to login to system.\n"
+            "\t--message_id - Message id to download attachments of it.\n"
+            "\t--sent_in_the_last - Show messages sent in the last specified\n"
+            "\t                     hours.\n"
+            "\t--sent_after - Show messages sent after specified date."
             )
     , m_engine(e)
 {
@@ -48,9 +51,9 @@ void messages_command::execute(const arguments& args)
     }
     output_format of = TABLE_FORMAT;
     std::string ofs = args["--output_format"];
-    if (rls == "csv") {
+    if (ofs == "csv") {
         of = CSV_FORMAT;
-    } else if (rls != "" && rls != "table") {
+    } else if (ofs != "" && ofs != "table") {
         throw invalid_argument_value("--output_format",
                 "table, csv");
     }

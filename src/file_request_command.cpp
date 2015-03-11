@@ -7,19 +7,19 @@ namespace lf {
 file_request_command::file_request_command(engine& e)
     : command("file_request",
         "[-k] [--report_level=<level>] --to=<username> --server=<url>\n"
-        "         --api_key=<key> [--subject=<string>] [--message=<string>]",
+        "\t--api_key=<key> [--subject=<string>] [--message=<string>]",
 
         "Sends the file request to specified user.",
 
-        "    -k - If specified, don't validate server certificate.\n"
-        "    --report_level - Level of reporting. Valid values:\n"
-        "                     silent, normal, verbose.\n"
-        "                     Default value: normal.\n"
-        "    --to - User name or email, to send file request.\n"
-        "    --server - The server URL.\n"
-        "    --api_key - API key of liquidfiles, to login to system.\n"
-        "    --subject - Subject of composed email. Default value: \"\".\n"
-        "    --message - Message text of composed email. Default value: \"\"."
+        "\t-k - If specified, don't validate server certificate.\n"
+        "\t--report_level - Level of reporting. Valid values:\n"
+        "\t                 silent, normal, verbose.\n"
+        "\t                 Default value: normal.\n"
+        "\t--to - User name or email, to send file request.\n"
+        "\t--server - The server URL.\n"
+        "\t--api_key - API key of liquidfiles, to login to system.\n"
+        "\t--subject - Subject of composed email. Default value: \"\".\n"
+        "\t--message - Message text of composed email. Default value: \"\"."
             )
     , m_engine(e)
 {

@@ -7,22 +7,23 @@ namespace lf {
 download_command::download_command(engine& e)
     : command("download",
             "[-k] [--report_level=<level>] --api_key=<key> [--download_to=<path>]\n"
-            " ((--server=<server> (--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)) \n"
-            " | <url>...)",
+            "\t((--server=<server> (--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)) \n"
+            "\t| <url>...)",
             "Download given files.",
-            "    -k - If specified, don't validate server certificate.\n"
-            "    --report_level - Level of reporting. Valid values:\n"
-            "                     silent, normal, verbose.\n"
-            "                     Default value: normal.\n"
-            "    --api_key - API key of liquidfiles, to login to system.\n"
-            "    --download_to - Directory path to download files there.\n"
-            "    --server - If specified together with --message_id argument,\n"
-            "               downloads the attachments of given message.\n"
-            "    --message_id - Message id to download attachments of it.\n"
-            "    --sent_in_the_last - Download files sent in the last specified\n"
-            "                         hours.\n"
-            "    --sent_after - Download files sent after specified date.\n"
-            "    <url>... - Urls of files to download."
+            "\t-k - If specified, don't validate server certificate.\n"
+            "\t--report_level - Level of reporting. Valid values:\n"
+            "\t                 silent, normal, verbose.\n"
+            "\t                 Default value: normal.\n"
+            "\t--api_key - API key of liquidfiles, to login to system.\n"
+            "\t--download_to - Directory path to download files there.\n"
+            "\t                Default value: \"\""
+            "\t--server - If specified together with --message_id argument,\n"
+            "\t           downloads the attachments of given message.\n"
+            "\t--message_id - Message id to download attachments of it.\n"
+            "\t--sent_in_the_last - Download files sent in the last specified\n"
+            "\t                     hours.\n"
+            "\t--sent_after - Download files sent after specified date.\n"
+            "\t<url>... - Urls of files to download."
             )
     , m_engine(e)
 {

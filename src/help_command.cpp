@@ -7,9 +7,9 @@ namespace lf {
 
 help_command::help_command(command_processor& p)
     : command("help", "[<command_name>]", "Prints help for tool or for specific command.",
-        "    <command_name> - Specifies the name of command for which help\n"
-        "                     will be printed. If not specified, help for tool\n"
-        "                     will be printed."
+        "\t<command_name> - Specifies the name of command for which help\n"
+        "\t                 will be printed. If not specified, help for tool\n"
+        "\t                 will be printed."
             )
     , m_command_processor(p)
 {
