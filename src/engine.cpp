@@ -18,7 +18,7 @@ namespace lf {
 
 namespace {
 
-unsigned s_normal_attach_responce_size = 22;
+unsigned s_normal_id_size = 22;
 
 std::string s_data;
 
@@ -311,7 +311,7 @@ std::string engine::send_attachments(std::string server,
 
 void engine::process_attach_responce(const std::string& r, report_level s) const
 {
-    if (r.size() == s_normal_attach_responce_size) {
+    if (r.size() == s_normal_id_size) {
         if (s >= NORMAL) {
             messenger::get() << "File uploaded successfully. ID: " << r << endl;
         }
@@ -323,15 +323,17 @@ void engine::process_attach_responce(const std::string& r, report_level s) const
 std::string engine::process_send_responce(const std::string& r,
         report_level s) const
 {
-    size_t f = r.rfind("Message ID: ");
+    size_t f = r.find("<id>");
     if (f != std::string::npos) {
-        size_t e = r.find('\n', f + 12);
+        size_t e = r.find("</id>", f);
         if (e != std::string::npos) {
-            std::string q = r.substr(f + 12, e - f - 12);
-            if (s >= NORMAL) {
-                messenger::get() << "Message sent successfully. ID: " << q << endl;
+            std::string q = r.substr(f + 4, e - f - 4);
+            if (q.size() == s_normal_id_size) {
+                if (s >= NORMAL) {
+                    messenger::get() << "Message sent successfully. ID: " << q << endl;
+                }
+                return q;
             }
-            return q;
         }
     }
     throw send_error(r);
