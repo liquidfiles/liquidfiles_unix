@@ -33,17 +33,6 @@ private:
     /// @name API
     /// @{
 public:
-    enum report_level {
-        SILENT,
-        NORMAL,
-        VERBOSE
-    };
-
-    enum validate_cert {
-        VALIDATE,
-        NOT_VALIDATE
-    };
-
     typedef std::set<std::string> files;
 
 public:

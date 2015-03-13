@@ -1,4 +1,5 @@
 #include "messages_command.h"
+#include "declarations.h"
 #include "engine.h"
 #include "exceptions.h"
 
@@ -39,12 +40,12 @@ void messages_command::execute(const arguments& args)
     }
     std::string l = args["--sent_in_the_last"];
     std::string f = args["--sent_after"];
-    engine::report_level rl = engine::NORMAL;
+    report_level rl = NORMAL;
     std::string rls = args["--report_level"];
     if (rls == "silent") {
-        rl = engine::SILENT;
+        rl = SILENT;
     } else if (rls == "verbose") {
-        rl = engine::VERBOSE;
+        rl = VERBOSE;
     } else if (rls != "" && rls != "normal") {
         throw invalid_argument_value("--report_level",
                 "silent, normal, verbose");
@@ -58,9 +59,9 @@ void messages_command::execute(const arguments& args)
                 "table, csv");
     }
     std::set<std::string> unnamed_args = args.get_unnamed_arguments();
-    engine::validate_cert val = engine::VALIDATE;
+    validate_cert val = VALIDATE;
     if (unnamed_args.find("-k") != unnamed_args.end()) {
-        val = engine::NOT_VALIDATE;
+        val = NOT_VALIDATE;
         unnamed_args.erase("-k");
     }
     std::string id = args["--message_id"];

@@ -1,4 +1,5 @@
 #include "send_command.h"
+#include "declarations.h"
 #include "engine.h"
 #include "exceptions.h"
 
@@ -41,12 +42,12 @@ void send_command::execute(const arguments& args)
     if (api_key == "") {
         throw missing_argument("--api_key");
     }
-    engine::report_level rl = engine::NORMAL;
+    report_level rl = NORMAL;
     std::string rls = args["--report_level"];
     if (rls == "silent") {
-        rl = engine::SILENT;
+        rl = SILENT;
     } else if (rls == "verbose") {
-        rl = engine::VERBOSE;
+        rl = VERBOSE;
     } else if (rls != "" && rls != "normal") {
         throw invalid_argument_value("--report_level",
                 "silent, normal, verbose");
@@ -54,9 +55,9 @@ void send_command::execute(const arguments& args)
     std::string subject = args["--subject"];
     std::string message = args["--message"];
     std::set<std::string> unnamed_args = args.get_unnamed_arguments();
-    engine::validate_cert val = engine::VALIDATE;
+    validate_cert val = VALIDATE;
     if (unnamed_args.find("-k") != unnamed_args.end()) {
-        val = engine::NOT_VALIDATE;
+        val = NOT_VALIDATE;
         unnamed_args.erase("-k");
     }
     m_engine.send(server, user, api_key, subject, message, unnamed_args,
