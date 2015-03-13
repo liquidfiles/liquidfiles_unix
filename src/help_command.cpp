@@ -56,7 +56,7 @@ void help_command::print_help() const
         " Invalid API key, Invalid filename, etc." << io::endl;
     io::mout << '\t' << 4 << "     Error during file send to user." << io::endl;
     io::mout << '\t' << 5 << "     Error in file system - "
-        "Can't open file, etc." << io::endl;
+        "Can't open file, etc." << io::endl << io::endl;
 }
 
 void help_command::execute(const arguments& args)

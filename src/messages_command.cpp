@@ -6,18 +6,18 @@ namespace lf {
 
 messages_command::messages_command(engine& e)
     : command("messages",
-            "[-k] [--report_level=<level>] --server=<url> --api_key=<key>\n"
-            "\t(--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)",
+            "[-k] [--report_level=<level>] --api_key=<key> [--output_format=<format>]\n"
+            "\t--server=<url> (--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)",
             "Lists the available messages.",
             "\t-k - If specified, don't validate server certificate.\n"
             "\t--report_level - Level of reporting. Valid values:\n"
             "\t                 silent, normal, verbose.\n"
             "\t                 Default value: normal.\n"
+            "\t--api_key - API key of liquidfiles, to login to system.\n"
             "\t--output_format - Specifies output string format. Valid values:\n"
             "\t                  table, csv.\n"
             "\t                  Default value: table.\n"
             "\t--server - The server URL.\n"
-            "\t--api_key - API key of liquidfiles, to login to system.\n"
             "\t--message_id - Message id to download attachments of it.\n"
             "\t--sent_in_the_last - Show messages sent in the last specified\n"
             "\t                     hours.\n"

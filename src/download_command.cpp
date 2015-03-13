@@ -16,7 +16,7 @@ download_command::download_command(engine& e)
             "\t                 Default value: normal.\n"
             "\t--api_key - API key of liquidfiles, to login to system.\n"
             "\t--download_to - Directory path to download files there.\n"
-            "\t                Default value: \"\""
+            "\t                Default value: \"\"\n"
             "\t--server - If specified together with --message_id argument,\n"
             "\t           downloads the attachments of given message.\n"
             "\t--message_id - Message id to download attachments of it.\n"
