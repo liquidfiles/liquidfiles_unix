@@ -82,7 +82,7 @@ std::string messages_responce::to_string(output_format f) const
 
 void messages_responce::write_csv(std::stringstream& m) const
 {
-    csv_ostream cp(&m);
+    io::csv_ostream cp(&m);
     std::vector<message_item>::const_iterator j = m_messages.begin();
     while (j != m_messages.end()) {
         cp << j->m_id << j->m_sender;
@@ -99,7 +99,7 @@ void messages_responce::write_csv(std::stringstream& m) const
 
 void messages_responce::write_table(std::stringstream& m) const
 {
-    table_printer tp(&m);
+    io::table_printer tp(&m);
     tp.add_column("ID", 24);
     tp.add_column("From", 30);
     tp.add_column("To", 30);

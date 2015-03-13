@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-namespace lf {
+namespace io {
 
 /**
  * @class csv_istream.

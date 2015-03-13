@@ -9,7 +9,7 @@
 
 namespace lf {
 
-command_processor::command_processor(messenger& m)
+command_processor::command_processor(io::messenger& m)
     : m_messenger(m)
 {
 }
@@ -64,10 +64,10 @@ int command_processor::execute(const std::string& str)
         arguments args = arguments::construct(p.second);
         c->execute(args);
     } catch(lf::exception& e) {
-        m_messenger << "Error: " << e.message() << endl;
+        m_messenger << "Error: " << e.message() << io::endl;
         return e.code();
     } catch(xml::parse_error& e) {
-        m_messenger << "Xml error: " << e.what() << endl;
+        m_messenger << "Xml error: " << e.what() << io::endl;
         return 4;
     }
     return 0;
@@ -84,10 +84,10 @@ int command_processor::execute(const std::string& cn,
         arguments a = arguments::construct(args);
         c->execute(a);
     } catch(lf::exception& e) {
-        m_messenger << "Error: " << e.message() << endl;
+        m_messenger << "Error: " << e.message() << io::endl;
         return e.code();
     } catch(xml::parse_error& e) {
-        m_messenger << "Xml error: " << e.what() << endl;
+        m_messenger << "Xml error: " << e.what() << io::endl;
         return 4;
     }
     return 0;

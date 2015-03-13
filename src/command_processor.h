@@ -4,10 +4,13 @@
 #include <string>
 #include <vector>
 
+namespace io {
+class messenger;
+}
+
 namespace lf {
 
 class command;
-class messenger;
 
 /**
  * @class command_processor
@@ -23,7 +26,7 @@ class command_processor
 public:
     /// @brief Constructor.
     /// @param m Messenger.
-    command_processor(messenger& m);
+    command_processor(io::messenger& m);
 
     /// @brief Destructor.
     ~command_processor();
@@ -82,7 +85,7 @@ public:
 private:
     typedef std::map<std::string, command*> registry;
     registry m_commands;
-    messenger& m_messenger;
+    io::messenger& m_messenger;
 };
 
 }

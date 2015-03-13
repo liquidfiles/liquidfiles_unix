@@ -129,7 +129,7 @@ void engine::download(const std::set<std::string>& urls,
     while (i != urls.end()) {
         std::string filename = utility::get_filename(*i);
         if (s >= NORMAL) {
-            messenger::get() << "Downloading file '" << filename << "'" << endl;
+            io::mout << "Downloading file '" << filename << "'" << io::endl;
         }
         if (!path.empty()) {
             filename = path + "/" + filename;
@@ -223,7 +223,7 @@ std::string engine::file_request(std::string server,
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
     curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str()); 
     if (s >= NORMAL) {
-        messenger::get() << "Sending file request to user '" << user << "'" << endl;
+        io::mout << "Sending file request to user '" << user << "'" << io::endl;
     }
     CURLcode res = curl_easy_perform(m_curl);
     curl_slist_free_all(slist);
@@ -250,7 +250,7 @@ std::string engine::attach(std::string server,
                CURLFORM_END);
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, formpost);
     if (s >= NORMAL) {
-        messenger::get() << "Uploading file '" << file << "'." << endl;
+        io::mout << "Uploading file '" << file << "'." << io::endl;
     }
     CURLcode res = curl_easy_perform(m_curl);
     curl_formfree(formpost);
@@ -297,7 +297,7 @@ std::string engine::send_attachments(std::string server,
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
     curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str()); 
     if (s >= NORMAL) {
-        messenger::get() << "Sending message to user '" << user << "'" << endl;
+        io::mout << "Sending message to user '" << user << "'" << io::endl;
     }
     CURLcode res = curl_easy_perform(m_curl);
     curl_slist_free_all(slist);
@@ -313,7 +313,7 @@ void engine::process_attach_responce(const std::string& r, report_level s) const
 {
     if (r.size() == s_normal_id_size) {
         if (s >= NORMAL) {
-            messenger::get() << "File uploaded successfully. ID: " << r << endl;
+            io::mout << "File uploaded successfully. ID: " << r << io::endl;
         }
         return;
     }
@@ -323,18 +323,20 @@ void engine::process_attach_responce(const std::string& r, report_level s) const
 std::string engine::process_send_responce(const std::string& r,
         report_level s) const
 {
-    size_t f = r.find("<id>");
-    if (f != std::string::npos) {
-        size_t e = r.find("</id>", f);
-        if (e != std::string::npos) {
-            std::string q = r.substr(f + 4, e - f - 4);
-            if (q.size() == s_normal_id_size) {
-                if (s >= NORMAL) {
-                    messenger::get() << "Message sent successfully. ID: " << q << endl;
-                }
-                return q;
+    xml::document<> d;
+    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
+    xml::node_iterator<> i(d.first_node());
+    xml::node_iterator<> e;
+    while(i != e) {
+        std::string n(i->name(), i->name_size());
+        if (n == "id") {
+            std::string v(i->value(), i->value_size());
+            if (s >= NORMAL) {
+                io::mout << "Message sent successfully. ID: " << v << io::endl;
             }
+            return v;
         }
+        ++i;
     }
     throw send_error(r);
     return "";
@@ -347,7 +349,7 @@ void engine::process_messages_responce(const std::string& r,
     d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
     messages_responce m;
     m.read(&d);
-    messenger::get() << m.to_string(f);
+    io::mout << m.to_string(f);
 }
 
 void engine::process_message_responce(const std::string& r,
@@ -357,7 +359,7 @@ void engine::process_message_responce(const std::string& r,
     d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
     message_responce m;
     m.read(&d);
-    messenger::get() << m.to_string(f);
+    io::mout << m.to_string(f);
 }
 
 std::string engine::message_impl(std::string server, const std::string& key,
@@ -371,7 +373,7 @@ std::string engine::message_impl(std::string server, const std::string& key,
     slist = curl_slist_append(slist, "Content-Type: text/xml");
     curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
     if (s >= NORMAL) {
-        messenger::get() << log << endl;
+        io::mout << log << io::endl;
     }
     CURLcode res = curl_easy_perform(m_curl);
     curl_slist_free_all(slist);
@@ -400,7 +402,7 @@ std::string engine::messages_impl(std::string server, const std::string& key, st
     slist = curl_slist_append(slist, "Content-Type: text/xml");
     curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
     if (s >= NORMAL) {
-        messenger::get() << "Getting messages from the server." << endl;
+        io::mout << "Getting messages from the server." << io::endl;
     }
     CURLcode res = curl_easy_perform(m_curl);
     curl_slist_free_all(slist);
@@ -425,7 +427,7 @@ std::string engine::process_file_request_responce(const std::string& r, report_l
         if (n == "url") {
             q = std::string(i->value(), i->value_size());
             if (s >= NORMAL) {
-                    messenger::get() << "Request sent successfully. URL: " << q << endl;
+                    io::mout << "Request sent successfully. URL: " << q << io::endl;
             }
             break;
         }

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "messenger.h"
-
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -9,7 +7,7 @@
 #include <string>
 #include <vector>
 
-namespace lf {
+namespace io {
 
 /**
  * @class table_printer.
@@ -40,14 +38,6 @@ public:
 
     /// @brief Prints footer to the stream.
     void print_footer();
-
-    /// @brief Prints endline to the stream.
-    table_printer& operator<<(endl_type input){
-        while (m_j != 0) {
-            *this << "";
-        }
-        return *this;
-    }
 
     /// @brief Prints float number to the stream.
     table_printer& operator<<(float input);

@@ -12,7 +12,7 @@
 int main(int argc, char** argv)
 {
     lf::engine e;
-    lf::command_processor p(lf::messenger::get());
+    lf::command_processor p(io::mout);
     p.register_command(new lf::help_command(p));
     p.register_command(new lf::send_command(e));
     p.register_command(new lf::messages_command(e));

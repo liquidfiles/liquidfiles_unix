@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-namespace lf {
+namespace io {
 
 class endl_type{};
 
@@ -60,5 +60,7 @@ public:
     }
     /// @}
 };
+
+extern messenger& mout;
 
 }

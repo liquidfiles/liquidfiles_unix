@@ -17,7 +17,7 @@ help_command::help_command(command_processor& p)
 
 void help_command::print_help() const
 {
-    lf::messenger::get() << "Usage:\n"
+    io::mout << "Usage:\n"
     "\tliquidfiles <command> <command_args>\n"
 "\n"
 "Valid commands are:\n";
@@ -34,29 +34,29 @@ void help_command::print_help() const
     i = cs.begin();
     while (i != cs.end()) {
         if ((*i) != name()) {
-            messenger::get() << '\t' << (*i);
+            io::mout << '\t' << (*i);
             for (unsigned j = 0; j < max_length - i->size(); ++j) {
-                messenger::get() << ' ';
+                io::mout << ' ';
             }
-            messenger::get() << m_command_processor.get_command(*i)->description() << endl;
+            io::mout << m_command_processor.get_command(*i)->description() << io::endl;
         }
         ++i;
     }
 
-    lf::messenger::get() << "\n"
+    io::mout << "\n"
 "Type 'liquidfiles help <command_name>' to see command specific options and usage.\n"
 "\n"
 "Abnormal exit codes:\n";
-    messenger::get() << '\t' << 1 << "     Command line arguments are invalid - "
+    io::mout << '\t' << 1 << "     Command line arguments are invalid - "
         "Invalid command name, missing required argument,"
-        " invalid value for specific argument." << endl;;
-    messenger::get() << '\t' << 2 << "     CURL error - Can't connect to host,"
-        " connection timeout, certificate check failure, etc." << endl;;
-    messenger::get() << '\t' << 3 << "     Error during file upload -"
-        " Invalid API key, Invalid filename, etc." << endl;
-    messenger::get() << '\t' << 4 << "     Error during file send to user." << endl;
-    messenger::get() << '\t' << 5 << "     Error in file system - "
-        "Can't open file, etc." << endl;
+        " invalid value for specific argument." << io::endl;;
+    io::mout << '\t' << 2 << "     CURL error - Can't connect to host,"
+        " connection timeout, certificate check failure, etc." << io::endl;;
+    io::mout << '\t' << 3 << "     Error during file upload -"
+        " Invalid API key, Invalid filename, etc." << io::endl;
+    io::mout << '\t' << 4 << "     Error during file send to user." << io::endl;
+    io::mout << '\t' << 5 << "     Error in file system - "
+        "Can't open file, etc." << io::endl;
 }
 
 void help_command::execute(const arguments& args)
@@ -72,13 +72,13 @@ void help_command::execute(const arguments& args)
         if (c == 0) {
             throw invalid_command_name(*i);
         }
-        messenger::get() <<
+        io::mout <<
     "Usage:\n"
         "\tliquidfiles " << c->name() << " " <<
         c->usage() << "\n\n"
         "Description:\n\t" << c->description() << "\n\n"
         "Arguments:\n" <<
-        c->arg_descriptions() << "\n" << endl;
+        c->arg_descriptions() << "\n" << io::endl;
     }
 }
 

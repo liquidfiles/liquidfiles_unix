@@ -143,7 +143,7 @@ void message_responce::write_table(std::stringstream& m) const
     m << "Message: " << m_message << "\n";
     if (!m_attachments.empty()) {
         m << "Attachments:\n";
-        table_printer tp(&m);
+        io::table_printer tp(&m);
         tp.add_column("N", 4);
         tp.add_column("Attachment", 140);
         tp.print_header();
@@ -165,7 +165,7 @@ void message_responce::write_table(std::stringstream& m) const
 
 void message_responce::write_csv(std::stringstream& m) const
 {
-    csv_ostream cp(&m);
+    io::csv_ostream cp(&m);
     cp << m_id << m_sender;
     std::vector<std::string>::const_iterator i;
     i = m_recipients.begin();

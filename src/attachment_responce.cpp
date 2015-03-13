@@ -63,7 +63,7 @@ std::string attachment_responce::to_string(output_format f) const
         break;
     case CSV_FORMAT:
     {
-        csv_ostream cp(&m);
+        io::csv_ostream cp(&m);
         cp << m_filename << m_content_type << m_checksum << m_crc32 << m_url << m_size;
     }
     default:

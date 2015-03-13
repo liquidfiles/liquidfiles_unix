@@ -1,8 +1,9 @@
 #include "messenger.h"
 
-namespace lf {
+namespace io {
 
 messenger* messenger::s_instance = 0;
 endl_type endl;
+messenger& mout = messenger::get();
 
 }

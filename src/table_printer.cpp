@@ -3,7 +3,7 @@
 #include <iomanip>
 #include <stdexcept>
 
-namespace lf {
+namespace io {
 
 table_printer::table_printer(std::ostream* output,
         const std::string& separator)
