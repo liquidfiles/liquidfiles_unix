@@ -88,6 +88,19 @@ public:
     {
     }
 
+    /**
+     * @brief Constructor.
+     * @param s Server.
+     * @param k Api key.
+     * @param v Validate flag.
+     */
+    credentials(const std::string& s, const std::string k, validate_cert v)
+        : m_server(s)
+        , m_api_key(k)
+        , m_validate_flag(v)
+    {
+    }
+
 private:
     std::string m_server;
     std::string m_api_key;

@@ -122,4 +122,13 @@ public:
     }
 };
 
+class get_api_key_error : public exception
+{
+public:
+    get_api_key_error(std::string s)
+        : exception(std::string("Error during 'get_api_key' command - ") + s, 1)
+    {
+    }
+};
+
 }

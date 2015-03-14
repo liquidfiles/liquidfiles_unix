@@ -235,6 +235,53 @@ std::string engine::file_request(std::string server,
     return process_file_request_responce(r, s);
 }
 
+std::string engine::get_api_key(std::string server,
+        const std::string& user,
+        const std::string& password,
+        report_level s,
+        validate_cert v)
+{
+    if (m_curl == 0) {
+        m_curl = curl_easy_init();
+    }
+    if (m_curl == 0) {
+        throw curl_error("Failed to initialize CURL");
+    }
+    curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, &data_get);
+    curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, 0);
+    if (v == NOT_VALIDATE) {
+        curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYPEER, false);
+    }
+    if (s == VERBOSE) {
+        curl_easy_setopt(m_curl, CURLOPT_VERBOSE, 1L);
+    }
+    server += "/login";
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    struct curl_slist* slist = 0;
+    slist = curl_slist_append(slist, "Content-Type: text/xml");
+    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    std::string data = std::string(
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
+  <user>\
+    <email>") + user + std::string("</email>\
+    <password>") + password + std::string("</password>\
+");
+    data += "</user>\n";
+    curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str()); 
+    if (s >= NORMAL) {
+        io::mout << "Getting API key for user '" << user << "'" << io::endl;
+    }
+    CURLcode res = curl_easy_perform(m_curl);
+    curl_slist_free_all(slist);
+    if (res != CURLE_OK) {
+        throw curl_error(std::string(curl_easy_strerror(res)));
+    }
+    std::string r = s_data;
+    s_data.clear();
+    return process_get_api_key_responce(r, s);
+}
+
 std::string engine::attach(std::string server,
         const std::string& file,
         report_level s)
@@ -435,6 +482,46 @@ std::string engine::process_file_request_responce(const std::string& r, report_l
     }
     if (q.empty()) {
         throw send_error(r);
+    }
+    return q;
+}
+
+std::string engine::process_get_api_key_responce(const std::string& r, report_level s) const
+{
+    xml::document<> d;
+    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
+    if (d.first_node() == 0) {
+        throw get_api_key_error(r);
+    }
+    std::string h(d.first_node()->name(), d.first_node()->name_size());
+    xml::node_iterator<> i(d.first_node());
+    xml::node_iterator<> e;
+    if (h == "error") {
+        while(i != e) {
+            std::string n(i->name(), i->name_size());
+            if (n == "message") {
+                std::string m = std::string(i->value(), i->value_size());
+                throw get_api_key_error(m);
+                break;
+            }
+            ++i;
+        }
+        throw get_api_key_error(r);
+    }
+    std::string q;
+    while(i != e) {
+        std::string n(i->name(), i->name_size());
+        if (n == "api_key") {
+            q = std::string(i->value(), i->value_size());
+            if (s >= NORMAL) {
+                io::mout << "Retrieved API key: " << q << io::endl;
+            }
+            break;
+        }
+        ++i;
+    }
+    if (q.empty()) {
+        throw get_api_key_error(r);
     }
     return q;
 }

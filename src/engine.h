@@ -115,7 +115,7 @@ public:
      * @param id Message id.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
-     * @throw curl_error.
+     * @throw curl_error, file_error.
      */
     void download(std::string server,
             const std::string& path,
@@ -133,7 +133,7 @@ public:
      * @param f Date, to get messages from that date.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
-     * @throw curl_error.
+     * @throw curl_error, file_error.
      */
     void download(std::string server,
             const std::string& path,
@@ -152,13 +152,28 @@ public:
      * @param message Message body of email.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
-     * @throw curl_error, upload_error, send_error.
+     * @throw curl_error.
      */
     std::string file_request(std::string server,
             const std::string& user, 
             const std::string& key,
             const std::string& subject,
             const std::string& message,
+            report_level s,
+            validate_cert v);
+
+    /**
+     * @brief Gets the API key for the specified user.
+     * @param server Server URL.
+     * @param user User name or email.
+     * @param password Password of the user.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error, get_api_key_error.
+     */
+    std::string get_api_key(std::string server,
+            const std::string& user, 
+            const std::string& password,
             report_level s,
             validate_cert v);
     /// @}
@@ -183,6 +198,7 @@ private:
     std::string messages_impl(std::string server, const std::string& key, std::string l,
             std::string f, report_level s, validate_cert v);
     std::string process_file_request_responce(const std::string& r, report_level s) const;
+    std::string process_get_api_key_responce(const std::string& r, report_level s) const;
 
 private:
     CURL* m_curl;
