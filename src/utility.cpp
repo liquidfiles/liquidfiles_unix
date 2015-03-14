@@ -10,6 +10,11 @@ bool is_named_argument(const std::string& a)
     return a.find_first_of("=") != a.npos;
 }
 
+bool is_boolean_argument(const std::string& a)
+{
+    return a.size() > 1 && a[0] == '-' && a[1] != '-';
+}
+
 void split(std::vector<std::string>& out,
         const std::string& s, const std::string& d)
 {

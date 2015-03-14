@@ -1,14 +1,15 @@
 #include "credentials.h"
+#include "arguments.h"
+#include "exceptions.h"
 #include "messenger.h"
 
 #include <cstdlib>
 #include <errno.h>
 #include <fstream>
+#include <set>
 #include <sys/stat.h>
 
 namespace lf {
-
-namespace credentials {
 
 namespace {
 
@@ -21,28 +22,28 @@ std::string get_directory_path()
 
 }
 
-void load(std::string& url, std::string& key, validate_cert& val)
+void credentials::load(credentials& c)
 {
     std::string d = get_directory_path();
     d += "/credentials";
     std::ifstream f(d.c_str());
-    if (!f) {
-        io::mout << "Warning: could not load credentials." << io::endl;
+    int version = 0;
+    f >> version;
+    switch (version) {
+    case 1:
+    {
+        f >> c.m_server;
+        f >> c.m_api_key;
+        int x;
+        f >> x;
+        c.m_validate_flag = static_cast<validate_cert>(x);
     }
-    f >> url;
-    if (!f) {
-        io::mout << "Warning: could not load credentials." << io::endl;
+    default:
+        ;
     }
-    f >> key;
-    if (!f) {
-        io::mout << "Warning: could not load credentials." << io::endl;
-    }
-    int x;
-    f >> x;
-    val = static_cast<validate_cert>(x);
 }
 
-void save(const std::string& url, const std::string& key, validate_cert val)
+void credentials::save(const credentials& c)
 {
     std::string d = get_directory_path();
     struct stat sb;
@@ -56,11 +57,36 @@ void save(const std::string& url, const std::string& key, validate_cert val)
     }
     d += "/credentials";
     std::ofstream f(d.c_str());
-    f << url << std::endl;
-    f << key << std::endl;
-    f << val << std::endl;
+    f << m_serial_version << std::endl;
+    f << c.m_server << std::endl;
+    f << c.m_api_key << std::endl;
+    f << c.m_validate_flag << std::endl;
 }
 
+credentials credentials::manage(const arguments& args)
+{
+    credentials c;
+    load(c);
+    if (args.exists("--api_key")) {
+        c.m_api_key = args["--api_key"];
+    }
+    if (args.exists("--server")) {
+        c.m_server = args["--server"];
+    }
+    if (c.m_api_key == "") {
+        throw missing_argument("--api_key");
+    }
+    if (c.m_server == "") {
+        throw missing_argument("--server");
+    }
+    const std::set<std::string>& b = args.get_boolean_arguments();
+    if (b.find("-k") != b.end()) {
+        c.m_validate_flag = NOT_VALIDATE;
+    }
+    if (b.find("-s") != b.end()) {
+        save(c);
+    }
+    return c;
 }
 
 }

@@ -1,4 +1,5 @@
 #include "messages_command.h"
+#include "credentials.h"
 #include "declarations.h"
 #include "engine.h"
 #include "exceptions.h"
@@ -7,22 +8,24 @@ namespace lf {
 
 messages_command::messages_command(engine& e)
     : command("messages",
-            "[-k] [--report_level=<level>] --api_key=<key> [--output_format=<format>]\n"
-            "\t--server=<url> (--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)",
+            credentials::usage() + "[--output_format=<format>]\n"
+            "\t[--report_level=<level>] (--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)",
             "Lists the available messages.",
-            "\t-k - If specified, don't validate server certificate.\n"
-            "\t--report_level - Level of reporting. Valid values:\n"
-            "\t                 silent, normal, verbose.\n"
-            "\t                 Default value: normal.\n"
-            "\t--api_key - API key of liquidfiles, to login to system.\n"
-            "\t--output_format - Specifies output string format. Valid values:\n"
-            "\t                  table, csv.\n"
-            "\t                  Default value: table.\n"
-            "\t--server - The server URL.\n"
-            "\t--message_id - Message id to download attachments of it.\n"
-            "\t--sent_in_the_last - Show messages sent in the last specified\n"
-            "\t                     hours.\n"
-            "\t--sent_after - Show messages sent after specified date."
+            credentials::arg_descriptions() +
+            "\t--report_level\n"
+            "\t    Level of reporting.\n"
+            "\t    Valid values: silent, normal, verbose.\n"
+            "\t    Default value: normal.\n\n"
+            "\t--output_format\n"
+            "\t    Specifies output string format.\n"
+            "\t    Valid values: table, csv.\n"
+            "\t    Default value: table.\n\n"
+            "\t--message_id\n"
+            "\t    Message id to show.\n\n"
+            "\t--sent_in_the_last\n"
+            "\t    Show messages sent in the last specified hours.\n\n"
+            "\t--sent_after\n"
+            "\t    Show messages sent after specified date."
             )
     , m_engine(e)
 {
@@ -30,14 +33,7 @@ messages_command::messages_command(engine& e)
 
 void messages_command::execute(const arguments& args)
 {
-    std::string server = args["--server"];
-    if (server == "") {
-        throw missing_argument("--server");
-    }
-    std::string api_key = args["--api_key"];
-    if (api_key == "") {
-        throw missing_argument("--api_key");
-    }
+    credentials c = credentials::manage(args);
     std::string l = args["--sent_in_the_last"];
     std::string f = args["--sent_after"];
     report_level rl = NORMAL;
@@ -58,17 +54,11 @@ void messages_command::execute(const arguments& args)
         throw invalid_argument_value("--output_format",
                 "table, csv");
     }
-    std::set<std::string> unnamed_args = args.get_unnamed_arguments();
-    validate_cert val = VALIDATE;
-    if (unnamed_args.find("-k") != unnamed_args.end()) {
-        val = NOT_VALIDATE;
-        unnamed_args.erase("-k");
-    }
     std::string id = args["--message_id"];
     if (id == "") {
-        m_engine.messages(server, api_key, l, f, rl, val, of);
+        m_engine.messages(c.server(), c.api_key(), l, f, rl, c.validate_flag(), of);
     } else {
-        m_engine.message(server, api_key, id, rl, val, of);
+        m_engine.message(c.server(), c.api_key(), id, rl, c.validate_flag(), of);
     }
 }
 

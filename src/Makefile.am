@@ -4,7 +4,8 @@ AM_CPPFLAGS = -Wall
 # this lists the binaries to produce, the (non-PHONY, binary) targets in
 # the previous manual Makefile
 bin_PROGRAMS = liquidfiles
-liquidfiles_SOURCES = attachment_responce.cpp \
+liquidfiles_SOURCES = arguments.cpp \
+					  attachment_responce.cpp \
 					  command.cpp \
 					  command_processor.cpp \
 					  credentials.cpp \

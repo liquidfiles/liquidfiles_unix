@@ -89,15 +89,15 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_liquidfiles_OBJECTS = attachment_responce.$(OBJEXT) \
-	command.$(OBJEXT) command_processor.$(OBJEXT) \
-	credentials.$(OBJEXT) download_command.$(OBJEXT) \
-	engine.$(OBJEXT) file_request_command.$(OBJEXT) \
-	help_command.$(OBJEXT) main.$(OBJEXT) \
-	messages_responce.$(OBJEXT) message_responce.$(OBJEXT) \
-	messages_command.$(OBJEXT) messenger.$(OBJEXT) \
-	send_command.$(OBJEXT) table_printer.$(OBJEXT) \
-	utility.$(OBJEXT)
+am_liquidfiles_OBJECTS = arguments.$(OBJEXT) \
+	attachment_responce.$(OBJEXT) command.$(OBJEXT) \
+	command_processor.$(OBJEXT) credentials.$(OBJEXT) \
+	download_command.$(OBJEXT) engine.$(OBJEXT) \
+	file_request_command.$(OBJEXT) help_command.$(OBJEXT) \
+	main.$(OBJEXT) messages_responce.$(OBJEXT) \
+	message_responce.$(OBJEXT) messages_command.$(OBJEXT) \
+	messenger.$(OBJEXT) send_command.$(OBJEXT) \
+	table_printer.$(OBJEXT) utility.$(OBJEXT)
 liquidfiles_OBJECTS = $(am_liquidfiles_OBJECTS)
 liquidfiles_DEPENDENCIES =
 AM_V_P = $(am__v_P_@AM_V@)
@@ -250,7 +250,8 @@ top_srcdir = @top_srcdir@
 
 # what flags you want to pass to the C compiler & linker
 AM_CPPFLAGS = -Wall
-liquidfiles_SOURCES = attachment_responce.cpp \
+liquidfiles_SOURCES = arguments.cpp \
+					  attachment_responce.cpp \
 					  command.cpp \
 					  command_processor.cpp \
 					  credentials.cpp \
@@ -355,6 +356,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arguments.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/attachment_responce.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/command_processor.Po@am__quote@
