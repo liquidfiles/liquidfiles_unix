@@ -5,8 +5,9 @@
 #include "get_api_key_command.h"
 #include "help_command.h"
 #include "messages_command.h"
-#include "messenger.h"
 #include "send_command.h"
+
+#include "io/messenger.h"
 
 #include <string>
 

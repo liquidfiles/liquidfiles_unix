@@ -1,7 +1,8 @@
 #include "credentials.h"
 #include "arguments.h"
 #include "exceptions.h"
-#include "messenger.h"
+
+#include "io/messenger.h"
 
 #include <cstdlib>
 #include <errno.h>

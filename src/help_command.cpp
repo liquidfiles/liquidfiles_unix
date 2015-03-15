@@ -1,7 +1,8 @@
 #include "help_command.h"
 #include "command_processor.h"
 #include "exceptions.h"
-#include "messenger.h"
+
+#include "io/messenger.h"
 
 namespace lf {
 

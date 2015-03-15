@@ -1,9 +1,10 @@
 #include "command_processor.h"
 #include "command.h"
 #include "exceptions.h"
-#include "messenger.h"
 #include "utility.h"
-#include "xml.h"
+
+#include "io/messenger.h"
+#include "xml/xml.h"
 
 #include <cassert>
 

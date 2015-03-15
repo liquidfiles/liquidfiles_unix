@@ -1,7 +1,8 @@
 #include "messages_responce.h"
-#include "csv_stream.h"
-#include "table_printer.h"
-#include "xml_iterators.h"
+
+#include "io/csv_stream.h"
+#include "io/table_printer.h"
+#include "xml/xml_iterators.h"
 
 namespace lf {
 
