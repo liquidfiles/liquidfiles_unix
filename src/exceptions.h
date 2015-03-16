@@ -59,6 +59,15 @@ public:
     }
 };
 
+class invalid_arguments : public exception
+{
+public:
+    invalid_arguments(std::string m)
+        : exception(m, 1)
+    {
+    }
+};
+
 class curl_error : public exception
 {
 public:

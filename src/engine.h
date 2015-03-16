@@ -176,6 +176,23 @@ public:
             const std::string& password,
             report_level s,
             validate_cert v);
+
+    /**
+     * @brief Uploads current file and create filelink.
+     * @param server Server URL.
+     * @param key API Key of Liquidfiles.
+     * @param file File path to upload.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error.
+     */
+    std::string filelink(std::string server,
+            const std::string& key,
+            const std::string& expire,
+            const std::string& file,
+            report_level s,
+            validate_cert v);
+            
     /// @}
 
 private:
@@ -199,6 +216,7 @@ private:
             std::string f, report_level s, validate_cert v);
     std::string process_file_request_responce(const std::string& r, report_level s) const;
     std::string process_get_api_key_responce(const std::string& r, report_level s) const;
+    std::string process_create_filelink_responce(const std::string& r, report_level s) const;
 
 private:
     CURL* m_curl;

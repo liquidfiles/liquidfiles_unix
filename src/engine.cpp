@@ -282,6 +282,45 @@ std::string engine::get_api_key(std::string server,
     return process_get_api_key_responce(r, s);
 }
 
+std::string engine::filelink(std::string server,
+            const std::string& key,
+            const std::string& expire,
+            const std::string& file,
+            report_level s,
+            validate_cert v)
+{
+    init_curl(key, s, v);
+    std::string a = attach(server, file, s);
+    server += "/link";
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    struct curl_slist* slist = 0;
+    slist = curl_slist_append(slist, "Content-Type: text/xml");
+    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    std::string data = std::string(
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
+  <link>\
+    <attachment>") + a + "</attachment>\n";
+    if (!expire.empty()) {
+        data += "<expires_at>";
+        data += expire;
+        data += "</expires_at>\n";
+    }
+    data += "  </link>\n";
+    curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str()); 
+    if (s >= NORMAL) {
+        io::mout << "Creating filelink" << io::endl;
+    }
+    CURLcode res = curl_easy_perform(m_curl);
+    curl_slist_free_all(slist);
+    if (res != CURLE_OK) {
+        throw curl_error(std::string(curl_easy_strerror(res)));
+    }
+    std::string r = s_data;
+    s_data.clear();
+    return process_create_filelink_responce(r, s);
+}
+
 std::string engine::attach(std::string server,
         const std::string& file,
         report_level s)
@@ -515,6 +554,34 @@ std::string engine::process_get_api_key_responce(const std::string& r, report_le
             q = std::string(i->value(), i->value_size());
             if (s >= NORMAL) {
                 io::mout << "Retrieved API key: " << q << io::endl;
+            }
+            break;
+        }
+        ++i;
+    }
+    if (q.empty()) {
+        throw get_api_key_error(r);
+    }
+    return q;
+}
+
+std::string engine::process_create_filelink_responce(const std::string& r, report_level s) const
+{
+    xml::document<> d;
+    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
+    if (d.first_node() == 0) {
+        throw get_api_key_error(r);
+    }
+    std::string h(d.first_node()->name(), d.first_node()->name_size());
+    xml::node_iterator<> i(d.first_node());
+    xml::node_iterator<> e;
+    std::string q;
+    while(i != e) {
+        std::string n(i->name(), i->name_size());
+        if (n == "url") {
+            q = std::string(i->value(), i->value_size());
+            if (s >= NORMAL) {
+                io::mout << "Created filelink sucessfully. URL: " << q << io::endl;
             }
             break;
         }

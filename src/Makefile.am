@@ -11,6 +11,7 @@ liquidfiles_SOURCES = arguments.cpp \
 					  credentials.cpp \
 					  download_command.cpp \
 					  engine.cpp \
+					  filelink_command.cpp \
 					  file_request_command.cpp \
 					  get_api_key_command.cpp \
 					  help_command.cpp \

@@ -93,12 +93,12 @@ am_liquidfiles_OBJECTS = arguments.$(OBJEXT) \
 	attachment_responce.$(OBJEXT) command.$(OBJEXT) \
 	command_processor.$(OBJEXT) credentials.$(OBJEXT) \
 	download_command.$(OBJEXT) engine.$(OBJEXT) \
-	file_request_command.$(OBJEXT) get_api_key_command.$(OBJEXT) \
-	help_command.$(OBJEXT) main.$(OBJEXT) \
-	messages_responce.$(OBJEXT) message_responce.$(OBJEXT) \
-	messages_command.$(OBJEXT) messenger.$(OBJEXT) \
-	send_command.$(OBJEXT) table_printer.$(OBJEXT) \
-	utility.$(OBJEXT)
+	filelink_command.$(OBJEXT) file_request_command.$(OBJEXT) \
+	get_api_key_command.$(OBJEXT) help_command.$(OBJEXT) \
+	main.$(OBJEXT) messages_responce.$(OBJEXT) \
+	message_responce.$(OBJEXT) messages_command.$(OBJEXT) \
+	messenger.$(OBJEXT) send_command.$(OBJEXT) \
+	table_printer.$(OBJEXT) utility.$(OBJEXT)
 liquidfiles_OBJECTS = $(am_liquidfiles_OBJECTS)
 liquidfiles_DEPENDENCIES =
 AM_V_P = $(am__v_P_@AM_V@)
@@ -258,6 +258,7 @@ liquidfiles_SOURCES = arguments.cpp \
 					  credentials.cpp \
 					  download_command.cpp \
 					  engine.cpp \
+					  filelink_command.cpp \
 					  file_request_command.cpp \
 					  get_api_key_command.cpp \
 					  help_command.cpp \
@@ -366,6 +367,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/download_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/engine.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/file_request_command.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/filelink_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/get_api_key_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/help_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@

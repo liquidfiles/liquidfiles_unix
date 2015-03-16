@@ -1,6 +1,7 @@
 #include "command_processor.h"
 #include "download_command.h"
 #include "engine.h"
+#include "filelink_command.h"
 #include "file_request_command.h"
 #include "get_api_key_command.h"
 #include "help_command.h"
@@ -18,6 +19,7 @@ int main(int argc, char** argv)
     p.register_command(new lf::send_command(e));
     p.register_command(new lf::messages_command(e));
     p.register_command(new lf::download_command(e));
+    p.register_command(new lf::filelink_command(e));
     p.register_command(new lf::file_request_command(e));
     p.register_command(new lf::get_api_key_command(e));
 
