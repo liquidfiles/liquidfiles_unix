@@ -2,7 +2,8 @@
 
 #include "attachment_responce.h"
 #include "declarations.h"
-#include "xml.h"
+
+#include "xml/xml.h"
 
 #include <string>
 #include <vector>

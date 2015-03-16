@@ -3,10 +3,11 @@
 #include "exceptions.h"
 #include "messages_responce.h"
 #include "message_responce.h"
-#include "messenger.h"
 #include "utility.h"
-#include "xml.h"
-#include "xml_iterators.h"
+
+#include "io/messenger.h"
+#include "xml/xml.h"
+#include "xml/xml_iterators.h"
 
 #include <cstdio>
 #include <cstring>

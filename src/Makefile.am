@@ -1,4 +1,6 @@
 # what flags you want to pass to the C compiler & linker
+SUBDIRS = io
+
 AM_CPPFLAGS = -Wall
 
 # this lists the binaries to produce, the (non-PHONY, binary) targets in
@@ -19,8 +21,7 @@ liquidfiles_SOURCES = arguments.cpp \
 					  messages_responce.cpp \
 					  message_responce.cpp \
 					  messages_command.cpp \
-					  messenger.cpp \
 					  send_command.cpp \
-					  table_printer.cpp \
 					  utility.cpp 
-liquidfiles_LDADD = 
+
+liquidfiles_LDADD = io/libio.a
