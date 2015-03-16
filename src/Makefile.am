@@ -1,7 +1,7 @@
 # what flags you want to pass to the C compiler & linker
 SUBDIRS = io
 
-AM_CPPFLAGS = -Wall
+AM_CPPFLAGS = -Wall -I $(CURDIR)
 
 # this lists the binaries to produce, the (non-PHONY, binary) targets in
 # the previous manual Makefile

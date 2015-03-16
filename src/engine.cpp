@@ -5,9 +5,9 @@
 #include "message_responce.h"
 #include "utility.h"
 
-#include "io/messenger.h"
-#include "xml/xml.h"
-#include "xml/xml_iterators.h"
+#include <io/messenger.h>
+#include <xml/xml.h>
+#include <xml/xml_iterators.h>
 
 #include <cstdio>
 #include <cstring>
@@ -302,9 +302,7 @@ std::string engine::filelink(std::string server,
   <link>\
     <attachment>") + a + "</attachment>\n";
     if (!expire.empty()) {
-        data += "<expires_at>";
-        data += expire;
-        data += "</expires_at>\n";
+        data += std::string("<expires_at>") + expire + "</expires_at>\n";
     }
     data += "  </link>\n";
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);

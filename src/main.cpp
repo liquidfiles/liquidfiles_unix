@@ -8,7 +8,7 @@
 #include "messages_command.h"
 #include "send_command.h"
 
-#include "io/messenger.h"
+#include <io/messenger.h>
 
 #include <string>
 

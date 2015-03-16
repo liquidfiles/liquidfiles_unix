@@ -2,7 +2,7 @@
 #include "command_processor.h"
 #include "exceptions.h"
 
-#include "io/messenger.h"
+#include <io/messenger.h>
 
 namespace lf {
 

@@ -3,8 +3,8 @@
 #include "exceptions.h"
 #include "utility.h"
 
-#include "io/messenger.h"
-#include "xml/xml.h"
+#include <io/messenger.h>
+#include <xml/xml.h>
 
 #include <cassert>
 
