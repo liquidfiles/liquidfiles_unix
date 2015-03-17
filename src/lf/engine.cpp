@@ -1,9 +1,9 @@
 #include "engine.h"
 #include "attachment_responce.h"
 #include "exceptions.h"
+#include "filelinks_responce.h"
 #include "messages_responce.h"
 #include "message_responce.h"
-#include "utility.h"
 
 #include <io/messenger.h>
 #include <xml/xml.h>
@@ -97,7 +97,7 @@ void engine::messages(std::string server,
         output_format of)
 {
     std::string r = messages_impl(server, key, l, f, s, v);
-    process_messages_responce(r, s, of);
+    process_output_responce<messages_responce>(r, s, of);
 }
 
 void engine::message(std::string server,
@@ -110,12 +110,24 @@ void engine::message(std::string server,
     std::string r =  message_impl(server, key, id, s, v,
             "Getting message from the server.");
     try {
-        process_message_responce(r, s, f);
+        process_output_responce<message_responce>(r, s, f);
     } catch (xml::parse_error&) {
         throw invalid_message_id(id);
     }
 }
 
+namespace {
+
+std::string get_filename(const std::string& url)
+{
+    std::string::size_type i = url.find_last_of('/');
+    if (i == std::string::npos) {
+        throw invalid_url(url);
+    }
+    return url.substr(i + 1);
+}
+
+}
 void engine::download(const std::set<std::string>& urls,
         const std::string& path,
         const std::string& key,
@@ -128,7 +140,7 @@ void engine::download(const std::set<std::string>& urls,
     slist = curl_slist_append(slist, "Content-Type: text/xml");
     curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
     while (i != urls.end()) {
-        std::string filename = utility::get_filename(*i);
+        std::string filename = get_filename(*i);
         if (s >= NORMAL) {
             io::mout << "Downloading file '" << filename << "'" << io::endl;
         }
@@ -320,6 +332,36 @@ std::string engine::filelink(std::string server,
     return process_create_filelink_responce(r, s);
 }
 
+void engine::filelinks(std::string server,
+            const std::string& key,
+            const std::string& limit,
+            report_level s,
+            validate_cert v,
+            output_format of)
+{
+    init_curl(key, s, v);
+    server += "/link";
+    if (!limit.empty()) {
+        server += "?limit=";
+        server += limit;
+    }
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    struct curl_slist* slist = 0;
+    slist = curl_slist_append(slist, "Content-Type: text/xml");
+    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    if (s >= NORMAL) {
+        io::mout << "Getting filelinks from the server." << io::endl;
+    }
+    CURLcode res = curl_easy_perform(m_curl);
+    curl_slist_free_all(slist);
+    if (res != CURLE_OK) {
+        throw curl_error(std::string(curl_easy_strerror(res)));
+    }
+    std::string r = s_data;
+    s_data.clear();
+    process_output_responce<filelinks_responce>(r, s, of);
+}
+
 std::string engine::attach(std::string server,
         const std::string& file,
         report_level s)
@@ -427,22 +469,13 @@ std::string engine::process_send_responce(const std::string& r,
     return "";
 }
 
-void engine::process_messages_responce(const std::string& r,
+template <typename T>
+void engine::process_output_responce(const std::string& r,
         report_level s, output_format f) const
 {
     xml::document<> d;
     d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
-    messages_responce m;
-    m.read(&d);
-    io::mout << m.to_string(f);
-}
-
-void engine::process_message_responce(const std::string& r,
-        report_level s, output_format f) const
-{
-    xml::document<> d;
-    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
-    message_responce m;
+    T m;
     m.read(&d);
     io::mout << m.to_string(f);
 }

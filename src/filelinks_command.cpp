@@ -1,4 +1,4 @@
-#include "messages_command.h"
+#include "filelinks_command.h"
 #include "credentials.h"
 #include "exceptions.h"
 
@@ -7,12 +7,12 @@
 
 namespace lf {
 
-messages_command::messages_command(engine& e)
-    : command("messages",
-            credentials::usage() + "[--output_format=<format>]\n"
-            "\t[--report_level=<level>] (--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)",
-            "Lists the available messages.",
-            credentials::arg_descriptions() +
+filelinks_command::filelinks_command(engine& e)
+    : command("filelinks",
+            credentials::usage() + 
+            "[--report_level=<level>] [--expires=<YYYY-MM-DD>] <file>",
+            "Lists the available filelinks.",
+            credentials::arg_descriptions() + 
             "\t--report_level\n"
             "\t    Level of reporting.\n"
             "\t    Valid values: silent, normal, verbose.\n"
@@ -21,22 +21,16 @@ messages_command::messages_command(engine& e)
             "\t    Specifies output string format.\n"
             "\t    Valid values: table, csv.\n"
             "\t    Default value: table.\n\n"
-            "\t--message_id\n"
-            "\t    Message id to show.\n\n"
-            "\t--sent_in_the_last\n"
-            "\t    Show messages sent in the last specified hours.\n\n"
-            "\t--sent_after\n"
-            "\t    Show messages sent after specified date."
+            "\t--limit\n"
+            "\t    Limit of filelinks list."
             )
     , m_engine(e)
 {
 }
 
-void messages_command::execute(const arguments& args)
+void filelinks_command::execute(const arguments& args)
 {
     credentials c = credentials::manage(args);
-    std::string l = args["--sent_in_the_last"];
-    std::string f = args["--sent_after"];
     report_level rl = NORMAL;
     std::string rls = args["--report_level"];
     if (rls == "silent") {
@@ -55,12 +49,8 @@ void messages_command::execute(const arguments& args)
         throw invalid_argument_value("--output_format",
                 "table, csv");
     }
-    std::string id = args["--message_id"];
-    if (id == "") {
-        m_engine.messages(c.server(), c.api_key(), l, f, rl, c.validate_flag(), of);
-    } else {
-        m_engine.message(c.server(), c.api_key(), id, rl, c.validate_flag(), of);
-    }
+    std::string limit = args["--limit"];
+    m_engine.filelinks(c.server(), c.api_key(), limit, rl, c.validate_flag(), of);
 }
 
 }

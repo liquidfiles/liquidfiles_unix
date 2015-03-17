@@ -46,7 +46,7 @@ void messages_responce::read(xml::node<>* s)
                     continue;
                 }
                 if (n == "authorization") {
-                    r.m_authorization = std::atoi(v.c_str());;
+                    r.m_authorization = std::atoi(v.c_str());
                     continue;
                 }
                 if (n == "authorization_description") {

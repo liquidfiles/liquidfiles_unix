@@ -37,13 +37,6 @@ void split(std::vector<std::string>& out,
  */
 std::pair<std::string, std::string> split(const std::string& s,
         const std::string& d = " ");
-
-/**
- * @brief Parses url and returns the filename at the end of it.
- * @param url URL to parse.
- * @throw invalid_url
- */
-std::string get_filename(std::string url);
 }
 
 }

@@ -39,15 +39,6 @@ split(const std::string& s, const std::string& d)
         std::make_pair(s.substr(0, i), s.substr(i + 1));
 }
 
-std::string get_filename(std::string url)
-{
-    std::string::size_type i = url.find_last_of('/');
-    if (i == std::string::npos) {
-        throw invalid_url(url);
-    }
-    return url.substr(i + 1);
-}
-
 }
 
 }

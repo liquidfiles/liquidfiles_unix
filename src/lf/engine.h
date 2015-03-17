@@ -178,7 +178,7 @@ public:
             validate_cert v);
 
     /**
-     * @brief Uploads current file and create filelink.
+     * @brief Uploads given file and create filelink.
      * @param server Server URL.
      * @param key API Key of Liquidfiles.
      * @param file File path to upload.
@@ -192,7 +192,22 @@ public:
             const std::string& file,
             report_level s,
             validate_cert v);
-            
+
+    /**
+     * @brief Lists the filelinks.
+     * @param server Server URL.
+     * @param key API Key of Liquidfiles.
+     * @param limit Limit of list.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error.
+     */
+    void filelinks(std::string server,
+            const std::string& key,
+            const std::string& limit,
+            report_level s,
+            validate_cert v,
+            output_format of);
     /// @}
 
 private:
@@ -208,8 +223,6 @@ private:
 private:
     std::string process_send_responce(const std::string& r, report_level s) const;
     void process_attach_responce(const std::string& r, report_level s) const;
-    void process_messages_responce(const std::string& r, report_level s, output_format f) const;
-    void process_message_responce(const std::string& r, report_level s, output_format f) const;
     std::string message_impl(std::string server, const std::string& key, std::string id,
             report_level s, validate_cert v, std::string log);
     std::string messages_impl(std::string server, const std::string& key, std::string l,
@@ -217,6 +230,9 @@ private:
     std::string process_file_request_responce(const std::string& r, report_level s) const;
     std::string process_get_api_key_responce(const std::string& r, report_level s) const;
     std::string process_create_filelink_responce(const std::string& r, report_level s) const;
+
+    template <typename T>
+    void process_output_responce(const std::string& r, report_level s, output_format f) const;
 
 private:
     CURL* m_curl;

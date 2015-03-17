@@ -3,6 +3,7 @@
 #include "exceptions.h"
 #include "utility.h"
 
+#include <base/exception.h>
 #include <io/messenger.h>
 #include <xml/xml.h>
 
@@ -64,7 +65,7 @@ int command_processor::execute(const std::string& str)
         }
         arguments args = arguments::construct(p.second);
         c->execute(args);
-    } catch(lf::exception& e) {
+    } catch(base::exception& e) {
         m_messenger << "Error: " << e.message() << io::endl;
         return e.code();
     } catch(xml::parse_error& e) {
@@ -84,7 +85,7 @@ int command_processor::execute(const std::string& cn,
         }
         arguments a = arguments::construct(args);
         c->execute(a);
-    } catch(lf::exception& e) {
+    } catch(base::exception& e) {
         m_messenger << "Error: " << e.message() << io::endl;
         return e.code();
     } catch(xml::parse_error& e) {

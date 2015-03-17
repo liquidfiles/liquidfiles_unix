@@ -1,6 +1,6 @@
 #pragma once
 
-#include "declarations.h"
+#include <lf/declarations.h>
 
 #include <string>
 
@@ -40,7 +40,7 @@ public:
 public:
     static std::string usage()
     {
-        return "[-k] [--server=<url>] [--api_key=<key>] [-s]"; 
+        return "[-k] [--server=<url>] [--api_key=<key>] [-s] "; 
     }
 
     static std::string arg_descriptions()

@@ -1,8 +1,9 @@
 #include "send_command.h"
 #include "credentials.h"
-#include "declarations.h"
-#include "engine.h"
 #include "exceptions.h"
+
+#include <lf/declarations.h>
+#include <lf/engine.h>
 
 namespace lf {
 
