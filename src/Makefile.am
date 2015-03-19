@@ -10,6 +10,7 @@ liquidfiles_SOURCES = arguments.cpp \
 					  command.cpp \
 					  command_processor.cpp \
 					  credentials.cpp \
+					  delete_filelink_command.cpp \
 					  download_command.cpp \
 					  filelink_command.cpp \
 					  filelinks_command.cpp \

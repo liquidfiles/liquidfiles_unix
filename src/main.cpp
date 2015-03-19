@@ -1,4 +1,5 @@
 #include "command_processor.h"
+#include "delete_filelink_command.h"
 #include "download_command.h"
 #include "filelink_command.h"
 #include "filelinks_command.h"
@@ -22,6 +23,7 @@ int main(int argc, char** argv)
     p.register_command(new lf::messages_command(e));
     p.register_command(new lf::download_command(e));
     p.register_command(new lf::filelink_command(e));
+    p.register_command(new lf::delete_filelink_command(e));
     p.register_command(new lf::filelinks_command(e));
     p.register_command(new lf::file_request_command(e));
     p.register_command(new lf::get_api_key_command(e));

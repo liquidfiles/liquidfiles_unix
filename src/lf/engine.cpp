@@ -332,6 +332,15 @@ std::string engine::filelink(std::string server,
     return process_create_filelink_responce(r, s);
 }
 
+void engine::delete_filelink(std::string server,
+            const std::string& key,
+            const std::string& id,
+            report_level s,
+            validate_cert v)
+{
+    init_curl(key, s, v);
+}
+
 void engine::filelinks(std::string server,
             const std::string& key,
             const std::string& limit,

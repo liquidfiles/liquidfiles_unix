@@ -194,6 +194,21 @@ public:
             validate_cert v);
 
     /**
+     * @brief Deletes the given filelink.
+     * @param server Server URL.
+     * @param key API Key of Liquidfiles.
+     * @param id ID of filelink.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error.
+     */
+    void delete_filelink(std::string server,
+            const std::string& key,
+            const std::string& id,
+            report_level s,
+            validate_cert v);
+
+    /**
      * @brief Lists the filelinks.
      * @param server Server URL.
      * @param key API Key of Liquidfiles.
