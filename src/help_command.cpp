@@ -16,33 +16,70 @@ help_command::help_command(command_processor& p)
 {
 }
 
+namespace {
+
+class max_length_calculator
+{
+public:
+    max_length_calculator(unsigned& m)
+        : m_max_length(m)
+    {
+    }
+
+public:
+    void operator()(const std::string& n)
+    {
+        if (n.size() > m_max_length) {
+            m_max_length = n.size();
+        }
+    }
+
+private:
+    unsigned& m_max_length;
+};
+
+class commands_printer
+{
+public:
+    commands_printer(command_processor& p, const std::string& n, unsigned m)
+        : m_command_processor(p)
+        , m_skip_name(n)
+        , m_max_length(m)
+    {
+    }
+
+public:
+    void operator()(const std::string& n)
+    {
+        if (n != m_skip_name) {
+            io::mout << '\t' << n;
+            for (unsigned j = 0; j < m_max_length - n.size(); ++j) {
+                io::mout << ' ';
+            }
+            io::mout << m_command_processor.get_command(n)->description() << io::endl;
+        }
+    }
+
+private:
+    command_processor& m_command_processor;
+    const std::string& m_skip_name;
+    unsigned m_max_length;
+};
+
+}
+
 void help_command::print_help() const
 {
     io::mout << "Usage:\n"
     "\tliquidfiles <command> <command_args>\n"
 "\n"
 "Valid commands are:\n";
-    std::vector<std::string> cs = m_command_processor.get_command_names();
-    std::vector<std::string>::const_iterator i = cs.begin();
     unsigned max_length = 0;
-    while (i != cs.end()) {
-        if (i->size() > max_length) {
-            max_length = i->size();
-        }
-        ++i;
-    }
+    max_length_calculator ml(max_length);
+    m_command_processor.for_each_command_name(ml);
     max_length += 5;
-    i = cs.begin();
-    while (i != cs.end()) {
-        if ((*i) != name()) {
-            io::mout << '\t' << (*i);
-            for (unsigned j = 0; j < max_length - i->size(); ++j) {
-                io::mout << ' ';
-            }
-            io::mout << m_command_processor.get_command(*i)->description() << io::endl;
-        }
-        ++i;
-    }
+    commands_printer cp(m_command_processor, name(), max_length);
+    m_command_processor.for_each_command_name(cp);
 
     io::mout << "\n"
 "Type 'liquidfiles help <command_name>' to see command specific options and usage.\n"

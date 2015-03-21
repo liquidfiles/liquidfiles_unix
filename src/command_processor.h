@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <map>
 #include <string>
 #include <vector>
@@ -56,9 +57,10 @@ public:
 
 public:
     /**
-     * @brief Returns the list of all commands.
+     * @brief Access to the names of commands by functor.
      */
-    std::vector<std::string> get_command_names() const;
+    template <typename F>
+    void for_each_command_name(F f) const;
     /// @}
 
     /// @name Execution
@@ -87,5 +89,33 @@ private:
     registry m_commands;
     io::messenger& m_messenger;
 };
+
+namespace {
+
+template <typename F>
+struct helper_functor
+{
+    helper_functor(F f)
+        : m_unary_function(f)
+    {
+    }
+
+    void operator()(const std::pair<std::string, command*>& p)
+    {
+        m_unary_function(p.first);
+    }
+
+private:
+    F m_unary_function;
+};
+
+}
+
+template <typename F>
+void command_processor::for_each_command_name(F f) const
+{
+    helper_functor<F> ff(f);
+    std::for_each(m_commands.begin(), m_commands.end(), ff);
+}
 
 }

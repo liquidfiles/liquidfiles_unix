@@ -1,5 +1,7 @@
 #pragma once
 
+#include "exceptions.h"
+
 #include <cstdlib>
 #include <cassert>
 #include <new>
@@ -11,52 +13,6 @@
 
 namespace xml
 {
-
-//! Parse error exception. 
-//! This exception is thrown by the parser when an error occurs. 
-//! Use what() function to get human-readable error message. 
-//! Use where() function to get a pointer to position within source text where error was detected.
-//! <br><br>
-//! If throwing exceptions by the parser is undesirable, 
-//! it can be disabled by defining XML_NO_EXCEPTIONS macro before xml.hpp is included.
-//! This will cause the parser to call xml::parse_error_handler() function instead of throwing an exception.
-//! This function must be defined by the user.
-//! <br><br>
-//! This class derives from <code>std::exception</code> class.
-class parse_error: public std::exception
-{
-
-public:
-
-    //! Constructs parse error
-    parse_error(const char *what, void *where)
-        : m_what(what)
-        , m_where(where)
-    {
-    }
-
-    //! Gets human readable description of error.
-    //! \return Pointer to null terminated description of the error.
-    virtual const char *what() const throw()
-    {
-        return m_what;
-    }
-
-    //! Gets pointer to character data where error happened.
-    //! Ch should be the same as char type of document that produced the error.
-    //! \return Pointer to location within the parsed string where error occured.
-    template<class Ch>
-    Ch *where() const
-    {
-        return reinterpret_cast<Ch *>(m_where);
-    }
-
-private:  
-
-    const char *m_what;
-    void *m_where;
-
-};
 
 // Forward declarations
 template<class Ch> class node;
@@ -329,8 +285,6 @@ public:
 
     //! Allocates a new node from the pool, and optionally assigns name and value to it. 
     //! If the allocation request cannot be accomodated, this function will throw <code>std::bad_alloc</code>.
-    //! If exceptions are disabled by defining XML_NO_EXCEPTIONS, this function
-    //! will call xml::parse_error_handler() function.
     //! \param type Type of node to create.
     //! \param name Name to assign to the node, or 0 to assign no name.
     //! \param value Value to assign to the node, or 0 to assign no value.
@@ -362,8 +316,6 @@ public:
 
     //! Allocates a new attribute from the pool, and optionally assigns name and value to it.
     //! If the allocation request cannot be accomodated, this function will throw <code>std::bad_alloc</code>.
-    //! If exceptions are disabled by defining XML_NO_EXCEPTIONS, this function
-    //! will call xml::parse_error_handler() function.
     //! \param name Name to assign to the attribute, or 0 to assign no name.
     //! \param value Value to assign to the attribute, or 0 to assign no value.
     //! \param name_size Size of name to assign, or 0 to automatically calculate size from name string.
@@ -393,8 +345,6 @@ public:
 
     //! Allocates a char array of given size from the pool, and optionally copies a given string to it.
     //! If the allocation request cannot be accomodated, this function will throw <code>std::bad_alloc</code>.
-    //! If exceptions are disabled by defining XML_NO_EXCEPTIONS, this function
-    //! will call xml::parse_error_handler() function.
     //! \param source String to initialize the allocated memory with, or 0 to not initialize it.
     //! \param size Number of characters to allocate, or zero to calculate it automatically from source string length; if size is 0, source string must be specified and null terminated.
     //! \return Pointer to allocated char array. This pointer will never be NULL.
@@ -1324,9 +1274,9 @@ public:
                 ++text;     // Skip '<'
                 if (node<Ch> *n = parse_node<Flags>(text))
                     this->append_node(n);
-            }
-            else
+            } else {
                 throw parse_error("expected <", text);
+            }
         }
 
     }

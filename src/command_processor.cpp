@@ -5,7 +5,6 @@
 
 #include <base/exception.h>
 #include <io/messenger.h>
-#include <xml/xml.h>
 
 #include <cassert>
 
@@ -44,17 +43,6 @@ command* command_processor::get_command(std::string name)
     return 0;
 }
 
-std::vector<std::string> command_processor::get_command_names() const
-{
-    std::vector<std::string> res;
-    registry::const_iterator i = m_commands.begin();
-    while(i != m_commands.end()) {
-        res.push_back(i->first);
-        ++i;
-    }
-    return res;
-}
-
 int command_processor::execute(const std::string& str)
 {
     std::pair<std::string, std::string> p = utility::split(str, " ");
@@ -68,9 +56,6 @@ int command_processor::execute(const std::string& str)
     } catch(base::exception& e) {
         m_messenger << "Error: " << e.message() << io::endl;
         return e.code();
-    } catch(xml::parse_error& e) {
-        m_messenger << "Xml error: " << e.what() << io::endl;
-        return 4;
     }
     return 0;
 }
@@ -88,9 +73,6 @@ int command_processor::execute(const std::string& cn,
     } catch(base::exception& e) {
         m_messenger << "Error: " << e.message() << io::endl;
         return e.code();
-    } catch(xml::parse_error& e) {
-        m_messenger << "Xml error: " << e.what() << io::endl;
-        return 4;
     }
     return 0;
 }
