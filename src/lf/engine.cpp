@@ -339,6 +339,27 @@ void engine::delete_filelink(std::string server,
             validate_cert v)
 {
     init_curl(key, s, v);
+    server += "/link/";
+    server += id;
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    struct curl_slist* slist = 0;
+    slist = curl_slist_append(slist, "Content-Type: text/xml");
+    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    curl_easy_setopt(m_curl,CURLOPT_CUSTOMREQUEST,"DELETE");
+    if (s >= NORMAL) {
+        io::mout << "Deleting filelink with id '" << id << "'" << io::endl;
+    }
+    CURLcode res = curl_easy_perform(m_curl);
+    curl_slist_free_all(slist);
+    if (res != CURLE_OK) {
+        throw curl_error(std::string(curl_easy_strerror(res)));
+    }
+    std::string r = s_data;
+    s_data.clear();
+    if (r.find_first_not_of(' ') != r.npos) {
+        throw request_error("delete_filelink", r);
+    }
+    io::mout << "Filelink deleted successfully." << io::endl;
 }
 
 void engine::filelinks(std::string server,
@@ -453,7 +474,7 @@ void engine::process_attach_responce(const std::string& r, report_level s) const
         }
         return;
     }
-    throw upload_error(r);
+    throw request_error("upload", r);
 }
 
 std::string engine::process_send_responce(const std::string& r,
@@ -474,7 +495,7 @@ std::string engine::process_send_responce(const std::string& r,
         }
         ++i;
     }
-    throw send_error(r);
+    throw request_error("send", r);
     return "";
 }
 
@@ -561,7 +582,7 @@ std::string engine::process_file_request_responce(const std::string& r, report_l
         ++i;
     }
     if (q.empty()) {
-        throw send_error(r);
+        throw request_error("file_request", r);
     }
     return q;
 }
@@ -571,7 +592,7 @@ std::string engine::process_get_api_key_responce(const std::string& r, report_le
     xml::document<> d;
     d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
     if (d.first_node() == 0) {
-        throw get_api_key_error(r);
+        throw request_error("get_api_key", r);
     }
     std::string h(d.first_node()->name(), d.first_node()->name_size());
     xml::node_iterator<> i(d.first_node());
@@ -581,12 +602,12 @@ std::string engine::process_get_api_key_responce(const std::string& r, report_le
             std::string n(i->name(), i->name_size());
             if (n == "message") {
                 std::string m = std::string(i->value(), i->value_size());
-                throw get_api_key_error(m);
+                throw request_error("get_api_key", m);
                 break;
             }
             ++i;
         }
-        throw get_api_key_error(r);
+        throw request_error("get_api_key", r);
     }
     std::string q;
     while(i != e) {
@@ -601,7 +622,7 @@ std::string engine::process_get_api_key_responce(const std::string& r, report_le
         ++i;
     }
     if (q.empty()) {
-        throw get_api_key_error(r);
+        throw request_error("get_api_key", r);
     }
     return q;
 }
@@ -611,7 +632,7 @@ std::string engine::process_create_filelink_responce(const std::string& r, repor
     xml::document<> d;
     d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
     if (d.first_node() == 0) {
-        throw get_api_key_error(r);
+        throw request_error("create_filelink", r);
     }
     std::string h(d.first_node()->name(), d.first_node()->name_size());
     xml::node_iterator<> i(d.first_node());
@@ -629,7 +650,7 @@ std::string engine::process_create_filelink_responce(const std::string& r, repor
         ++i;
     }
     if (q.empty()) {
-        throw get_api_key_error(r);
+        throw request_error("create_filelink", r);
     }
     return q;
 }

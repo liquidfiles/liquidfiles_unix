@@ -46,7 +46,7 @@ public:
      * @param fs Files list to send.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
-     * @throw curl_error, upload_error, send_error.
+     * @throw curl_error, request_error.
      */
     std::string send(std::string server,
             const std::string& user, 
@@ -84,7 +84,7 @@ public:
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
      * @param f Format of output (table or csv).
-     * @throw curl_error.
+     * @throw curl_error, invalid_message_id.
      */
     void message(std::string server,
             const std::string& key,
@@ -100,6 +100,7 @@ public:
      * @param key API Key of Liquidfiles.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
+     * @throw file_error, curl_error, invalid_url.
      */
     void download(const std::set<std::string>& urls,
             const std::string& path,
@@ -115,7 +116,7 @@ public:
      * @param id Message id.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
-     * @throw curl_error, file_error.
+     * @throw curl_error, file_error, invalid_message_id, invalid_url.
      */
     void download(std::string server,
             const std::string& path,
@@ -133,7 +134,7 @@ public:
      * @param f Date, to get messages from that date.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
-     * @throw curl_error, file_error.
+     * @throw curl_error, file_error, invalid_url.
      */
     void download(std::string server,
             const std::string& path,
@@ -152,7 +153,7 @@ public:
      * @param message Message body of email.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
-     * @throw curl_error.
+     * @throw curl_error, request_error.
      */
     std::string file_request(std::string server,
             const std::string& user, 
@@ -169,7 +170,7 @@ public:
      * @param password Password of the user.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
-     * @throw curl_error, get_api_key_error.
+     * @throw curl_error, request_error.
      */
     std::string get_api_key(std::string server,
             const std::string& user, 
@@ -184,7 +185,7 @@ public:
      * @param file File path to upload.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
-     * @throw curl_error.
+     * @throw curl_error, request_error.
      */
     std::string filelink(std::string server,
             const std::string& key,
@@ -200,7 +201,7 @@ public:
      * @param id ID of filelink.
      * @param s Silence flag.
      * @param v Validate certificate flag for HTTP request.
-     * @throw curl_error.
+     * @throw curl_error, request_error.
      */
     void delete_filelink(std::string server,
             const std::string& key,
