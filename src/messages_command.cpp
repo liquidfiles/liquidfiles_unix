@@ -1,14 +1,14 @@
 #include "messages_command.h"
 #include "credentials.h"
-#include "exceptions.h"
 
+#include <cmd/exceptions.h>
 #include <lf/declarations.h>
 #include <lf/engine.h>
 
 namespace lf {
 
 messages_command::messages_command(engine& e)
-    : command("messages",
+    : cmd::command("messages",
             credentials::usage() + "[--output_format=<format>]\n"
             "\t[--report_level=<level>] (--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)",
             "Lists the available messages.",
@@ -32,7 +32,7 @@ messages_command::messages_command(engine& e)
 {
 }
 
-void messages_command::execute(const arguments& args)
+void messages_command::execute(const cmd::arguments& args)
 {
     credentials c = credentials::manage(args);
     const std::string& l = args["--sent_in_the_last"];
@@ -44,7 +44,7 @@ void messages_command::execute(const arguments& args)
     } else if (rls == "verbose") {
         rl = VERBOSE;
     } else if (rls != "" && rls != "normal") {
-        throw invalid_argument_value("--report_level",
+        throw cmd::invalid_argument_value("--report_level",
                 "silent, normal, verbose");
     }
     output_format of = TABLE_FORMAT;
@@ -52,7 +52,7 @@ void messages_command::execute(const arguments& args)
     if (ofs == "csv") {
         of = CSV_FORMAT;
     } else if (ofs != "" && ofs != "table") {
-        throw invalid_argument_value("--output_format",
+        throw cmd::invalid_argument_value("--output_format",
                 "table, csv");
     }
     const std::string& id = args["--message_id"];

@@ -1,7 +1,7 @@
 #include "utility.h"
 #include "exceptions.h"
 
-namespace lf {
+namespace cmd {
 
 namespace utility {
 

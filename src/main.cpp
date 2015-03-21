@@ -1,4 +1,3 @@
-#include "command_processor.h"
 #include "delete_filelink_command.h"
 #include "download_command.h"
 #include "filelink_command.h"
@@ -9,6 +8,7 @@
 #include "messages_command.h"
 #include "send_command.h"
 
+#include <cmd/command_processor.h>
 #include <io/messenger.h>
 #include <lf/engine.h>
 
@@ -17,7 +17,7 @@
 int main(int argc, char** argv)
 {
     lf::engine e;
-    lf::command_processor p(io::mout);
+    cmd::command_processor p(io::mout);
     p.register_command(new lf::help_command(p));
     p.register_command(new lf::send_command(e));
     p.register_command(new lf::messages_command(e));

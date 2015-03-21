@@ -1,6 +1,6 @@
 #include "command.h"
 
-namespace lf {
+namespace cmd {
 
 command::command(const std::string& n, const std::string& u, const std::string& d,
         const argument_descriptions& a)

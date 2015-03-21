@@ -1,14 +1,14 @@
 #include "file_request_command.h"
 #include "credentials.h"
-#include "exceptions.h"
 
+#include <cmd/exceptions.h>
 #include <lf/declarations.h>
 #include <lf/engine.h>
 
 namespace lf {
 
 file_request_command::file_request_command(engine& e)
-    : command("file_request",
+    : cmd::command("file_request",
             credentials::usage() +
             "[--report_level=<level>] --to=<username> [--subject=<string>] [--message=<string>]",
             "Sends the file request to specified user.",
@@ -28,12 +28,12 @@ file_request_command::file_request_command(engine& e)
 {
 }
 
-void file_request_command::execute(const arguments& args)
+void file_request_command::execute(const cmd::arguments& args)
 {
     credentials c = credentials::manage(args);
     const std::string& user = args["--to"];
     if (user == "") {
-        throw missing_argument("--to");
+        throw cmd::missing_argument("--to");
     }
     report_level rl = NORMAL;
     const std::string& rls = args["--report_level"];
@@ -42,7 +42,7 @@ void file_request_command::execute(const arguments& args)
     } else if (rls == "verbose") {
         rl = VERBOSE;
     } else if (rls != "" && rls != "normal") {
-        throw invalid_argument_value("--report_level",
+        throw cmd::invalid_argument_value("--report_level",
                 "silent, normal, verbose");
     }
     const std::string& subject = args["--subject"];

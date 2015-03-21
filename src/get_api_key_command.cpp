@@ -1,14 +1,14 @@
 #include "get_api_key_command.h"
 #include "credentials.h"
-#include "exceptions.h"
 
+#include <cmd/exceptions.h>
 #include <lf/declarations.h>
 #include <lf/engine.h>
 
 namespace lf {
 
 get_api_key_command::get_api_key_command(engine& e)
-    : command("get_api_key",
+    : cmd::command("get_api_key",
             "[-k] --server=<url> --username=<email> --password=<password> [-s] [--report_level=<level>]",
             "Retrieves api key for the specified user.",
             "\t-k\n"
@@ -31,19 +31,19 @@ get_api_key_command::get_api_key_command(engine& e)
 {
 }
 
-void get_api_key_command::execute(const arguments& args)
+void get_api_key_command::execute(const cmd::arguments& args)
 {
     const std::string& server = args["--server"];
     if (server == "") {
-        throw missing_argument("--server");
+        throw cmd::missing_argument("--server");
     }
     const std::string& user = args["--username"];
     if (user == "") {
-        throw missing_argument("--username");
+        throw cmd::missing_argument("--username");
     }
     const std::string& password = args["--password"];
     if (password == "") {
-        throw missing_argument("--password");
+        throw cmd::missing_argument("--password");
     }
     report_level rl = NORMAL;
     const std::string& rls = args["--report_level"];
@@ -52,7 +52,7 @@ void get_api_key_command::execute(const arguments& args)
     } else if (rls == "verbose") {
         rl = VERBOSE;
     } else if (rls != "" && rls != "normal") {
-        throw invalid_argument_value("--report_level",
+        throw cmd::invalid_argument_value("--report_level",
                 "silent, normal, verbose");
     }
     const std::set<std::string>& b = args.get_boolean_arguments();

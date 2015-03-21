@@ -1,14 +1,14 @@
 #include "download_command.h"
 #include "credentials.h"
-#include "exceptions.h"
 
+#include <cmd/exceptions.h>
 #include <lf/declarations.h>
 #include <lf/engine.h>
 
 namespace lf {
 
 download_command::download_command(engine& e)
-    : command("download",
+    : cmd::command("download",
             "[-k] [--api_key=<key>] [-s] [--report_level=<level>] [--download_to=<path>]\n"
             "\t(([--server=<server>] (--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)) \n"
             "\t| <url>...)",
@@ -33,12 +33,12 @@ download_command::download_command(engine& e)
 {
 }
 
-void download_command::execute(const arguments& args)
+void download_command::execute(const cmd::arguments& args)
 {
     credentials c;
     try {
         c = credentials::manage(args);
-    } catch (missing_argument&) {
+    } catch (cmd::missing_argument&) {
         if (c.api_key() == "") {
             throw;
         }
@@ -51,7 +51,7 @@ void download_command::execute(const arguments& args)
     } else if (rls == "verbose") {
         rl = VERBOSE;
     } else if (rls != "" && rls != "normal") {
-        throw invalid_argument_value("--report_level",
+        throw cmd::invalid_argument_value("--report_level",
                 "silent, normal, verbose");
     }
     const std::string& l = args["--sent_in_the_last"];

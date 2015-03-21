@@ -1,14 +1,14 @@
 #include "filelinks_command.h"
 #include "credentials.h"
-#include "exceptions.h"
 
+#include <cmd/exceptions.h>
 #include <lf/declarations.h>
 #include <lf/engine.h>
 
 namespace lf {
 
 filelinks_command::filelinks_command(engine& e)
-    : command("filelinks",
+    : cmd::command("filelinks",
             credentials::usage() + 
             "[--report_level=<level>] [--expires=<YYYY-MM-DD>] <file>",
             "Lists the available filelinks.",
@@ -28,7 +28,7 @@ filelinks_command::filelinks_command(engine& e)
 {
 }
 
-void filelinks_command::execute(const arguments& args)
+void filelinks_command::execute(const cmd::arguments& args)
 {
     credentials c = credentials::manage(args);
     report_level rl = NORMAL;
@@ -38,7 +38,7 @@ void filelinks_command::execute(const arguments& args)
     } else if (rls == "verbose") {
         rl = VERBOSE;
     } else if (rls != "" && rls != "normal") {
-        throw invalid_argument_value("--report_level",
+        throw cmd::invalid_argument_value("--report_level",
                 "silent, normal, verbose");
     }
     output_format of = TABLE_FORMAT;
@@ -46,7 +46,7 @@ void filelinks_command::execute(const arguments& args)
     if (ofs == "csv") {
         of = CSV_FORMAT;
     } else if (ofs != "" && ofs != "table") {
-        throw invalid_argument_value("--output_format",
+        throw cmd::invalid_argument_value("--output_format",
                 "table, csv");
     }
     const std::string& limit = args["--limit"];

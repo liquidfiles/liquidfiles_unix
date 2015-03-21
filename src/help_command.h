@@ -1,32 +1,34 @@
 #pragma once
 
-#include "command.h"
+#include <cmd/command.h>
 
 #include <map>
 
-namespace lf {
-
+namespace cmd {
 class command_processor;
+}
+
+namespace lf {
 
 /**
  * @class help_command.
  * @brief Class for 'help' command.
  */
-class help_command : public command
+class help_command : public cmd::command
 {
 public:
     /// @brief Constructor.
-    help_command(command_processor& p);
+    help_command(cmd::command_processor& p);
 
 public:
     /// @brief Executes command by given arguments.
-    virtual void execute(const arguments& args);
+    virtual void execute(const cmd::arguments& args);
 
 private:
     void print_help() const;
 
 private:
-    command_processor& m_command_processor;
+    cmd::command_processor& m_command_processor;
 };
 
 }

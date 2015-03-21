@@ -6,7 +6,7 @@
 #include <base/exception.h>
 #include <io/messenger.h>
 
-namespace lf {
+namespace cmd {
 
 command_processor::command_processor(io::messenger& m)
     : m_messenger(m)

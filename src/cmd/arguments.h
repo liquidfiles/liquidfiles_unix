@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace lf {
+namespace cmd {
 
 /// @class arguments
 /// @brief Represents the arguments of command.

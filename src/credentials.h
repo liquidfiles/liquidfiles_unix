@@ -4,9 +4,11 @@
 
 #include <string>
 
-namespace lf {
-
+namespace cmd {
 class arguments;
+}
+
+namespace lf {
 
 class credentials
 {
@@ -20,7 +22,7 @@ public:
      * @param a Arguments.
      * @throw missing_argument.
      */
-    static credentials manage(const arguments& a);
+    static credentials manage(const cmd::arguments& a);
 
 public:
     /**

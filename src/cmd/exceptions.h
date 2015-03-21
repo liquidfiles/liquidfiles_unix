@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace lf {
+namespace cmd {
 
 class duplicate_name : public base::exception
 {

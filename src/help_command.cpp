@@ -1,13 +1,13 @@
 #include "help_command.h"
-#include "command_processor.h"
-#include "exceptions.h"
 
+#include <cmd/command_processor.h>
+#include <cmd/exceptions.h>
 #include <io/messenger.h>
 
 namespace lf {
 
-help_command::help_command(command_processor& p)
-    : command("help", "[<command_name>]", "Prints help for tool or for specific command.",
+help_command::help_command(cmd::command_processor& p)
+    : cmd::command("help", "[<command_name>]", "Prints help for tool or for specific command.",
         "\t<command_name> - Specifies the name of command for which help\n"
         "\t                 will be printed. If not specified, help for tool\n"
         "\t                 will be printed."
@@ -41,7 +41,7 @@ private:
 class commands_printer
 {
 public:
-    commands_printer(command_processor& p, const std::string& n, unsigned m)
+    commands_printer(cmd::command_processor& p, const std::string& n, unsigned m)
         : m_command_processor(p)
         , m_skip_name(n)
         , m_max_length(m)
@@ -61,7 +61,7 @@ public:
     }
 
 private:
-    command_processor& m_command_processor;
+    cmd::command_processor& m_command_processor;
     const std::string& m_skip_name;
     unsigned m_max_length;
 };
@@ -97,7 +97,7 @@ void help_command::print_help() const
         "Can't open file, etc." << io::endl << io::endl;
 }
 
-void help_command::execute(const arguments& args)
+void help_command::execute(const cmd::arguments& args)
 {
     if (args.get_unnamed_arguments().empty()) {
         print_help();
@@ -106,9 +106,9 @@ void help_command::execute(const arguments& args)
     std::set<std::string>::const_iterator i =
         args.get_unnamed_arguments().begin();
     for (; i != args.get_unnamed_arguments().end(); ++i) {
-        command* c = m_command_processor.get_command(*i);
+        cmd::command* c = m_command_processor.get_command(*i);
         if (c == 0) {
-            throw invalid_command_name(*i);
+            throw cmd::invalid_command_name(*i);
         }
         io::mout <<
     "Usage:\n"

@@ -1,7 +1,7 @@
 #include "arguments.h"
 #include "utility.h"
 
-namespace lf {
+namespace cmd {
 
 bool arguments::exists(const std::string& n) const
 {

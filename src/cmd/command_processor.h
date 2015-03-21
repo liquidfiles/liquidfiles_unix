@@ -9,7 +9,7 @@ namespace io {
 class messenger;
 }
 
-namespace lf {
+namespace cmd {
 
 class command;
 

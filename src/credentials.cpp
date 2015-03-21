@@ -1,7 +1,7 @@
 #include "credentials.h"
-#include "arguments.h"
-#include "exceptions.h"
 
+#include <cmd/arguments.h>
+#include <cmd/exceptions.h>
 #include <io/messenger.h>
 
 #include <cstdlib>
@@ -64,7 +64,7 @@ void credentials::save(const credentials& c)
     f << c.m_validate_flag << std::endl;
 }
 
-credentials credentials::manage(const arguments& args)
+credentials credentials::manage(const cmd::arguments& args)
 {
     credentials c;
     load(c);
@@ -75,10 +75,10 @@ credentials credentials::manage(const arguments& args)
         c.m_server = args["--server"];
     }
     if (c.m_api_key == "") {
-        throw missing_argument("--api_key");
+        throw cmd::missing_argument("--api_key");
     }
     if (c.m_server == "") {
-        throw missing_argument("--server");
+        throw cmd::missing_argument("--server");
     }
     const std::set<std::string>& b = args.get_boolean_arguments();
     if (b.find("-k") != b.end()) {
