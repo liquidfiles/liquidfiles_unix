@@ -9,7 +9,7 @@ namespace lf {
 class curl_error : public base::exception
 {
 public:
-    curl_error(std::string a)
+    curl_error(const std::string& a)
         : base::exception(a, 2)
     {
     }
@@ -27,7 +27,7 @@ public:
 class file_error : public base::exception
 {
 public:
-    file_error(std::string f, std::string e)
+    file_error(const std::string& f, const std::string& e)
         : base::exception(std::string("Can't open file '") + f + "'. " + e, 5)
     {
     }
@@ -36,7 +36,7 @@ public:
 class invalid_message_id : public base::exception
 {
 public:
-    invalid_message_id(std::string a)
+    invalid_message_id(const std::string& a)
         : base::exception(std::string("Messsage with id '") + a + "' does not exist.", 1)
     {
     }
@@ -45,7 +45,7 @@ public:
 class invalid_url : public base::exception
 {
 public:
-    invalid_url(std::string a)
+    invalid_url(const std::string& a)
         : base::exception(std::string("Given URL '") + a + "' is invalid.", 1)
     {
     }

@@ -6,8 +6,6 @@
 #include <base/exception.h>
 #include <io/messenger.h>
 
-#include <cassert>
-
 namespace lf {
 
 command_processor::command_processor(io::messenger& m)
@@ -27,7 +25,6 @@ command_processor::~command_processor()
 
 void command_processor::register_command(command* c)
 {
-    assert(c != 0);
     if (m_commands.find(c->name()) != m_commands.end()) {
         throw duplicate_name(c->name());
     }

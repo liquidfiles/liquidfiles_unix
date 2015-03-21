@@ -45,7 +45,7 @@ void table_printer::print_header()
 {
     print_horizontal_line();
     *m_out_stream << "|";
-    for (int i=0; i<get_num_columns(); ++i) {
+    for (int i=0; i < get_num_columns(); ++i) {
         *m_out_stream << std::setw(m_column_widths.at(i)) <<
             m_column_headers.at(i).substr(0, m_column_widths.at(i));
         if (i != get_num_columns() - 1) {

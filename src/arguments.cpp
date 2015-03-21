@@ -3,18 +3,19 @@
 
 namespace lf {
 
-bool arguments::exists(std::string n) const
+bool arguments::exists(const std::string& n) const
 {
     return find(n) != end();
 }
 
-std::string arguments::operator[](std::string n) const
+const std::string& arguments::operator[](const std::string& n) const
 {
+    static std::string empty_string;
     const_iterator i = find(n);
     if (i != end()) {
         return i->second;
     }
-    return std::string();
+    return empty_string;
 }
 
 const std::set<std::string>& arguments::get_unnamed_arguments() const

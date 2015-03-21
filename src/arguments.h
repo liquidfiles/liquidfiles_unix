@@ -14,13 +14,13 @@ class arguments: public std::map<std::string, std::string>
 public:
     /// @brief Checks whether argument with given name exists.
     /// @param n Name of argument.
-    bool exists(std::string n) const;
+    bool exists(const std::string& n) const;
 
 public:
     /// @brief Access to argument value by argument name.
     /// @param n Name of argument.
     /// @note If argument with given name does not exist, empty value returned.
-    std::string operator[](std::string n) const;
+    const std::string& operator[](const std::string& n) const;
 
 public:
     /// @brief Access to unnamed arguments.

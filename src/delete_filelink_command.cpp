@@ -28,7 +28,7 @@ void delete_filelink_command::execute(const arguments& args)
 {
     credentials c = credentials::manage(args);
     report_level rl = NORMAL;
-    std::string rls = args["--report_level"];
+    const std::string& rls = args["--report_level"];
     if (rls == "silent") {
         rl = SILENT;
     } else if (rls == "verbose") {
@@ -37,7 +37,7 @@ void delete_filelink_command::execute(const arguments& args)
         throw invalid_argument_value("--report_level",
                 "silent, normal, verbose");
     }
-    std::string id = args["--filelink_id"];
+    const std::string& id = args["--filelink_id"];
     if (id == "") {
         throw missing_argument("--filelink_id");
     }

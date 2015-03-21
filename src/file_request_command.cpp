@@ -31,12 +31,12 @@ file_request_command::file_request_command(engine& e)
 void file_request_command::execute(const arguments& args)
 {
     credentials c = credentials::manage(args);
-    std::string user = args["--to"];
+    const std::string& user = args["--to"];
     if (user == "") {
         throw missing_argument("--to");
     }
     report_level rl = NORMAL;
-    std::string rls = args["--report_level"];
+    const std::string& rls = args["--report_level"];
     if (rls == "silent") {
         rl = SILENT;
     } else if (rls == "verbose") {
@@ -45,8 +45,8 @@ void file_request_command::execute(const arguments& args)
         throw invalid_argument_value("--report_level",
                 "silent, normal, verbose");
     }
-    std::string subject = args["--subject"];
-    std::string message = args["--message"];
+    const std::string& subject = args["--subject"];
+    const std::string& message = args["--message"];
     m_engine.file_request(c.server(), user, c.api_key(), subject, message, rl, c.validate_flag());
 }
 

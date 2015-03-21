@@ -44,7 +44,7 @@ private:
         char ch = '\0';
         do {
             if (m_position >= m_string.size()) {
-                if(!m_stream->eof()) {
+                if (!m_stream->eof()) {
                     std::getline(*m_stream, m_string);
                     m_position = 0;
                 } else {
@@ -57,7 +57,7 @@ private:
             }
             ch = m_string[m_position];
             ++m_position;
-            if(ch == m_delimiter || ch == '\r' || ch == '\n') {
+            if (ch == m_delimiter || ch == '\r' || ch == '\n') {
                 break;
             }
             str += ch;
@@ -137,7 +137,7 @@ template <>
 inline csv_ostream& csv_ostream::operator << (const char& val)
 {
     get_stream() << val;
-    if(val == '\n') {
+    if (val == '\n') {
         set_after_newline(true);
     }
     return *this;

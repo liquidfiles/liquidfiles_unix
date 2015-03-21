@@ -22,8 +22,8 @@ public:
      * @param d Description of command.
      * @param a Arguments description string.
      */
-    command(std::string n, std::string u, std::string d,
-            argument_descriptions a);
+    command(const std::string& n, const std::string& u, const std::string& d,
+            const argument_descriptions& a);
     
     virtual ~command();
 
@@ -35,7 +35,7 @@ private:
     /// @name Command parameters.
     /// @{
 public:
-    std::string name() const
+    const std::string& name() const
     {
         return m_name;
     }

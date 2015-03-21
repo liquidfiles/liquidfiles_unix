@@ -33,20 +33,20 @@ get_api_key_command::get_api_key_command(engine& e)
 
 void get_api_key_command::execute(const arguments& args)
 {
-    std::string server = args["--server"];
+    const std::string& server = args["--server"];
     if (server == "") {
         throw missing_argument("--server");
     }
-    std::string user = args["--username"];
+    const std::string& user = args["--username"];
     if (user == "") {
         throw missing_argument("--username");
     }
-    std::string password = args["--password"];
+    const std::string& password = args["--password"];
     if (password == "") {
         throw missing_argument("--password");
     }
     report_level rl = NORMAL;
-    std::string rls = args["--report_level"];
+    const std::string& rls = args["--report_level"];
     if (rls == "silent") {
         rl = SILENT;
     } else if (rls == "verbose") {
@@ -60,7 +60,7 @@ void get_api_key_command::execute(const arguments& args)
     if (b.find("-k") != b.end()) {
         val = NOT_VALIDATE;
     }
-    std::string key = m_engine.get_api_key(server, user, password, rl, val);
+    const std::string& key = m_engine.get_api_key(server, user, password, rl, val);
     if (b.find("-s") != b.end()) {
         credentials c(server, key, val);
         credentials::save(c);

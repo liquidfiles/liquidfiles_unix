@@ -32,7 +32,7 @@ void filelinks_command::execute(const arguments& args)
 {
     credentials c = credentials::manage(args);
     report_level rl = NORMAL;
-    std::string rls = args["--report_level"];
+    const std::string& rls = args["--report_level"];
     if (rls == "silent") {
         rl = SILENT;
     } else if (rls == "verbose") {
@@ -42,14 +42,14 @@ void filelinks_command::execute(const arguments& args)
                 "silent, normal, verbose");
     }
     output_format of = TABLE_FORMAT;
-    std::string ofs = args["--output_format"];
+    const std::string& ofs = args["--output_format"];
     if (ofs == "csv") {
         of = CSV_FORMAT;
     } else if (ofs != "" && ofs != "table") {
         throw invalid_argument_value("--output_format",
                 "table, csv");
     }
-    std::string limit = args["--limit"];
+    const std::string& limit = args["--limit"];
     m_engine.filelinks(c.server(), c.api_key(), limit, rl, c.validate_flag(), of);
 }
 

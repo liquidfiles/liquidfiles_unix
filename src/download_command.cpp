@@ -43,9 +43,9 @@ void download_command::execute(const arguments& args)
             throw;
         }
     }
-    std::string path = args["--download_to"];
+    const std::string& path = args["--download_to"];
     report_level rl = NORMAL;
-    std::string rls = args["--report_level"];
+    const std::string& rls = args["--report_level"];
     if (rls == "silent") {
         rl = SILENT;
     } else if (rls == "verbose") {
@@ -54,9 +54,9 @@ void download_command::execute(const arguments& args)
         throw invalid_argument_value("--report_level",
                 "silent, normal, verbose");
     }
-    std::string l = args["--sent_in_the_last"];
-    std::string f = args["--sent_after"];
-    std::string id = args["--message_id"];
+    const std::string& l = args["--sent_in_the_last"];
+    const std::string& f = args["--sent_after"];
+    const std::string& id = args["--message_id"];
     const std::set<std::string>& unnamed_args = args.get_unnamed_arguments();
     if (!c.server().empty()) {
         if (!id.empty()) {

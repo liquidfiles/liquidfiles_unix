@@ -11,14 +11,14 @@ namespace base {
 class exception
 {
 public:
-    exception(std::string m, int c)
+    exception(const std::string& m, int c)
         : m_message(m)
         , m_code(c)
     {
     }
 
 public:
-    std::string message() const
+    const std::string& message() const
     {
         return m_message;
     }
