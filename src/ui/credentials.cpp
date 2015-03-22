@@ -10,7 +10,7 @@
 #include <set>
 #include <sys/stat.h>
 
-namespace lf {
+namespace ui {
 
 namespace {
 
@@ -37,7 +37,7 @@ void credentials::load(credentials& c)
         f >> c.m_api_key;
         int x;
         f >> x;
-        c.m_validate_flag = static_cast<validate_cert>(x);
+        c.m_validate_flag = static_cast<lf::validate_cert>(x);
     }
     default:
         ;
@@ -82,7 +82,7 @@ credentials credentials::manage(const cmd::arguments& args)
     }
     const std::set<std::string>& b = args.get_boolean_arguments();
     if (b.find("-k") != b.end()) {
-        c.m_validate_flag = NOT_VALIDATE;
+        c.m_validate_flag = lf::NOT_VALIDATE;
     }
     if (b.find("-s") != b.end()) {
         save(c);

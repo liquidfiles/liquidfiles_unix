@@ -5,9 +5,9 @@
 #include <lf/declarations.h>
 #include <lf/engine.h>
 
-namespace lf {
+namespace ui {
 
-filelinks_command::filelinks_command(engine& e)
+filelinks_command::filelinks_command(lf::engine& e)
     : cmd::command("filelinks",
             credentials::usage() + 
             "[--report_level=<level>] [--expires=<YYYY-MM-DD>] <file>",
@@ -31,20 +31,20 @@ filelinks_command::filelinks_command(engine& e)
 void filelinks_command::execute(const cmd::arguments& args)
 {
     credentials c = credentials::manage(args);
-    report_level rl = NORMAL;
+    lf::report_level rl = lf::NORMAL;
     const std::string& rls = args["--report_level"];
     if (rls == "silent") {
-        rl = SILENT;
+        rl = lf::SILENT;
     } else if (rls == "verbose") {
-        rl = VERBOSE;
+        rl = lf::VERBOSE;
     } else if (rls != "" && rls != "normal") {
         throw cmd::invalid_argument_value("--report_level",
                 "silent, normal, verbose");
     }
-    output_format of = TABLE_FORMAT;
+    lf::output_format of = lf::TABLE_FORMAT;
     const std::string& ofs = args["--output_format"];
     if (ofs == "csv") {
-        of = CSV_FORMAT;
+        of = lf::CSV_FORMAT;
     } else if (ofs != "" && ofs != "table") {
         throw cmd::invalid_argument_value("--output_format",
                 "table, csv");

@@ -3,26 +3,28 @@
 #include <cmd/command.h>
 
 namespace lf {
-
 class engine;
+}
+
+namespace ui {
 
 /**
- * @class delete_filelink_command.
- * @brief Class for 'delete_filelink' command.
+ * @class filelinks_command.
+ * @brief Class for 'filelinks' command.
  */
-class delete_filelink_command : public cmd::command
+class filelinks_command : public cmd::command
 {
 public:
     /// @brief Constructor.
     /// @param e Engine.
-    delete_filelink_command(engine& e);
+    filelinks_command(lf::engine& e);
 
 public:
     /// @brief Executes command by given arguments.
     virtual void execute(const cmd::arguments& args);
 
 private:
-    engine& m_engine;
+    lf::engine& m_engine;
 };
 
 }

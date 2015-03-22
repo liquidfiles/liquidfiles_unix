@@ -4,7 +4,7 @@
 #include <cmd/exceptions.h>
 #include <io/messenger.h>
 
-namespace lf {
+namespace ui {
 
 help_command::help_command(cmd::command_processor& p)
     : cmd::command("help", "[<command_name>]", "Prints help for tool or for specific command.",

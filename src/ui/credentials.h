@@ -8,7 +8,7 @@ namespace cmd {
 class arguments;
 }
 
-namespace lf {
+namespace ui {
 
 class credentials
 {
@@ -76,7 +76,7 @@ public:
     }
 
     /// @brief Access to validate flag.
-    validate_cert validate_flag() const
+    lf::validate_cert validate_flag() const
     {
         return m_validate_flag;
     }
@@ -86,7 +86,7 @@ public:
     credentials()
         : m_server()
         , m_api_key()
-        , m_validate_flag(VALIDATE)
+        , m_validate_flag(lf::VALIDATE)
     {
     }
 
@@ -96,7 +96,7 @@ public:
      * @param k Api key.
      * @param v Validate flag.
      */
-    credentials(const std::string& s, const std::string k, validate_cert v)
+    credentials(const std::string& s, const std::string k, lf::validate_cert v)
         : m_server(s)
         , m_api_key(k)
         , m_validate_flag(v)
@@ -106,7 +106,7 @@ public:
 private:
     std::string m_server;
     std::string m_api_key;
-    validate_cert m_validate_flag;
+    lf::validate_cert m_validate_flag;
 };
 
 }

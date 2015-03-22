@@ -76,7 +76,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-subdir = src/lf
+subdir = src/ui
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/depcomp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -93,12 +93,15 @@ AM_V_AR = $(am__v_AR_@AM_V@)
 am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
 am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
-liblf_a_AR = $(AR) $(ARFLAGS)
-liblf_a_LIBADD =
-am_liblf_a_OBJECTS = attachment_responce.$(OBJEXT) engine.$(OBJEXT) \
-	filelinks_responce.$(OBJEXT) messages_responce.$(OBJEXT) \
-	message_responce.$(OBJEXT)
-liblf_a_OBJECTS = $(am_liblf_a_OBJECTS)
+libui_a_AR = $(AR) $(ARFLAGS)
+libui_a_LIBADD =
+am_libui_a_OBJECTS = credentials.$(OBJEXT) \
+	delete_filelink_command.$(OBJEXT) download_command.$(OBJEXT) \
+	filelink_command.$(OBJEXT) filelinks_command.$(OBJEXT) \
+	file_request_command.$(OBJEXT) get_api_key_command.$(OBJEXT) \
+	help_command.$(OBJEXT) messages_command.$(OBJEXT) \
+	send_command.$(OBJEXT)
+libui_a_OBJECTS = $(am_libui_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -128,8 +131,8 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(liblf_a_SOURCES)
-DIST_SOURCES = $(liblf_a_SOURCES)
+SOURCES = $(libui_a_SOURCES)
+DIST_SOURCES = $(libui_a_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -253,12 +256,17 @@ AM_CPPFLAGS = -Wall -I $(CURDIR)/../
 
 # this lists the binaries to produce, the (non-PHONY, binary) targets in
 # the previous manual Makefile
-noinst_LIBRARIES = liblf.a
-liblf_a_SOURCES = attachment_responce.cpp \
-				  engine.cpp \
-				  filelinks_responce.cpp \
-				  messages_responce.cpp \
-				  message_responce.cpp
+noinst_LIBRARIES = libui.a
+libui_a_SOURCES = credentials.cpp \
+				  delete_filelink_command.cpp \
+				  download_command.cpp \
+				  filelink_command.cpp \
+				  filelinks_command.cpp \
+				  file_request_command.cpp \
+				  get_api_key_command.cpp \
+				  help_command.cpp \
+				  messages_command.cpp \
+				  send_command.cpp
 
 all: all-am
 
@@ -273,9 +281,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/lf/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/ui/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign src/lf/Makefile
+	  $(AUTOMAKE) --foreign src/ui/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -298,10 +306,10 @@ $(am__aclocal_m4_deps):
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
 
-liblf.a: $(liblf_a_OBJECTS) $(liblf_a_DEPENDENCIES) $(EXTRA_liblf_a_DEPENDENCIES) 
-	$(AM_V_at)-rm -f liblf.a
-	$(AM_V_AR)$(liblf_a_AR) liblf.a $(liblf_a_OBJECTS) $(liblf_a_LIBADD)
-	$(AM_V_at)$(RANLIB) liblf.a
+libui.a: $(libui_a_OBJECTS) $(libui_a_DEPENDENCIES) $(EXTRA_libui_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libui.a
+	$(AM_V_AR)$(libui_a_AR) libui.a $(libui_a_OBJECTS) $(libui_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libui.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -309,11 +317,16 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/attachment_responce.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/engine.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/filelinks_responce.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/message_responce.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messages_responce.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/credentials.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/delete_filelink_command.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/download_command.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/file_request_command.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/filelink_command.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/filelinks_command.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/get_api_key_command.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/help_command.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messages_command.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/send_command.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

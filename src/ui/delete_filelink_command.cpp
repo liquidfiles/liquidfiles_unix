@@ -5,9 +5,9 @@
 #include <lf/declarations.h>
 #include <lf/engine.h>
 
-namespace lf {
+namespace ui {
 
-delete_filelink_command::delete_filelink_command(engine& e)
+delete_filelink_command::delete_filelink_command(lf::engine& e)
     : cmd::command("delete_filelink",
             credentials::usage() + 
             "[--report_level=<level>] --filelink_id=<id>",
@@ -27,12 +27,12 @@ delete_filelink_command::delete_filelink_command(engine& e)
 void delete_filelink_command::execute(const cmd::arguments& args)
 {
     credentials c = credentials::manage(args);
-    report_level rl = NORMAL;
+    lf::report_level rl = lf::NORMAL;
     const std::string& rls = args["--report_level"];
     if (rls == "silent") {
-        rl = SILENT;
+        rl = lf::SILENT;
     } else if (rls == "verbose") {
-        rl = VERBOSE;
+        rl = lf::VERBOSE;
     } else if (rls != "" && rls != "normal") {
         throw cmd::invalid_argument_value("--report_level",
                 "silent, normal, verbose");

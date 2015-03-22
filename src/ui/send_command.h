@@ -3,26 +3,28 @@
 #include <cmd/command.h>
 
 namespace lf {
-
 class engine;
+}
+
+namespace ui {
 
 /**
- * @class get_api_key_command.
- * @brief Class for 'get_api_key' command.
+ * @class send_command.
+ * @brief Class for 'send' command.
  */
-class get_api_key_command : public cmd::command
+class send_command : public cmd::command
 {
 public:
     /// @brief Constructor.
     /// @param e Engine.
-    get_api_key_command(engine& e);
+    send_command(lf::engine& e);
 
 public:
     /// @brief Executes command by given arguments.
     virtual void execute(const cmd::arguments& args);
 
 private:
-    engine& m_engine;
+    lf::engine& m_engine;
 };
 
 }

@@ -5,9 +5,9 @@
 #include <lf/declarations.h>
 #include <lf/engine.h>
 
-namespace lf {
+namespace ui {
 
-download_command::download_command(engine& e)
+download_command::download_command(lf::engine& e)
     : cmd::command("download",
             "[-k] [--api_key=<key>] [-s] [--report_level=<level>] [--download_to=<path>]\n"
             "\t(([--server=<server>] (--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)) \n"
@@ -44,12 +44,12 @@ void download_command::execute(const cmd::arguments& args)
         }
     }
     const std::string& path = args["--download_to"];
-    report_level rl = NORMAL;
+    lf::report_level rl = lf::NORMAL;
     const std::string& rls = args["--report_level"];
     if (rls == "silent") {
-        rl = SILENT;
+        rl = lf::SILENT;
     } else if (rls == "verbose") {
-        rl = VERBOSE;
+        rl = lf::VERBOSE;
     } else if (rls != "" && rls != "normal") {
         throw cmd::invalid_argument_value("--report_level",
                 "silent, normal, verbose");

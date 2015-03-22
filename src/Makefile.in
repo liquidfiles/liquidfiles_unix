@@ -89,14 +89,10 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_liquidfiles_OBJECTS = credentials.$(OBJEXT) \
-	delete_filelink_command.$(OBJEXT) download_command.$(OBJEXT) \
-	filelink_command.$(OBJEXT) filelinks_command.$(OBJEXT) \
-	file_request_command.$(OBJEXT) get_api_key_command.$(OBJEXT) \
-	help_command.$(OBJEXT) main.$(OBJEXT) \
-	messages_command.$(OBJEXT) send_command.$(OBJEXT)
+am_liquidfiles_OBJECTS = main.$(OBJEXT)
 liquidfiles_OBJECTS = $(am_liquidfiles_OBJECTS)
-liquidfiles_DEPENDENCIES = lf/liblf.a cmd/libcmd.a io/libio.a
+liquidfiles_DEPENDENCIES = ui/libui.a lf/liblf.a cmd/libcmd.a \
+	io/libio.a
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -289,21 +285,10 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
 # what flags you want to pass to the C compiler & linker
-SUBDIRS = lf cmd io
+SUBDIRS = ui lf cmd io
 AM_CPPFLAGS = -Wall -I $(CURDIR)
-liquidfiles_SOURCES = credentials.cpp \
-					  delete_filelink_command.cpp \
-					  download_command.cpp \
-					  filelink_command.cpp \
-					  filelinks_command.cpp \
-					  file_request_command.cpp \
-					  get_api_key_command.cpp \
-					  help_command.cpp \
-					  main.cpp \
-					  messages_command.cpp \
-					  send_command.cpp
-
-liquidfiles_LDADD = lf/liblf.a cmd/libcmd.a io/libio.a
+liquidfiles_SOURCES = main.cpp
+liquidfiles_LDADD = ui/libui.a lf/liblf.a cmd/libcmd.a io/libio.a
 all: all-recursive
 
 .SUFFIXES:
@@ -317,9 +302,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu src/Makefile
+	  $(AUTOMAKE) --foreign src/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -391,17 +376,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/credentials.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/delete_filelink_command.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/download_command.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/file_request_command.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/filelink_command.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/filelinks_command.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/get_api_key_command.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/help_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messages_command.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/send_command.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

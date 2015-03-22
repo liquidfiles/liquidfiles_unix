@@ -8,7 +8,7 @@ namespace cmd {
 class command_processor;
 }
 
-namespace lf {
+namespace ui {
 
 /**
  * @class help_command.

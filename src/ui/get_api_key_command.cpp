@@ -5,9 +5,9 @@
 #include <lf/declarations.h>
 #include <lf/engine.h>
 
-namespace lf {
+namespace ui {
 
-get_api_key_command::get_api_key_command(engine& e)
+get_api_key_command::get_api_key_command(lf::engine& e)
     : cmd::command("get_api_key",
             "[-k] --server=<url> --username=<email> --password=<password> [-s] [--report_level=<level>]",
             "Retrieves api key for the specified user.",
@@ -45,20 +45,20 @@ void get_api_key_command::execute(const cmd::arguments& args)
     if (password == "") {
         throw cmd::missing_argument("--password");
     }
-    report_level rl = NORMAL;
+    lf::report_level rl = lf::NORMAL;
     const std::string& rls = args["--report_level"];
     if (rls == "silent") {
-        rl = SILENT;
+        rl = lf::SILENT;
     } else if (rls == "verbose") {
-        rl = VERBOSE;
+        rl = lf::VERBOSE;
     } else if (rls != "" && rls != "normal") {
         throw cmd::invalid_argument_value("--report_level",
                 "silent, normal, verbose");
     }
     const std::set<std::string>& b = args.get_boolean_arguments();
-    validate_cert val = VALIDATE;
+    lf::validate_cert val = lf::VALIDATE;
     if (b.find("-k") != b.end()) {
-        val = NOT_VALIDATE;
+        val = lf::NOT_VALIDATE;
     }
     const std::string& key = m_engine.get_api_key(server, user, password, rl, val);
     if (b.find("-s") != b.end()) {
