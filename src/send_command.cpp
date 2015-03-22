@@ -51,7 +51,7 @@ void send_command::execute(const cmd::arguments& args)
     const std::string& subject = args["--subject"];
     const std::string& message = args["--message"];
     const std::set<std::string>& unnamed_args = args.get_unnamed_arguments();
-    m_engine.send(c.server(), user, c.api_key(), subject, message, unnamed_args,
+    m_engine.send(c.server(), c.api_key(), user, subject, message, unnamed_args,
             rl, c.validate_flag());
 }
 

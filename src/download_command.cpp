@@ -60,13 +60,13 @@ void download_command::execute(const cmd::arguments& args)
     const std::set<std::string>& unnamed_args = args.get_unnamed_arguments();
     if (!c.server().empty()) {
         if (!id.empty()) {
-            m_engine.download(c.server(), path, c.api_key(), id, rl, c.validate_flag());
+            m_engine.download(c.server(), c.api_key(), path, id, rl, c.validate_flag());
         }
         if (!l.empty() || !f.empty()) {
-            m_engine.download(c.server(), path, c.api_key(), l, f, rl, c.validate_flag());
+            m_engine.download(c.server(), c.api_key(), path, l, f, rl, c.validate_flag());
         }
     }
-    m_engine.download(unnamed_args, path, c.api_key(), rl, c.validate_flag());
+    m_engine.download(unnamed_args, c.api_key(), path, rl, c.validate_flag());
 }
 
 }

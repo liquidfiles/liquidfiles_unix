@@ -47,7 +47,7 @@ void file_request_command::execute(const cmd::arguments& args)
     }
     const std::string& subject = args["--subject"];
     const std::string& message = args["--message"];
-    m_engine.file_request(c.server(), user, c.api_key(), subject, message, rl, c.validate_flag());
+    m_engine.file_request(c.server(), c.api_key(), user, subject, message, rl, c.validate_flag());
 }
 
 }

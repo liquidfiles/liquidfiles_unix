@@ -50,7 +50,7 @@ void filelinks_command::execute(const cmd::arguments& args)
                 "table, csv");
     }
     const std::string& limit = args["--limit"];
-    m_engine.filelinks(c.server(), c.api_key(), limit, rl, c.validate_flag(), of);
+    m_engine.filelinks(c.server(), c.api_key(), limit, of, rl, c.validate_flag());
 }
 
 }

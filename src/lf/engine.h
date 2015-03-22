@@ -49,8 +49,8 @@ public:
      * @throw curl_error, request_error.
      */
     std::string send(std::string server,
-            const std::string& user, 
             const std::string& key,
+            const std::string& user, 
             const std::string& subject,
             const std::string& message,
             const files& fs,
@@ -72,9 +72,9 @@ public:
             const std::string& key,
             const std::string& l,
             const std::string& f,
+            output_format of,
             report_level s,
-            validate_cert v,
-            output_format of);
+            validate_cert v);
 
     /**
      * @brief List the given message.
@@ -89,9 +89,9 @@ public:
     void message(std::string server,
             const std::string& key,
             const std::string& id,
+            output_format f,
             report_level s,
-            validate_cert v,
-            output_format f);
+            validate_cert v);
 
     /**
      * @brief Downloads the files from the given urls.
@@ -103,8 +103,8 @@ public:
      * @throw file_error, curl_error, invalid_url.
      */
     void download(const std::set<std::string>& urls,
-            const std::string& path,
             const std::string& key,
+            const std::string& path,
             report_level s,
             validate_cert v);
 
@@ -119,8 +119,8 @@ public:
      * @throw curl_error, file_error, invalid_message_id, invalid_url.
      */
     void download(std::string server,
-            const std::string& path,
             const std::string& key,
+            const std::string& path,
             const std::string& id,
             report_level s,
             validate_cert v);
@@ -137,8 +137,8 @@ public:
      * @throw curl_error, file_error, invalid_url.
      */
     void download(std::string server,
-            const std::string& path,
             const std::string& key,
+            const std::string& path,
             const std::string& l,
             const std::string& f,
             report_level s,
@@ -156,8 +156,8 @@ public:
      * @throw curl_error, request_error.
      */
     std::string file_request(std::string server,
-            const std::string& user, 
             const std::string& key,
+            const std::string& user, 
             const std::string& subject,
             const std::string& message,
             report_level s,
@@ -221,9 +221,9 @@ public:
     void filelinks(std::string server,
             const std::string& key,
             const std::string& limit,
+            output_format of,
             report_level s,
-            validate_cert v,
-            output_format of);
+            validate_cert v);
     /// @}
 
 private:

@@ -57,9 +57,9 @@ void messages_command::execute(const cmd::arguments& args)
     }
     const std::string& id = args["--message_id"];
     if (id == "") {
-        m_engine.messages(c.server(), c.api_key(), l, f, rl, c.validate_flag(), of);
+        m_engine.messages(c.server(), c.api_key(), l, f, of, rl, c.validate_flag());
     } else {
-        m_engine.message(c.server(), c.api_key(), id, rl, c.validate_flag(), of);
+        m_engine.message(c.server(), c.api_key(), id, of, rl, c.validate_flag());
     }
 }
 

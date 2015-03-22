@@ -69,8 +69,8 @@ engine::~engine()
 }
 
 std::string engine::send(std::string server,
-        const std::string& user,
         const std::string& key,
+        const std::string& user,
         const std::string& subject,
         const std::string& message,
         const files& fs,
@@ -92,9 +92,9 @@ void engine::messages(std::string server,
         const std::string& key,
         const std::string& l,
         const std::string& f,
+        output_format of,
         report_level s,
-        validate_cert v,
-        output_format of)
+        validate_cert v)
 {
     std::string r = messages_impl(server, key, l, f, s, v);
     process_output_responce<messages_responce>(r, s, of);
@@ -103,9 +103,9 @@ void engine::messages(std::string server,
 void engine::message(std::string server,
         const std::string& key,
         const std::string& id,
+        output_format f,
         report_level s,
-        validate_cert v,
-        output_format f)
+        validate_cert v)
 {
     std::string r =  message_impl(server, key, id, s, v,
             "Getting message from the server.");
@@ -129,8 +129,8 @@ std::string get_filename(const std::string& url)
 
 }
 void engine::download(const std::set<std::string>& urls,
-        const std::string& path,
         const std::string& key,
+        const std::string& path,
         report_level s,
         validate_cert v)
 {
@@ -166,8 +166,8 @@ void engine::download(const std::set<std::string>& urls,
 }
 
 void engine::download(std::string server,
-        const std::string& path,
         const std::string& key,
+        const std::string& path,
         const std::string& id,
         report_level s,
         validate_cert v)
@@ -186,15 +186,15 @@ void engine::download(std::string server,
             urls.insert(i->url());
             ++i;
         }
-        download(urls, path, key, s, v);
+        download(urls, key, path, s, v);
     } catch (xml::parse_error&) {
         throw invalid_message_id(id);
     }
 }
 
 void engine::download(std::string server,
-        const std::string& path,
         const std::string& key,
+        const std::string& path,
         const std::string& l,
         const std::string& f,
         report_level s,
@@ -211,8 +211,8 @@ void engine::download(std::string server,
 }
 
 std::string engine::file_request(std::string server,
-        const std::string& user,
         const std::string& key,
+        const std::string& user,
         const std::string& subject,
         const std::string& message,
         report_level s,
@@ -365,9 +365,9 @@ void engine::delete_filelink(std::string server,
 void engine::filelinks(std::string server,
             const std::string& key,
             const std::string& limit,
+            output_format of,
             report_level s,
-            validate_cert v,
-            output_format of)
+            validate_cert v)
 {
     init_curl(key, s, v);
     server += "/link";
