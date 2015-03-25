@@ -141,25 +141,7 @@ void engine::download(const std::set<std::string>& urls,
     curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
     while (i != urls.end()) {
         std::string filename = get_filename(*i);
-        if (s >= NORMAL) {
-            io::mout << "Downloading file '" << filename << "'" << io::endl;
-        }
-        if (!path.empty()) {
-            filename = path + "/" + filename;
-        }
-        FILE* fp = fopen(filename.c_str(),"wb");
-        if (fp == 0) {
-            throw file_error(filename, strerror(errno));
-        }
-        curl_easy_setopt(m_curl, CURLOPT_URL, i->c_str());
-        curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, fp);
-        CURLcode res = curl_easy_perform(m_curl);
-        fclose(fp);
-        curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, 0);
-        if (res != CURLE_OK) {
-            throw curl_error(std::string(curl_easy_strerror(res)));
-        }
-        s_data.clear();
+	download_impl(*i, path, filename, s);
         ++i;
     }
     curl_slist_free_all(slist);
@@ -179,14 +161,16 @@ void engine::download(std::string server,
         d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
         message_responce m;
         m.read(&d);
+	struct curl_slist* slist = 0;
+	slist = curl_slist_append(slist, "Content-Type: text/xml");
+	curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
         const std::vector<attachment_responce>& a = m.attachments();
-        std::set<std::string> urls;
         std::vector<attachment_responce>::const_iterator i = a.begin();
         while (i != a.end()) {
-            urls.insert(i->url());
+	    download_impl(i->url(), path, i->filename(), s);
             ++i;
         }
-        download(urls, key, path, s, v);
+	curl_slist_free_all(slist);
     } catch (xml::parse_error&) {
         throw invalid_message_id(id);
     }
@@ -560,6 +544,32 @@ std::string engine::messages_impl(std::string server, const std::string& key, st
     std::string r = s_data;
     s_data.clear();
     return r;
+}
+
+void engine::download_impl(const std::string& url,
+        const std::string& path,
+        std::string name,
+        report_level s)
+{
+    if (s >= NORMAL) {
+        io::mout << "Downloading file '" << name << "'" << io::endl;
+    }
+    if (!path.empty()) {
+        name = path + "/" + name;
+    }
+    FILE* fp = fopen(name.c_str(),"wb");
+    if (fp == 0) {
+        throw file_error(name, strerror(errno));
+    }
+    curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, fp);
+    CURLcode res = curl_easy_perform(m_curl);
+    fclose(fp);
+    curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, 0);
+    if (res != CURLE_OK) {
+        throw curl_error(std::string(curl_easy_strerror(res)));
+    }
+    s_data.clear();
 }
 
 std::string engine::process_file_request_responce(const std::string& r, report_level s) const
