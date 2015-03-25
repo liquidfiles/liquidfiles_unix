@@ -141,7 +141,7 @@ void engine::download(const std::set<std::string>& urls,
     curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
     while (i != urls.end()) {
         std::string filename = get_filename(*i);
-	download_impl(*i, path, filename, s);
+        download_impl(*i, path, filename, s);
         ++i;
     }
     curl_slist_free_all(slist);
@@ -161,16 +161,16 @@ void engine::download(std::string server,
         d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
         message_responce m;
         m.read(&d);
-	struct curl_slist* slist = 0;
-	slist = curl_slist_append(slist, "Content-Type: text/xml");
-	curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+        struct curl_slist* slist = 0;
+        slist = curl_slist_append(slist, "Content-Type: text/xml");
+        curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
         const std::vector<attachment_responce>& a = m.attachments();
         std::vector<attachment_responce>::const_iterator i = a.begin();
         while (i != a.end()) {
-	    download_impl(i->url(), path, i->filename(), s);
+            download_impl(i->url(), path, i->filename(), s);
             ++i;
         }
-	curl_slist_free_all(slist);
+        curl_slist_free_all(slist);
     } catch (xml::parse_error&) {
         throw invalid_message_id(id);
     }
