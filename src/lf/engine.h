@@ -243,6 +243,7 @@ private:
             report_level s, validate_cert v, std::string log);
     std::string messages_impl(std::string server, const std::string& key, std::string l,
             std::string f, report_level s, validate_cert v);
+    void download_impl(const std::string& url, const std::string& path, std::string name, report_level s);
     std::string process_file_request_responce(const std::string& r, report_level s) const;
     std::string process_get_api_key_responce(const std::string& r, report_level s) const;
     std::string process_create_filelink_responce(const std::string& r, report_level s) const;
