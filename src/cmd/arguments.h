@@ -41,6 +41,4 @@ private:
     std::set<std::string> m_boolean_arguments;
 };
 
-typedef std::string argument_descriptions;
-
 }

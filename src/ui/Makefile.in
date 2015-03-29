@@ -95,7 +95,7 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libui_a_AR = $(AR) $(ARFLAGS)
 libui_a_LIBADD =
-am_libui_a_OBJECTS = credentials.$(OBJEXT) \
+am_libui_a_OBJECTS = credentials.$(OBJEXT) common_arguments.$(OBJEXT) \
 	delete_filelink_command.$(OBJEXT) download_command.$(OBJEXT) \
 	filelink_command.$(OBJEXT) filelinks_command.$(OBJEXT) \
 	file_request_command.$(OBJEXT) get_api_key_command.$(OBJEXT) \
@@ -258,6 +258,7 @@ AM_CPPFLAGS = -Wall -I ../
 # the previous manual Makefile
 noinst_LIBRARIES = libui.a
 libui_a_SOURCES = credentials.cpp \
+				  common_arguments.cpp \
 				  delete_filelink_command.cpp \
 				  download_command.cpp \
 				  filelink_command.cpp \
@@ -317,6 +318,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/common_arguments.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/credentials.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/delete_filelink_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/download_command.Po@am__quote@

@@ -25,6 +25,7 @@ public:
 
 private:
     lf::engine& m_engine;
+    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_limit_argument;
 };
 
 }

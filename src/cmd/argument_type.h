@@ -2,40 +2,22 @@
 
 namespace cmd {
 
-enum argument_type {
-    STRING_TYPE,
-    INT_TYPE,
-    ENUM_TYPE
-};
-
-template <argument_type t>
-struct enum_to_type;
-
-template <>
-struct enum_to_type<STRING_TYPE>
-{
-    typedef std::string type;
-};
-
-template <>
-struct enum_to_type<INT_TYPE>
-{
-    typedef int type;
-};
-
 template <typename T>
-T string_to_val(const std::string& v);
-
-template <>
-std::string string_to_val<std::string>(const std::string& v)
+T string_to_val(const std::string& v)
 {
     return v;
 }
 
-template <>
-int string_to_val<int>(const std::string& v)
+template <typename T>
+std::string val_to_string(const T& t)
 {
-    return std::atoi(v);
+    return t;
+}
+
+template <typename T>
+std::string possible_values()
+{
+    return "";
 }
 
 }

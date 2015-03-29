@@ -40,7 +40,7 @@ arguments arguments::construct(const std::vector<std::string>& str)
 {
     arguments args;
     std::vector<std::string>::const_iterator i = str.begin();
-    while(i != str.end()) {
+    while (i != str.end()) {
         if (utility::is_named_argument(*i)) {
             std::pair<std::string, std::string> p = utility::split(*i, "=");
             args.insert(std::make_pair(p.first, p.second));

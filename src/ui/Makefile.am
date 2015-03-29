@@ -6,6 +6,7 @@ AM_CPPFLAGS = -Wall -I ../
 noinst_LIBRARIES = libui.a
 
 libui_a_SOURCES = credentials.cpp \
+				  common_arguments.cpp \
 				  delete_filelink_command.cpp \
 				  download_command.cpp \
 				  filelink_command.cpp \

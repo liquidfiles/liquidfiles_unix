@@ -7,13 +7,13 @@
 namespace ui {
 
 help_command::help_command(cmd::command_processor& p)
-    : cmd::command("help", "[<command_name>]", "Prints help for tool or for specific command.",
-        "\t<command_name> - Specifies the name of command for which help\n"
-        "\t                 will be printed. If not specified, help for tool\n"
-        "\t                 will be printed."
-            )
+    : cmd::command("help", "Prints help for tool or for specific command.")
     , m_command_processor(p)
+    , m_commands_argument("<command_name>", "Specifies the name of command for which help\n"
+        "\t                 will be printed. If not specified, help for tool\n"
+        "\t                 will be printed.")
 {
+    get_arguments().push_back(m_commands_argument);
 }
 
 namespace {
@@ -116,7 +116,7 @@ void help_command::execute(const cmd::arguments& args)
         c->usage() << "\n\n"
         "Description:\n\t" << c->description() << "\n\n"
         "Arguments:\n" <<
-        c->arg_descriptions() << "\n" << io::endl;
+        c->arg_descriptions();
     }
 }
 

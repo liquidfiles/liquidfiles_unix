@@ -25,6 +25,9 @@ public:
 
 private:
     lf::engine& m_engine;
+    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, true> m_to_argument;
+    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_message_argument;
+    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_subject_argument;
 };
 
 }

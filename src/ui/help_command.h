@@ -29,6 +29,7 @@ private:
 
 private:
     cmd::command_processor& m_command_processor;
+    cmd::argument_definition<std::string, cmd::UNNAMED_ARGUMENT, false> m_commands_argument;
 };
 
 }

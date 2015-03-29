@@ -1,4 +1,5 @@
 #include "messages_command.h"
+#include "common_arguments.h"
 #include "credentials.h"
 
 #include <cmd/exceptions.h>
@@ -8,54 +9,28 @@
 namespace ui {
 
 messages_command::messages_command(lf::engine& e)
-    : cmd::command("messages",
-            credentials::usage() + "[--output_format=<format>]\n"
-            "\t[--report_level=<level>] (--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)",
-            "Lists the available messages.",
-            credentials::arg_descriptions() +
-            "\t--report_level\n"
-            "\t    Level of reporting.\n"
-            "\t    Valid values: silent, normal, verbose.\n"
-            "\t    Default value: normal.\n\n"
-            "\t--output_format\n"
-            "\t    Specifies output string format.\n"
-            "\t    Valid values: table, csv.\n"
-            "\t    Default value: table.\n\n"
-            "\t--message_id\n"
-            "\t    Message id to show.\n\n"
-            "\t--sent_in_the_last\n"
-            "\t    Show messages sent in the last specified hours.\n\n"
-            "\t--sent_after\n"
-            "\t    Show messages sent after specified date."
-            )
+    : cmd::command("messages", "Lists the available messages.")
     , m_engine(e)
+    , m_message_id_argument("message_id", "<id>", "Message id to show.")
+    , m_sent_in_last_argument("sent_in_the_last", "<HOURS>", "Show messages sent in the last specified hours.")
+    , m_sent_after_argument("sent_after", "YYYYMMDD", "Show messages sent after specified date.")
 {
+    get_arguments().push_back(credentials::get_arguments());
+    get_arguments().push_back(s_report_level_arg);
+    get_arguments().push_back(s_output_format_arg);
+    get_arguments().push_back(m_message_id_argument);
+    get_arguments().push_back(m_sent_in_last_argument);
+    get_arguments().push_back(m_sent_after_argument);
 }
 
 void messages_command::execute(const cmd::arguments& args)
 {
     credentials c = credentials::manage(args);
-    const std::string& l = args["--sent_in_the_last"];
-    const std::string& f = args["--sent_after"];
-    lf::report_level rl = lf::NORMAL;
-    const std::string& rls = args["--report_level"];
-    if (rls == "silent") {
-        rl = lf::SILENT;
-    } else if (rls == "verbose") {
-        rl = lf::VERBOSE;
-    } else if (rls != "" && rls != "normal") {
-        throw cmd::invalid_argument_value("--report_level",
-                "silent, normal, verbose");
-    }
-    lf::output_format of = lf::TABLE_FORMAT;
-    const std::string& ofs = args["--output_format"];
-    if (ofs == "csv") {
-        of = lf::CSV_FORMAT;
-    } else if (ofs != "" && ofs != "table") {
-        throw cmd::invalid_argument_value("--output_format",
-                "table, csv");
-    }
-    const std::string& id = args["--message_id"];
+    std::string l = m_sent_in_last_argument.value(args);
+    std::string f = m_sent_after_argument.value(args);
+    std::string id = m_message_id_argument.value(args);
+    lf::report_level rl = s_report_level_arg.value(args);
+    lf::output_format of = s_output_format_arg.value(args);
     if (id == "") {
         m_engine.messages(c.server(), c.api_key(), l, f, of, rl, c.validate_flag());
     } else {

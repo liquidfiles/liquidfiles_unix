@@ -1,4 +1,5 @@
 #include "download_command.h"
+#include "common_arguments.h"
 #include "credentials.h"
 
 #include <cmd/exceptions.h>
@@ -8,29 +9,21 @@
 namespace ui {
 
 download_command::download_command(lf::engine& e)
-    : cmd::command("download",
-            "[-k] [--api_key=<key>] [-s] [--report_level=<level>] [--download_to=<path>]\n"
-            "\t(([--server=<server>] (--message_id=<id> | --sent_in_the_last=<HOURS> | --sent_after=<YYYYMMDD>)) \n"
-            "\t| <url>...)",
-            "Download given files.",
-            credentials::arg_descriptions() +
-            "\t--report_level\n"
-            "\t    Level of reporting.\n"
-            "\t    Valid values: silent, normal, verbose.\n"
-            "\t    Default value: normal.\n\n"
-            "\t--download_to\n"
-            "\t    Directory path to download files there. Default value: \"\"\n\n"
-            "\t--message_id\n"
-            "\t    Message id to download attachments of it.\n\n"
-            "\t--sent_in_the_last\n"
-            "\t    Download files sent in the last specified hours.\n\n"
-            "\t--sent_after\n"
-            "\t    Download files sent after specified date.\n\n"
-            "\t<url>...\n"
-            "\t    Url(s) of files to download."
-            )
+    : cmd::command("download", "Download given files.")
     , m_engine(e)
+    , m_path_argument("download_to", "<path>", "Directory path to download files there.", "")
+    , m_message_id_argument("message_id", "<id>", "Message id to download attachments of it.")
+    , m_sent_in_last_argument("sent_in_the_last", "<HOURS>", "Download files sent in the last specified hours.")
+    , m_sent_after_argument("sent_after", "YYYYMMDD", "Download files sent after specified date.")
+    , m_urls_argument("<url> ...", "Url(s) of files to download.")
 {
+    get_arguments().push_back(credentials::get_arguments());
+    get_arguments().push_back(s_report_level_arg);
+    get_arguments().push_back(m_path_argument);
+    get_arguments().push_back(m_message_id_argument);
+    get_arguments().push_back(m_sent_in_last_argument);
+    get_arguments().push_back(m_sent_after_argument);
+    get_arguments().push_back(m_urls_argument);
 }
 
 void download_command::execute(const cmd::arguments& args)
@@ -43,21 +36,12 @@ void download_command::execute(const cmd::arguments& args)
             throw;
         }
     }
-    const std::string& path = args["--download_to"];
-    lf::report_level rl = lf::NORMAL;
-    const std::string& rls = args["--report_level"];
-    if (rls == "silent") {
-        rl = lf::SILENT;
-    } else if (rls == "verbose") {
-        rl = lf::VERBOSE;
-    } else if (rls != "" && rls != "normal") {
-        throw cmd::invalid_argument_value("--report_level",
-                "silent, normal, verbose");
-    }
-    const std::string& l = args["--sent_in_the_last"];
-    const std::string& f = args["--sent_after"];
-    const std::string& id = args["--message_id"];
-    const std::set<std::string>& unnamed_args = args.get_unnamed_arguments();
+    std::string path = m_path_argument.value(args);
+    lf::report_level rl = s_report_level_arg.value(args);
+    std::string l = m_sent_in_last_argument.value(args);
+    std::string f = m_sent_after_argument.value(args);
+    std::string id = m_message_id_argument.value(args);
+    std::set<std::string> unnamed_args = m_urls_argument.value(args);
     if (!c.server().empty()) {
         if (!id.empty()) {
             m_engine.download(c.server(), c.api_key(), path, id, rl, c.validate_flag());

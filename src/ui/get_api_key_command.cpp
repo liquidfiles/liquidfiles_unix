@@ -1,4 +1,5 @@
 #include "get_api_key_command.h"
+#include "common_arguments.h"
 #include "credentials.h"
 
 #include <cmd/exceptions.h>
@@ -8,60 +9,33 @@
 namespace ui {
 
 get_api_key_command::get_api_key_command(lf::engine& e)
-    : cmd::command("get_api_key",
-            "[-k] --server=<url> --username=<email> --password=<password> [-s] [--report_level=<level>]",
-            "Retrieves api key for the specified user.",
-            "\t-k\n"
-            "\t    If specified, do not validate server certificate.\n\n"
-            "\t--server\n"
-            "\t    The server URL.\n\n"
-            "\t--username\n"
-            "\t    Username.\n\n"
-            "\t--password\n"
-            "\t    Password.\n\n"
-            "\t-s\n"
-            "\t    If specified, saves current credentials in cache."
-            " Credentials to save are - '-k', '--server' and retrieved key.\n\n"
-            "\t--report_level\n"
-            "\t    Level of reporting.\n"
-            "\t    Valid values: silent, normal, verbose.\n"
-            "\t    Default value: normal."
-            )
+    : cmd::command("get_api_key", "Retrieves api key for the specified user.")
     , m_engine(e)
+    , m_validate_cert_argument("k", "If specified, do not validate server certificate.")
+    , m_server_argument("server", "<url>", "The server URL.")
+    , m_username_argument("username", "<email>", "Username.")
+    , m_password_argument("password", "<password>", "Password.")
+    , m_save_argument("s", "If specified, saves current credentials in cache."
+            " Credentials to save are - '-k', '--server' and retrieved key.")
 {
+    get_arguments().push_back(m_validate_cert_argument);
+    get_arguments().push_back(m_server_argument);
+    get_arguments().push_back(m_username_argument);
+    get_arguments().push_back(m_password_argument);
+    get_arguments().push_back(m_save_argument);
+    get_arguments().push_back(s_report_level_arg);
 }
 
 void get_api_key_command::execute(const cmd::arguments& args)
 {
-    const std::string& server = args["--server"];
-    if (server == "") {
-        throw cmd::missing_argument("--server");
-    }
-    const std::string& user = args["--username"];
-    if (user == "") {
-        throw cmd::missing_argument("--username");
-    }
-    const std::string& password = args["--password"];
-    if (password == "") {
-        throw cmd::missing_argument("--password");
-    }
-    lf::report_level rl = lf::NORMAL;
-    const std::string& rls = args["--report_level"];
-    if (rls == "silent") {
-        rl = lf::SILENT;
-    } else if (rls == "verbose") {
-        rl = lf::VERBOSE;
-    } else if (rls != "" && rls != "normal") {
-        throw cmd::invalid_argument_value("--report_level",
-                "silent, normal, verbose");
-    }
-    const std::set<std::string>& b = args.get_boolean_arguments();
-    lf::validate_cert val = lf::VALIDATE;
-    if (b.find("-k") != b.end()) {
-        val = lf::NOT_VALIDATE;
-    }
+    std::string server = m_server_argument.value(args);
+    std::string user = m_username_argument.value(args);
+    std::string password = m_password_argument.value(args);
+    lf::report_level rl = s_report_level_arg.value(args);
+    lf::validate_cert val = m_validate_cert_argument.value(args);
     const std::string& key = m_engine.get_api_key(server, user, password, rl, val);
-    if (b.find("-s") != b.end()) {
+    bool s = m_save_argument.value(args);
+    if (s) {
         credentials c(server, key, val);
         credentials::save(c);
     }

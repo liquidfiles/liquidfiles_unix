@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmd/argument_definition.h>
 #include <lf/declarations.h>
 
 #include <string>
@@ -40,26 +41,21 @@ public:
     static const int m_serial_version = 1;
 
 public:
+    static void init();
+
+    static const cmd::argument_definition_container& get_arguments()
+    {
+        return m_arguments;
+    }
+
     static std::string usage()
     {
-        return "[-k] [--server=<url>] [--api_key=<key>] [-s] "; 
+        return m_arguments.usage();
     }
 
     static std::string arg_descriptions()
     {
-        return
-            "\t-k\n"
-            "\t    If specified, do not validate server certificate."
-            " If not specified, tries to retrieve from saved credentials.\n\n"
-            "\t--server\n"
-            "\t    The server URL."
-            " If not specified, tries to retrieve from saved credentials.\n\n"
-            "\t--api_key\n"
-            "\t    API key of liquidfiles, to login to system."
-            " If not specified, tries to retrieve from saved credentials.\n\n"
-            "\t-s\n"
-            "\t    If specified, saves current credentials in cache."
-            " Credentials to save are - '-k', '--server' and '--api_key'.\n\n";
+        return m_arguments.full_description();
     }
 
 public:
@@ -107,6 +103,11 @@ private:
     std::string m_server;
     std::string m_api_key;
     lf::validate_cert m_validate_flag;
+    static cmd::argument_definition_container m_arguments;
+    static cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_server_arg;
+    static cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_api_key_arg;
+    static cmd::argument_definition<lf::validate_cert, cmd::BOOLEAN_ARGUMENT, false> m_validate_cert_arg;
+    static cmd::argument_definition<bool, cmd::BOOLEAN_ARGUMENT, false> m_save_arg;
 };
 
 }

@@ -12,6 +12,24 @@
 
 namespace ui {
 
+cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false>
+    credentials::m_server_arg("server", "<url>", "The server URL."
+            " If not specified, tries to retrieve from saved credentials.");
+
+cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false>
+    credentials::m_api_key_arg("api_key", "<key>", "API key of liquidfiles, to login to system."
+            " If not specified, tries to retrieve from saved credentials.");
+
+cmd::argument_definition<lf::validate_cert, cmd::BOOLEAN_ARGUMENT, false>
+    credentials::m_validate_cert_arg("k", "If specified, do not validate server certificate."
+            " If not specified, tries to retrieve from saved credentials.");
+
+cmd::argument_definition<bool, cmd::BOOLEAN_ARGUMENT, false>
+    credentials::m_save_arg("s", "If specified, saves current credentials in cache."
+            " Credentials to save are - '-k', '--server' and '--api_key'.");
+
+cmd::argument_definition_container credentials::m_arguments;
+
 namespace {
 
 std::string get_directory_path()
@@ -21,6 +39,14 @@ std::string get_directory_path()
     return h;
 }
 
+}
+
+void credentials::init()
+{
+    m_arguments.push_back(m_server_arg);
+    m_arguments.push_back(m_api_key_arg);
+    m_arguments.push_back(m_validate_cert_arg);
+    m_arguments.push_back(m_save_arg);
 }
 
 void credentials::load(credentials& c)
@@ -68,23 +94,26 @@ credentials credentials::manage(const cmd::arguments& args)
 {
     credentials c;
     load(c);
-    if (args.exists("--api_key")) {
-        c.m_api_key = args["--api_key"];
+    std::string v = m_api_key_arg.value(args);
+    if (!v.empty()) {
+        c.m_api_key = v;
     }
-    if (args.exists("--server")) {
-        c.m_server = args["--server"];
+    v = m_server_arg.value(args);
+    if (!v.empty()) {
+        c.m_server = v;
     }
     if (c.m_api_key == "") {
-        throw cmd::missing_argument("--api_key");
+        throw cmd::missing_argument(m_api_key_arg.name());
     }
     if (c.m_server == "") {
-        throw cmd::missing_argument("--server");
+        throw cmd::missing_argument(m_server_arg.name());
     }
-    const std::set<std::string>& b = args.get_boolean_arguments();
-    if (b.find("-k") != b.end()) {
-        c.m_validate_flag = lf::NOT_VALIDATE;
+    lf::validate_cert vv = m_validate_cert_arg.value(args);
+    if (vv == lf::NOT_VALIDATE) {
+        c.m_validate_flag = vv;
     }
-    if (b.find("-s") != b.end()) {
+    bool s = m_save_arg.value(args);
+    if (s) {
         save(c);
     }
     return c;

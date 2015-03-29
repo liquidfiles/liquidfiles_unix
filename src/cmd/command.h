@@ -1,5 +1,6 @@
 #pragma once
 
+#include "argument_definition.h"
 #include "arguments.h"
 
 #include <string>
@@ -18,13 +19,10 @@ public:
     /**
      * @brief Constructs command with given name and given description.
      * @param n Name of command.
-     * @param u Usage string.
      * @param d Description of command.
-     * @param a Arguments description string.
      */
-    command(const std::string& n, const std::string& u, const std::string& d,
-            const argument_descriptions& a);
-    
+    command(const std::string& n, const std::string& d);
+
     virtual ~command();
 
 private:
@@ -41,9 +39,9 @@ public:
     }
 
 public:
-    const std::string& usage() const
+    std::string usage() const
     {
-        return m_usage;
+        return m_arguments.usage();
     }
 
 public:
@@ -53,9 +51,15 @@ public:
     }
 
 public:
-    const argument_descriptions& arg_descriptions() const
+    std::string arg_descriptions() const
     {
-        return m_argument_descriptions;
+        return m_arguments.full_description();
+    }
+
+protected:
+    argument_definition_container& get_arguments()
+    {
+        return m_arguments;
     }
     /// @}
 
@@ -64,9 +68,8 @@ public:
 
 private:
     const std::string m_name;
-    const std::string m_usage;
     const std::string m_description;
-    const argument_descriptions m_argument_descriptions;
+    argument_definition_container m_arguments;
 };
 
 }

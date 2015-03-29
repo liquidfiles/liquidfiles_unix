@@ -1,4 +1,5 @@
 #include "delete_filelink_command.h"
+#include "common_arguments.h"
 #include "credentials.h"
 
 #include <cmd/exceptions.h>
@@ -8,39 +9,20 @@
 namespace ui {
 
 delete_filelink_command::delete_filelink_command(lf::engine& e)
-    : cmd::command("delete_filelink",
-            credentials::usage() + 
-            "[--report_level=<level>] --filelink_id=<id>",
-            "Deletes the given filelink.",
-            credentials::arg_descriptions() + 
-            "\t--report_level\n"
-            "\t    Level of reporting.\n"
-            "\t    Valid values: silent, normal, verbose.\n"
-            "\t    Default value: normal.\n\n"
-            "\t--filelink_id\n"
-            "\t    ID of filelink to delete."
-            )
+    : cmd::command("delete_filelink", "Deletes the given filelink.")
     , m_engine(e)
+    , m_filelink_id_argument("filelink_id", "<id>", "ID of filelink to delete.")
 {
+    get_arguments().push_back(credentials::get_arguments());
+    get_arguments().push_back(s_report_level_arg);
+    get_arguments().push_back(m_filelink_id_argument);
 }
 
 void delete_filelink_command::execute(const cmd::arguments& args)
 {
     credentials c = credentials::manage(args);
-    lf::report_level rl = lf::NORMAL;
-    const std::string& rls = args["--report_level"];
-    if (rls == "silent") {
-        rl = lf::SILENT;
-    } else if (rls == "verbose") {
-        rl = lf::VERBOSE;
-    } else if (rls != "" && rls != "normal") {
-        throw cmd::invalid_argument_value("--report_level",
-                "silent, normal, verbose");
-    }
-    const std::string& id = args["--filelink_id"];
-    if (id == "") {
-        throw cmd::missing_argument("--filelink_id");
-    }
+    lf::report_level rl = s_report_level_arg.value(args);
+    std::string id = m_filelink_id_argument.value(args);
     m_engine.delete_filelink(c.server(), c.api_key(), id,
             rl, c.validate_flag());
 }
