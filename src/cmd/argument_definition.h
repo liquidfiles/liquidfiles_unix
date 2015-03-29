@@ -4,6 +4,8 @@
 #include "argument_type.h"
 #include "exceptions.h"
 
+#include <base/shared_ptr.h>
+
 #include <set>
 
 namespace cmd {
@@ -58,11 +60,11 @@ private:
             return m_data.full_description();
         }
 
-    public:
+    private:
         T m_data;
     };
 
-    concept* m_self;
+    base::shared_ptr<concept> m_self;
 };
 
 class argument_definition_container : public std::vector<argument_definition_object>
