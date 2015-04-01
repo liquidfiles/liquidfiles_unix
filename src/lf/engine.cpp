@@ -81,11 +81,37 @@ std::string engine::send(std::string server,
     std::set<std::string> attachments;
     files::const_iterator i = fs.begin();
     for (; i != fs.end(); ++i) {
-        std::string a = attach(server, *i, s);
+        std::string a = attach_impl(server, *i, s);
         attachments.insert(a);
     }
-    return send_attachments(server, user, subject, message,
+    return send_attachments_impl(server, user, subject, message,
             attachments, s);
+}
+
+std::string engine::send_attachments(std::string server,
+            const std::string& key,
+            const std::string& user,
+            const std::string& subject,
+            const std::string& message,
+            const files& fs,
+            report_level s,
+            validate_cert v)
+{
+    init_curl(key, s, v);
+    return send_attachments_impl(server, user, subject, message, fs, s);
+}
+
+void engine::attach(std::string server,
+        const std::string& key,
+        const files& fs,
+        report_level s,
+        validate_cert v)
+{
+    init_curl(key, s, v);
+    files::const_iterator i = fs.begin();
+    for (; i != fs.end(); ++i) {
+        attach_impl(server, *i, s);
+    }
 }
 
 void engine::messages(std::string server,
@@ -287,33 +313,19 @@ std::string engine::filelink(std::string server,
             validate_cert v)
 {
     init_curl(key, s, v);
-    std::string a = attach(server, file, s);
-    server += "/link";
-    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_slist* slist = 0;
-    slist = curl_slist_append(slist, "Content-Type: text/xml");
-    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
-    std::string data = std::string(
-"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
-  <link>\
-    <attachment>") + a + "</attachment>\n";
-    if (!expire.empty()) {
-        data += std::string("<expires_at>") + expire + "</expires_at>\n";
-    }
-    data += "  </link>\n";
-    curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
-    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str()); 
-    if (s >= NORMAL) {
-        io::mout << "Creating filelink" << io::endl;
-    }
-    CURLcode res = curl_easy_perform(m_curl);
-    curl_slist_free_all(slist);
-    if (res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
-    std::string r = s_data;
-    s_data.clear();
-    return process_create_filelink_responce(r, s);
+    std::string a = attach_impl(server, file, s);
+    return filelink_impl(server, expire, a, s);
+}
+
+std::string engine::filelink_attachment(std::string server,
+            const std::string& key,
+            const std::string& expire,
+            const std::string& id,
+            report_level s,
+            validate_cert v)
+{
+    init_curl(key, s, v);
+    return filelink_impl(server, expire, id, s);
 }
 
 void engine::delete_filelink(std::string server,
@@ -376,7 +388,7 @@ void engine::filelinks(std::string server,
     process_output_responce<filelinks_responce>(r, s, of);
 }
 
-std::string engine::attach(std::string server,
+std::string engine::attach_impl(std::string server,
         const std::string& file,
         report_level s)
 {
@@ -404,7 +416,7 @@ std::string engine::attach(std::string server,
     return r;
 }
 
-std::string engine::send_attachments(std::string server,
+std::string engine::send_attachments_impl(std::string server,
         const std::string& user,
         const std::string& subject,
         const std::string& message,
@@ -448,6 +460,37 @@ std::string engine::send_attachments(std::string server,
     std::string r = s_data;
     s_data.clear();
     return process_send_responce(r, s);
+}
+
+std::string engine::filelink_impl(std::string server, const std::string& expire,
+            const std::string& id, report_level s)
+{
+    server += "/link";
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    struct curl_slist* slist = 0;
+    slist = curl_slist_append(slist, "Content-Type: text/xml");
+    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    std::string data = std::string(
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
+  <link>\
+    <attachment>") + id + "</attachment>\n";
+    if (!expire.empty()) {
+        data += std::string("<expires_at>") + expire + "</expires_at>\n";
+    }
+    data += "  </link>\n";
+    curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str()); 
+    if (s >= NORMAL) {
+        io::mout << "Creating filelink" << io::endl;
+    }
+    CURLcode res = curl_easy_perform(m_curl);
+    curl_slist_free_all(slist);
+    if (res != CURLE_OK) {
+        throw curl_error(std::string(curl_easy_strerror(res)));
+    }
+    std::string r = s_data;
+    s_data.clear();
+    return process_create_filelink_responce(r, s);
 }
 
 void engine::process_attach_responce(const std::string& r, report_level s) const

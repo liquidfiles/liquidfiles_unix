@@ -39,8 +39,8 @@ public:
     /**
      * @brief Sends the file to specified user, by specified server.
      * @param server Server URL.
-     * @param user User name or email.
      * @param key API Key of Liquidfiles.
+     * @param user User name or email.
      * @param subject Subject of composed email.
      * @param message Message body of email.
      * @param fs Files list to send.
@@ -53,6 +53,29 @@ public:
             const std::string& user, 
             const std::string& subject,
             const std::string& message,
+            const files& fs,
+            report_level s,
+            validate_cert v);
+
+    std::string send_attachments(std::string server,
+            const std::string& key,
+            const std::string& user,
+            const std::string& subject,
+            const std::string& message,
+            const files& fs,
+            report_level s,
+            validate_cert v);
+    /**
+     * @brief Uploads given files to server.
+     * @param server Server URL.
+     * @param key API Key of Liquidfiles.
+     * @param fs Files list to send.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error, request_error.
+     */
+    void attach(std::string server,
+            const std::string& key,
             const files& fs,
             report_level s,
             validate_cert v);
@@ -195,6 +218,22 @@ public:
             validate_cert v);
 
     /**
+     * @brief Creates filelink on the given attachment.
+     * @param server Server URL.
+     * @param key API Key of Liquidfiles.
+     * @param id Attachment id to create filelink.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error, request_error.
+     */
+    std::string filelink_attachment(std::string server,
+            const std::string& key,
+            const std::string& expire,
+            const std::string& id,
+            report_level s,
+            validate_cert v);
+
+    /**
      * @brief Deletes the given filelink.
      * @param server Server URL.
      * @param key API Key of Liquidfiles.
@@ -227,23 +266,23 @@ public:
     /// @}
 
 private:
-    std::string attach(std::string server, const std::string& file,
+    std::string attach_impl(std::string server, const std::string& file,
             report_level s);
-
-    std::string send_attachments(std::string server, const std::string& user,
+    std::string send_attachments_impl(std::string server, const std::string& user,
             const std::string& subject, const std::string& message,
             const files& fs, report_level s);
-
+    std::string filelink_impl(std::string server, const std::string& expire,
+            const std::string& id, report_level s);
     void init_curl(std::string key, report_level s, validate_cert v);
-
-private:
-    std::string process_send_responce(const std::string& r, report_level s) const;
-    void process_attach_responce(const std::string& r, report_level s) const;
     std::string message_impl(std::string server, const std::string& key, std::string id,
             report_level s, validate_cert v, std::string log);
     std::string messages_impl(std::string server, const std::string& key, std::string l,
             std::string f, report_level s, validate_cert v);
     void download_impl(const std::string& url, const std::string& path, std::string name, report_level s);
+
+private:
+    std::string process_send_responce(const std::string& r, report_level s) const;
+    void process_attach_responce(const std::string& r, report_level s) const;
     std::string process_file_request_responce(const std::string& r, report_level s) const;
     std::string process_get_api_key_responce(const std::string& r, report_level s) const;
     std::string process_create_filelink_responce(const std::string& r, report_level s) const;
