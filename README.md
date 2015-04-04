@@ -117,7 +117,8 @@ you don’t need to specify --with-curl option.**
 
 ## Usage
 Liquidfiles is command line utility. It invokes one command per session and exits. General usage is the following:
-* <code> liquidfiles &lt;command&gt; &lt;command_args&gt; </code>
+
+    liquidfiles <command> <command_args>
 
 The list of supported commands is:
 * attach              Uploads given files to server.
@@ -131,7 +132,8 @@ The list of supported commands is:
 * send                Sends the file(s) to specified user.
 
 To get command's detailed description, options and usage 'help' command can be used:
-* <code> liquidfiles help &lt;command&gt; </code>
+
+    liquidfiles help <command>
 
 Below subsections contain detailed descriptions of commands
 
@@ -142,7 +144,7 @@ Description:
 
 Usage:
 
-	liquidfiles attach [--server=&lt;url&gt;] [--api_key=&lt;key&gt;] [-k] [-s] [--report_level=&lt;level&gt;] &lt;file&gt; ...
+	liquidfiles attach [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] <file> ...
 
 Arguments:
 
