@@ -8,10 +8,9 @@ Unix and Linux servers.
 Liquidfiles Unix is fully based on [Liquidfiles public API](http://support.liquidfiles.net/forums/21423392-API) and user [libcurl](http://curl.haxx.se/) to send and receive data from Liquidfiles server.
 
 This document consists of the following sections:
+
 1. Installation - describes the typical installation steps including dependent libraries.
 2. Usage of tool - contains full description of commands, their arguments as well as usage examples.
-
-For command line help, use:  'liquidfiles help' <command> (e.g. liquidfiles help send).
 
 ## Installation
 LiquidFiles can be installed statically or to use shared libraries where all system dependencies are met. LiquidFiles relies heavily on OpenSSL 
@@ -118,19 +117,19 @@ you don’t need to specify --with-curl option.**
 
 ## Usage
 Liquidfiles is command line utility. It invokes one command per session and exits. General usage is the following:
-    liquidfiles <command> <command_args>
+* liquidfiles <command> <command_args>
 
 The list of supported commands is:
-	attach              Uploads given files to server.
-	delete_filelink     Deletes the given filelink.
-	download            Download given files.
-	file_request        Sends the file request to specified user.
-	filelink            Uploads given file and creates filelink on it.
-	filelinks           Lists the available filelinks.
-	get_api_key         Retrieves api key for the specified user.
-	messages            Lists the available messages.
-	send                Sends the file(s) to specified user.
+* attach              Uploads given files to server.
+* delete_filelink     Deletes the given filelink.
+* download            Download given files.
+* file_request        Sends the file request to specified user.
+* filelink            Uploads given file and creates filelink on it.
+* filelinks           Lists the available filelinks.
+* get_api_key         Retrieves api key for the specified user.
+* messages            Lists the available messages.
+* send                Sends the file(s) to specified user.
 
 To get command's detailed description, options and usage 'help' command can be used:
-    liquidfiles help <command>
+* liquidfiles help <command>
 
