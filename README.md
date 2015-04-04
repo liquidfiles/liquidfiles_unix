@@ -1,11 +1,15 @@
-# Installing LiquidFiles Unix Command Line Utility
+# LiquidFiles Unix Command Line Utility
 ## Introduction
-This BETA version of the utility has the send feature only.  LiquidFIles roadmap is to include all CLI features as per the already supported Windows CLI utility. Refer to [Liquidfiles support site] http://support.liquidfiles.net/entries/22100711-Command-line-utility-Windows-) for further information.
+liquidfiles_unix is UNIX command line utility, to work with Liquidfiles server, for sending files, listing messages, downloading files, etc.
 
 LiquidFiles Unix command line utility extends the functionality of your LiquidFiles server to command line use and scripting from supported 
 Unix and Linux servers.
 
-This document describes the typical installation steps for the LiquidFiles Unix client including dependent libraries. LiquidFiles can be installed using static or shared libraries to enable portability within your environment.
+Liquidfiles Unix is fully based on [Liquidfiles public API](http://support.liquidfiles.net/forums/21423392-API) and user [libcurl](http://curl.haxx.se/) to send and receive data from Liquidfiles server.
+
+This document consists of the following sections:
+1. Installation - describes the typical installation steps including dependent libraries.
+2. Usage of tool - contains full description of commands, their arguments as well as usage examples.
 
 For command line help, use:  'liquidfiles help' <command> (e.g. liquidfiles help send).
 
@@ -111,3 +115,22 @@ then you may not need to specify --with-ssl option, or if you have specified cus
 
 **Note - Using these instructions, you will need the external path however if your Curl is on system default paths, then 
 you don’t need to specify --with-curl option.**
+
+## Usage
+Liquidfiles is command line utility. It invokes one command per session and exits. General usage is the following:
+    liquidfiles <command> <command_args>
+
+The list of supported commands is:
+	attach              Uploads given files to server.
+	delete_filelink     Deletes the given filelink.
+	download            Download given files.
+	file_request        Sends the file request to specified user.
+	filelink            Uploads given file and creates filelink on it.
+	filelinks           Lists the available filelinks.
+	get_api_key         Retrieves api key for the specified user.
+	messages            Lists the available messages.
+	send                Sends the file(s) to specified user.
+
+To get command's detailed description, options and usage 'help' command can be used:
+    liquidfiles help <command>
+
