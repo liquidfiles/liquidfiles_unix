@@ -200,3 +200,289 @@ Arguments:
 	--filelink_id
 	    ID of filelink to delete.
 
+### download
+Description:
+
+	Downloads given files.
+    This command gives 2 ways to download files from liquidfiles.
+    First way to by specifying direct url to file(s) by unnamed arguments. In this case command downloads the specified files from the url.
+    Second way is by specifying message(s) by '--message_id' argument or by '--sent_in_the_last' or '--sent_after'. In this case command retrieves the message(s) and downloads all the files attached to it.
+
+Usage:
+
+	liquidfiles download [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] [--download_to=<path>] [--message_id=<id>] [--sent_in_the_last=<HOURS>] [--sent_after=YYYYMMDD] [<url> ...]
+
+Arguments:
+
+	--server
+	    The server URL. If not specified, tries to retrieve from saved credentials.
+
+	--api_key
+	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
+
+	-k
+	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
+
+	-s
+	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
+
+	--report_level
+	    Level of reporting.
+	    Valid values: silent, normal, verbose.
+	    Default value: "normal".
+
+	--download_to
+	    Directory path to download files there.
+	    Default value: "".
+
+	--message_id
+	    Message id to download attachments of it.
+
+	--sent_in_the_last
+	    Download files sent in the last specified hours.
+
+	--sent_after
+	    Download files sent after specified date.
+
+	<url> ...
+	    Url(s) of files to download.
+
+### file_request
+Description:
+
+	Sends the file request to specified user.
+
+Usage:
+
+	liquidfiles file_request [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] --to=<username> [--subject=<string>] [--message=<string>]
+
+Arguments:
+
+	--server
+	    The server URL. If not specified, tries to retrieve from saved credentials.
+
+	--api_key
+	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
+
+	-k
+	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
+
+	-s
+	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
+
+	--report_level
+	    Level of reporting.
+	    Valid values: silent, normal, verbose.
+	    Default value: "normal".
+
+	--to
+	    User name or email, to send file request.
+
+	--subject
+	    Subject of composed email.
+	    Default value: "".
+
+	--message
+	    Message text of composed email.
+	    Default value: "".
+
+### filelink
+Description:
+
+	Creates filelink.
+    This command creates filelink for the given files. It can upload given file and create link on it or get already uploaded file ID and create link on it.
+    If '-r' option is specified, it means that given unnamed argument is ID of already uploaded file, so command just creates link on it.
+    If '-r' is not specified, then given unnamed argument is file path, and command uploads that file and creates link on it.
+
+Usage:
+
+	liquidfiles filelink [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] [--expires=<YYYY-MM-DD>] [-r] <file>
+
+Arguments:
+
+	--server
+	    The server URL. If not specified, tries to retrieve from saved credentials.
+
+	--api_key
+	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
+
+	-k
+	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
+
+	-s
+	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
+
+	--report_level
+	    Level of reporting.
+	    Valid values: silent, normal, verbose.
+	    Default value: "normal".
+
+	--expires
+	    Expire date for the filelink.
+
+	-r
+	    If specified, it means that unnamed argument is attachment ID, otherwise it is file path.
+
+	<file>
+	    File path or attachment id to create filelink.
+
+### filelinks
+Description:
+
+	Lists the available filelinks.
+    The output of this command is list of filelinks. The format of output depends on '--output_format' argument.
+    If '--output_format' is table, then table is printed. Each row of table represents one filelink.
+    If '--output_format' is csv, then output is csv format. All the filelinks are separated by comma.
+
+Usage:
+
+	liquidfiles filelinks [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] [--output_format=<format>] [--limit=<number>]
+
+Arguments:
+
+	--server
+	    The server URL. If not specified, tries to retrieve from saved credentials.
+
+	--api_key
+	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
+
+	-k
+	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
+
+	-s
+	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
+
+	--report_level
+	    Level of reporting.
+	    Valid values: silent, normal, verbose.
+	    Default value: "normal".
+
+	--output_format
+	    Specifies output string format.
+	    Valid values: table, csv.
+	    Default value: "table".
+
+	--limit
+	    Limit of filelinks list.
+
+### get_api_key
+Description:
+
+	Retrieves api key for the specified user.
+
+Usage:
+
+	liquidfiles get_api_key [-k] --server=<url> --username=<email> --password=<password> [-s] [--report_level=<level>]
+
+Arguments:
+
+	-k
+	    If specified, do not validate server certificate.
+
+	--server
+	    The server URL.
+
+	--username
+	    Username.
+
+	--password
+	    Password.
+
+	-s
+	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and retrieved key.
+
+	--report_level
+	    Level of reporting.
+	    Valid values: silent, normal, verbose.
+	    Default value: "normal".
+
+### messages
+Description:
+	Lists the available messages.
+    The output of this command is list of messages. The format of output depends on '--output_format' argument.
+    If '--output_format' is table, then table is printed. Each row of table represents one message.
+    If '--output_format' is csv, then output is csv format. All the messages are separated by comma.
+
+Usage:
+	liquidfiles messages [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] [--output_format=<format>] [--message_id=<id>] [--sent_in_the_last=<HOURS>] [--sent_after=YYYYMMDD]
+
+Arguments:
+	--server
+	    The server URL. If not specified, tries to retrieve from saved credentials.
+
+	--api_key
+	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
+
+	-k
+	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
+
+	-s
+	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
+
+	--report_level
+	    Level of reporting.
+	    Valid values: silent, normal, verbose.
+	    Default value: "normal".
+
+	--output_format
+	    Specifies output string format.
+	    Valid values: table, csv.
+	    Default value: "table".
+
+	--message_id
+	    Message id to show.
+
+	--sent_in_the_last
+	    Show messages sent in the last specified hours.
+
+	--sent_after
+	    Show messages sent after specified date.
+
+### send
+Description:
+
+	Sends the file(s) to specified user.
+    This command can upload given files and send them by message or get already uploaded file IDs and send them.
+    If '-r' option is specified, it means that given unnamed arguments are IDs of already uploaded files, so command just sends them
+    If '-r' is not specified, then given unnamed arguments are file paths, and command uploads that files and sends them.
+
+Usage:
+
+	liquidfiles send [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] --to=<username> [--subject=<string>] [--message=<string>] [-r] <file> ...
+
+Arguments:
+
+	--server
+	    The server URL. If not specified, tries to retrieve from saved credentials.
+
+	--api_key
+	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
+
+	-k
+	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
+
+	-s
+	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
+
+	--report_level
+	    Level of reporting.
+	    Valid values: silent, normal, verbose.
+	    Default value: "normal".
+
+	--to
+	    User name or email, to send file.
+
+	--subject
+	    Subject of composed email.
+	    Default value: "".
+
+	--message
+	    Message text of composed email.
+	    Default value: "".
+
+	-r
+	    If specified, it means that unnamed arguments are attachment IDs, otherwise they are file paths.
+
+	<file> ...
+	    File path(s) or attachments IDs to send to user.
+

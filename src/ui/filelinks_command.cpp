@@ -15,6 +15,7 @@ filelinks_command::filelinks_command(lf::engine& e)
 {
     get_arguments().push_back(credentials::get_arguments());
     get_arguments().push_back(s_report_level_arg);
+    get_arguments().push_back(s_output_format_arg);
     get_arguments().push_back(m_limit_argument);
 }
 
