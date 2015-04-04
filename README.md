@@ -59,6 +59,7 @@ Refer to OpenSSL installation instructions and options for further information.*
 2. Run Configure* './configure'
 3. Make			make
 4. Install		make install
+
 **Note - if your OpenSSL and Curl is installed in non-system path, then you need to specify using the install options
   --with-curl=$PATH_CURL   and/or  --with-ssl=$PATH_SSL **
 
@@ -167,4 +168,35 @@ Arguments:
 
 	<file> ...
 	    File path(s) to upload.
+
+### delete_filelink
+Description:
+
+	Deletes the given filelink.
+
+Usage:
+
+	liquidfiles delete_filelink [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] --filelink_id=<id>
+
+Arguments:
+
+	--server
+	    The server URL. If not specified, tries to retrieve from saved credentials.
+
+	--api_key
+	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
+
+	-k
+	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
+
+	-s
+	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
+
+	--report_level
+	    Level of reporting.
+	    Valid values: silent, normal, verbose.
+	    Default value: "normal".
+
+	--filelink_id
+	    ID of filelink to delete.
 
