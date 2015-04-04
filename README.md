@@ -22,7 +22,7 @@ identical machine and executed there, offering portability for larger or more co
 installed system only.
 
 These instructions use the following keys for substituting user defined values:
-* <xxx-VERSION>  (downloaded_version_filename)
+* &lt;xxx-VERSION&gt;  (downloaded_version_filename)
 * $PATH_X  (user_defined_path).
 
 ### Installing shared
@@ -36,8 +36,8 @@ the default paths, you will not require the prefix option that allows user speci
 Install OpenSSL first:
 
 1. Download latest OpenSSL version from official site.
-2. Extract archive (e.g. tar –xz <openssl-VERSION>.tar.gz)
-3. Go to directory (e.g. cd <openssl-VERSION>)
+2. Extract archive (e.g. tar –xz &lt;openssl-VERSION&gt;.tar.gz)
+3. Go to directory (e.g. cd &lt;openssl-VERSION&gt;)
 4. run Configure './config shared'
 5. in the directory run 'make'
 6. then run 'make install'
@@ -45,8 +45,8 @@ Install OpenSSL first:
 After installing OpenSSL, you need to install Curl:
 
 1. Download latest curl version from official site.
-2. Extract archive	(e.g. tar –xz <curl-VERSION>.tar.gz)
-3. Go to directory	(e.g. cd <curl-VERSION>)
+2. Extract archive	(e.g. tar –xz &lt;curl-VERSION&gt;.tar.gz)
+3. Go to directory	(e.g. cd &lt;curl-VERSION&gt;)
 4. run Configure** './configure'
 5. in the directory run 'make'
 6. then run 'make install'
@@ -81,8 +81,8 @@ assume this is the case to provide a reliable installation option.
 To install OpenSSL
 
 1. Download latest OpenSSL version from official site.
-2. Extract archive (e.g. tar –xz <openssl-VERSION>.tar.gz)
-3. Go to directory (e.g. cd <openssl-VERSION>)
+2. Extract archive (e.g. tar –xz &lt;openssl-VERSION&gt;.tar.gz)
+3. Go to directory (e.g. cd &lt;openssl-VERSION&gt;)
 4. Configure shared libs (e.g. ./config shared --prefix=$PATH_X)
 5. in the directory run 'make'
 6. then run 'make install'
@@ -97,8 +97,8 @@ OpenSSL both statically and shared, in some instances you may be able to skip st
 After having OpenSSL, you need to install curl
 
 1. Download latest curl version from official site.
-2. Extract archive (e.g. tar –xz <curl-VERSION>.tar.gz)
-3. Go to directory (cd <curl-VERSION>)
+2. Extract archive (e.g. tar –xz &lt;curl-VERSION&gt;.tar.gz)
+3. Go to directory (cd &lt;curl-VERSION&gt;)
 4. Configure static files (e.g. ./configure --with-static --prefix=$PATH_X --with-ssl=$PATH_X --disable-shared)
 5. in the directory run 'make'
 6. then run 'make install'
