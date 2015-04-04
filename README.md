@@ -117,7 +117,7 @@ you don’t need to specify --with-curl option.**
 
 ## Usage
 Liquidfiles is command line utility. It invokes one command per session and exits. General usage is the following:
-<code> liquidfiles &lt;command&gt; &lt;command_args&gt; </code>
+* <code> liquidfiles &lt;command&gt; &lt;command_args&gt; </code>
 
 The list of supported commands is:
 * attach              Uploads given files to server.
@@ -131,5 +131,35 @@ The list of supported commands is:
 * send                Sends the file(s) to specified user.
 
 To get command's detailed description, options and usage 'help' command can be used:
-<code> liquidfiles help &lt;command&gt; </code>
+* <code> liquidfiles help &lt;command&gt; </code>
+
+Below subsections contain detailed descriptions of commands
+
+### attach
+Description:
+    Uploads the given file(s) to the liquidfiles server and returns the id(s) of uploaded file(s).
+
+Usage:
+	liquidfiles attach [--server=&lt;url&gt;] [--api_key=&lt;key&gt;] [-k] [-s] [--report_level=&lt;level&gt;] &lt;file&gt; ...
+
+Arguments:
+	--server
+	    The server URL. If not specified, tries to retrieve from saved credentials.
+
+	--api_key
+	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
+
+	-k
+	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
+
+	-s
+	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
+
+	--report_level
+	    Level of reporting.
+	    Valid values: silent, normal, verbose.
+	    Default value: "normal".
+
+	&lt;file&gt; ...
+	    File path(s) to upload.
 
