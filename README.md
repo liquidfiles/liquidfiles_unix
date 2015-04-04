@@ -137,12 +137,15 @@ Below subsections contain detailed descriptions of commands
 
 ### attach
 Description:
+
     Uploads the given file(s) to the liquidfiles server and returns the id(s) of uploaded file(s).
 
 Usage:
+
 	liquidfiles attach [--server=&lt;url&gt;] [--api_key=&lt;key&gt;] [-k] [-s] [--report_level=&lt;level&gt;] &lt;file&gt; ...
 
 Arguments:
+
 	--server
 	    The server URL. If not specified, tries to retrieve from saved credentials.
 
@@ -160,6 +163,6 @@ Arguments:
 	    Valid values: silent, normal, verbose.
 	    Default value: "normal".
 
-	&lt;file&gt; ...
+	<file> ...
 	    File path(s) to upload.
 
