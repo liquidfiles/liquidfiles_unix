@@ -61,7 +61,7 @@ Refer to OpenSSL installation instructions and options for further information.*
 4. Install		make install
 
 **Note - if your OpenSSL and Curl is installed in non-system path, then you need to specify using the install options
-  --with-curl=$PATH_CURL   and/or  --with-ssl=$PATH_SSL **
+  --with-curl=$PATH_CURL   and/or  --with-ssl=$PATH_SSL**
 
 ### Installing static
 The benefit of building statically is that you do not necessarily have to install OpenSSL and Curl into default system 
