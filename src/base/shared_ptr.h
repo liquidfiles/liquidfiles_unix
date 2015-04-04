@@ -88,4 +88,5 @@ private:
     T* m_ptr;
     int* m_ref_count;
 };
+
 }

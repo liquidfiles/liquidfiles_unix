@@ -32,6 +32,25 @@ size_t data_get(void* ptr, size_t size, size_t nmemb, FILE* stream)
     return size * nmemb;
 }
 
+class curl_header_guard
+{
+public:
+    curl_header_guard(CURL* c)
+        : m_slist(0)
+    {
+        m_slist = curl_slist_append(m_slist, "Content-Type: text/xml");
+        curl_easy_setopt(c, CURLOPT_HTTPHEADER, m_slist);
+    }
+
+    ~curl_header_guard()
+    {
+        curl_slist_free_all(m_slist);
+    }
+
+private:
+    struct curl_slist* m_slist;
+};
+
 }
 
 void engine::init_curl(std::string key, report_level s, validate_cert v)
@@ -386,6 +405,60 @@ void engine::filelinks(std::string server,
     std::string r = s_data;
     s_data.clear();
     process_output_responce<filelinks_responce>(r, s, of);
+}
+
+void engine::delete_attachments(std::string server,
+            const std::string& key,
+            const std::set<std::string>& ids,
+            report_level s,
+            validate_cert v)
+{
+    init_curl(key, s, v);
+    server += "/attachment/";
+    curl_easy_setopt(m_curl,CURLOPT_CUSTOMREQUEST,"DELETE");
+    curl_header_guard hg(m_curl);
+    std::set<std::string>::const_iterator i = ids.begin();
+    for (; i != ids.end(); ++i) {
+        std::string x = server + (*i);
+        curl_easy_setopt(m_curl, CURLOPT_URL, x.c_str());
+        if (s >= NORMAL) {
+            io::mout << "Deleting attachment '" << *i << "'" << io::endl;
+        }
+        CURLcode res = curl_easy_perform(m_curl);
+        if (res != CURLE_OK) {
+            throw curl_error(std::string(curl_easy_strerror(res)));
+        }
+        if (s >= NORMAL) {
+            io::mout << "Deleted successfully." << io::endl;
+        }
+    }
+}
+
+void engine::delete_attachments(std::string server,
+            const std::string& key,
+            const std::string& id,
+            report_level s,
+            validate_cert v)
+{
+    init_curl(key, s, v);
+    server += "/message/";
+    server += id;
+    server += "/delete_attachments";
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    struct curl_slist* slist = 0;
+    slist = curl_slist_append(slist, "Content-Type: text/xml");
+    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    if (s >= NORMAL) {
+        io::mout << "Deleting attachments of the message." << io::endl;
+    }
+    CURLcode res = curl_easy_perform(m_curl);
+    curl_slist_free_all(slist);
+    if (res != CURLE_OK) {
+        throw curl_error(std::string(curl_easy_strerror(res)));
+    }
+    if (s >= NORMAL) {
+        io::mout << "Deleted attachments successfully." << io::endl;
+    }
 }
 
 std::string engine::attach_impl(std::string server,

@@ -263,6 +263,36 @@ public:
             output_format of,
             report_level s,
             validate_cert v);
+
+    /**
+     * @brief Deletes the given attachments.
+     * @param server Server URL.
+     * @param key API Key of Liquidfiles.
+     * @param ids IDs of the attachments.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error, invalid_id.
+     */
+    void delete_attachments(std::string server,
+            const std::string& key,
+            const std::set<std::string>& ids,
+            report_level s,
+            validate_cert v);
+
+    /**
+     * @brief Deletes all attachments of the given message.
+     * @param server Server URL.
+     * @param key API Key of Liquidfiles.
+     * @param id Message id.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error, invalid_message_id.
+     */
+    void delete_attachments(std::string server,
+            const std::string& key,
+            const std::string& id,
+            report_level s,
+            validate_cert v);
     /// @}
 
 private:

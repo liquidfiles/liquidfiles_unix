@@ -96,11 +96,12 @@ am__v_AR_1 =
 libui_a_AR = $(AR) $(ARFLAGS)
 libui_a_LIBADD =
 am_libui_a_OBJECTS = credentials.$(OBJEXT) common_arguments.$(OBJEXT) \
-	attach_command.$(OBJEXT) delete_filelink_command.$(OBJEXT) \
-	download_command.$(OBJEXT) filelink_command.$(OBJEXT) \
-	filelinks_command.$(OBJEXT) file_request_command.$(OBJEXT) \
-	get_api_key_command.$(OBJEXT) help_command.$(OBJEXT) \
-	messages_command.$(OBJEXT) send_command.$(OBJEXT)
+	attach_command.$(OBJEXT) delete_attachments_command.$(OBJEXT) \
+	delete_filelink_command.$(OBJEXT) download_command.$(OBJEXT) \
+	filelink_command.$(OBJEXT) filelinks_command.$(OBJEXT) \
+	file_request_command.$(OBJEXT) get_api_key_command.$(OBJEXT) \
+	help_command.$(OBJEXT) messages_command.$(OBJEXT) \
+	send_command.$(OBJEXT)
 libui_a_OBJECTS = $(am_libui_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -260,6 +261,7 @@ noinst_LIBRARIES = libui.a
 libui_a_SOURCES = credentials.cpp \
 				  common_arguments.cpp \
 				  attach_command.cpp \
+				  delete_attachments_command.cpp \
 				  delete_filelink_command.cpp \
 				  download_command.cpp \
 				  filelink_command.cpp \
@@ -322,6 +324,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/attach_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/common_arguments.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/credentials.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/delete_attachments_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/delete_filelink_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/download_command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/file_request_command.Po@am__quote@
