@@ -144,6 +144,11 @@ public:
         return ret;
     }
 
+    const std::string& type_string() const
+    {
+        return m_type_string;
+    }
+
 private:
     std::string m_type_string;
     std::string m_description;
@@ -277,6 +282,9 @@ public:
     std::set<T> value(const arguments& a) const
     {
         const std::set<std::string>& v = a.get_unnamed_arguments();
+        if (r && v.empty()) {
+            throw missing_argument(parent::type_string());
+        }
         std::set<T> s;
         std::set<std::string>::const_iterator i = v.begin();
         while (i != v.end()) {

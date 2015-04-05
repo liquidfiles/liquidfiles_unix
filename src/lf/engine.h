@@ -33,7 +33,7 @@ private:
     /// @name API
     /// @{
 public:
-    typedef std::set<std::string> files;
+    typedef std::set<std::string> strings;
 
 public:
     /**
@@ -53,18 +53,31 @@ public:
             const std::string& user, 
             const std::string& subject,
             const std::string& message,
-            const files& fs,
+            const strings& fs,
             report_level s,
             validate_cert v);
 
+    /**
+     * @brief Sends the given attachments to given user.
+     * @param server Server URL.
+     * @param key API Key of Liquidfiles.
+     * @param user User name or email.
+     * @param subject Subject of composed email.
+     * @param message Message body of email.
+     * @param fs Attachment IDs.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error, request_error.
+     */
     std::string send_attachments(std::string server,
             const std::string& key,
             const std::string& user,
             const std::string& subject,
             const std::string& message,
-            const files& fs,
+            const strings& fs,
             report_level s,
             validate_cert v);
+
     /**
      * @brief Uploads given files to server.
      * @param server Server URL.
@@ -76,7 +89,7 @@ public:
      */
     void attach(std::string server,
             const std::string& key,
-            const files& fs,
+            const strings& fs,
             report_level s,
             validate_cert v);
 
@@ -300,7 +313,7 @@ private:
             report_level s);
     std::string send_attachments_impl(std::string server, const std::string& user,
             const std::string& subject, const std::string& message,
-            const files& fs, report_level s);
+            const strings& fs, report_level s);
     std::string filelink_impl(std::string server, const std::string& expire,
             const std::string& id, report_level s);
     void init_curl(std::string key, report_level s, validate_cert v);
@@ -319,6 +332,8 @@ private:
 
     template <typename T>
     void process_output_responce(const std::string& r, report_level s, output_format f) const;
+
+    std::string perform();
 
 private:
     CURL* m_curl;

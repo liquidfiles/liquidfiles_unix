@@ -25,7 +25,7 @@ std::string s_data;
 
 size_t data_get(void* ptr, size_t size, size_t nmemb, FILE* stream)
 {
-    s_data += std::string(static_cast<char*>(ptr), static_cast<char*>(ptr) + nmemb);
+    s_data += std::string(static_cast<char*>(ptr), nmemb);
     if (stream != 0) {
         fwrite(ptr, size, nmemb, stream);
     }
@@ -49,6 +49,44 @@ public:
 
 private:
     struct curl_slist* m_slist;
+};
+
+class curl_form_guard
+{
+public:
+    curl_form_guard(struct curl_httppost* f)
+        : m_formpost(f)
+    {
+    }
+
+    ~curl_form_guard()
+    {
+        curl_formfree(m_formpost);
+    }
+
+private:
+    struct curl_httppost* m_formpost;
+};
+
+class curl_file_guard
+{
+public:
+    curl_file_guard(CURL* c, FILE* f)
+        : m_curl(c)
+        , m_file(f)
+    {
+        curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, m_file);
+    }
+
+    ~curl_file_guard()
+    {
+        fclose(m_file);
+        curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, 0);
+    }
+
+private:
+    CURL* m_curl;
+    FILE* m_file;
 };
 
 }
@@ -92,13 +130,13 @@ std::string engine::send(std::string server,
         const std::string& user,
         const std::string& subject,
         const std::string& message,
-        const files& fs,
+        const strings& fs,
         report_level s,
         validate_cert v)
 {
     init_curl(key, s, v);
     std::set<std::string> attachments;
-    files::const_iterator i = fs.begin();
+    strings::const_iterator i = fs.begin();
     for (; i != fs.end(); ++i) {
         std::string a = attach_impl(server, *i, s);
         attachments.insert(a);
@@ -112,7 +150,7 @@ std::string engine::send_attachments(std::string server,
             const std::string& user,
             const std::string& subject,
             const std::string& message,
-            const files& fs,
+            const strings& fs,
             report_level s,
             validate_cert v)
 {
@@ -122,12 +160,12 @@ std::string engine::send_attachments(std::string server,
 
 void engine::attach(std::string server,
         const std::string& key,
-        const files& fs,
+        const strings& fs,
         report_level s,
         validate_cert v)
 {
     init_curl(key, s, v);
-    files::const_iterator i = fs.begin();
+    strings::const_iterator i = fs.begin();
     for (; i != fs.end(); ++i) {
         attach_impl(server, *i, s);
     }
@@ -173,6 +211,7 @@ std::string get_filename(const std::string& url)
 }
 
 }
+
 void engine::download(const std::set<std::string>& urls,
         const std::string& key,
         const std::string& path,
@@ -181,15 +220,12 @@ void engine::download(const std::set<std::string>& urls,
 {
     init_curl(key, s, v);
     std::set<std::string>::const_iterator i = urls.begin();
-    struct curl_slist* slist = 0;
-    slist = curl_slist_append(slist, "Content-Type: text/xml");
-    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    curl_header_guard hg(m_curl);
     while (i != urls.end()) {
         std::string filename = get_filename(*i);
         download_impl(*i, path, filename, s);
         ++i;
     }
-    curl_slist_free_all(slist);
 }
 
 void engine::download(std::string server,
@@ -199,23 +235,20 @@ void engine::download(std::string server,
         report_level s,
         validate_cert v)
 {
-    std::string r =  message_impl(server, key, id, s, v,
+    std::string r = message_impl(server, key, id, s, v,
         "Retrieving attachments of message.");
     try {
         xml::document<> d;
         d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
         message_responce m;
         m.read(&d);
-        struct curl_slist* slist = 0;
-        slist = curl_slist_append(slist, "Content-Type: text/xml");
-        curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+        curl_header_guard hg(m_curl);
         const std::vector<attachment_responce>& a = m.attachments();
         std::vector<attachment_responce>::const_iterator i = a.begin();
         while (i != a.end()) {
             download_impl(i->url(), path, i->filename(), s);
             ++i;
         }
-        curl_slist_free_all(slist);
     } catch (xml::parse_error&) {
         throw invalid_message_id(id);
     }
@@ -250,9 +283,7 @@ std::string engine::file_request(std::string server,
     init_curl(key, s, v);
     server += "/requests";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_slist* slist = 0;
-    slist = curl_slist_append(slist, "Content-Type: text/xml");
-    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    curl_header_guard hg(m_curl);
     std::string data = std::string(
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
   <request>\
@@ -267,14 +298,7 @@ std::string engine::file_request(std::string server,
     if (s >= NORMAL) {
         io::mout << "Sending file request to user '" << user << "'" << io::endl;
     }
-    CURLcode res = curl_easy_perform(m_curl);
-    curl_slist_free_all(slist);
-    if (res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
-    std::string r = s_data;
-    s_data.clear();
-    return process_file_request_responce(r, s);
+    return process_file_request_responce(perform(), s);
 }
 
 std::string engine::get_api_key(std::string server,
@@ -299,9 +323,7 @@ std::string engine::get_api_key(std::string server,
     }
     server += "/login";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_slist* slist = 0;
-    slist = curl_slist_append(slist, "Content-Type: text/xml");
-    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    curl_header_guard hg(m_curl);
     std::string data = std::string(
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
   <user>\
@@ -314,14 +336,7 @@ std::string engine::get_api_key(std::string server,
     if (s >= NORMAL) {
         io::mout << "Getting API key for user '" << user << "'" << io::endl;
     }
-    CURLcode res = curl_easy_perform(m_curl);
-    curl_slist_free_all(slist);
-    if (res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
-    std::string r = s_data;
-    s_data.clear();
-    return process_get_api_key_responce(r, s);
+    return process_get_api_key_responce(perform(), s);
 }
 
 std::string engine::filelink(std::string server,
@@ -357,20 +372,12 @@ void engine::delete_filelink(std::string server,
     server += "/link/";
     server += id;
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_slist* slist = 0;
-    slist = curl_slist_append(slist, "Content-Type: text/xml");
-    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
-    curl_easy_setopt(m_curl,CURLOPT_CUSTOMREQUEST,"DELETE");
+    curl_header_guard hg(m_curl);
+    curl_easy_setopt(m_curl, CURLOPT_CUSTOMREQUEST, "DELETE");
     if (s >= NORMAL) {
         io::mout << "Deleting filelink with id '" << id << "'" << io::endl;
     }
-    CURLcode res = curl_easy_perform(m_curl);
-    curl_slist_free_all(slist);
-    if (res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
-    std::string r = s_data;
-    s_data.clear();
+    std::string r = perform();
     if (r.find_first_not_of(' ') != r.npos) {
         throw request_error("delete_filelink", r);
     }
@@ -391,20 +398,11 @@ void engine::filelinks(std::string server,
         server += limit;
     }
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_slist* slist = 0;
-    slist = curl_slist_append(slist, "Content-Type: text/xml");
-    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    curl_header_guard hg(m_curl);
     if (s >= NORMAL) {
         io::mout << "Getting filelinks from the server." << io::endl;
     }
-    CURLcode res = curl_easy_perform(m_curl);
-    curl_slist_free_all(slist);
-    if (res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
-    std::string r = s_data;
-    s_data.clear();
-    process_output_responce<filelinks_responce>(r, s, of);
+    process_output_responce<filelinks_responce>(perform(), s, of);
 }
 
 void engine::delete_attachments(std::string server,
@@ -415,7 +413,7 @@ void engine::delete_attachments(std::string server,
 {
     init_curl(key, s, v);
     server += "/attachment/";
-    curl_easy_setopt(m_curl,CURLOPT_CUSTOMREQUEST,"DELETE");
+    curl_easy_setopt(m_curl, CURLOPT_CUSTOMREQUEST, "DELETE");
     curl_header_guard hg(m_curl);
     std::set<std::string>::const_iterator i = ids.begin();
     for (; i != ids.end(); ++i) {
@@ -424,10 +422,7 @@ void engine::delete_attachments(std::string server,
         if (s >= NORMAL) {
             io::mout << "Deleting attachment '" << *i << "'" << io::endl;
         }
-        CURLcode res = curl_easy_perform(m_curl);
-        if (res != CURLE_OK) {
-            throw curl_error(std::string(curl_easy_strerror(res)));
-        }
+        perform();
         if (s >= NORMAL) {
             io::mout << "Deleted successfully." << io::endl;
         }
@@ -445,17 +440,11 @@ void engine::delete_attachments(std::string server,
     server += id;
     server += "/delete_attachments";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_slist* slist = 0;
-    slist = curl_slist_append(slist, "Content-Type: text/xml");
-    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    curl_header_guard hg(m_curl);
     if (s >= NORMAL) {
         io::mout << "Deleting attachments of the message." << io::endl;
     }
-    CURLcode res = curl_easy_perform(m_curl);
-    curl_slist_free_all(slist);
-    if (res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
+    perform();
     if (s >= NORMAL) {
         io::mout << "Deleted attachments successfully." << io::endl;
     }
@@ -474,18 +463,13 @@ std::string engine::attach_impl(std::string server,
                CURLFORM_COPYNAME, "Filedata",
                CURLFORM_FILE, file.c_str(),
                CURLFORM_END);
+    curl_form_guard fg(formpost);
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, formpost);
     if (s >= NORMAL) {
         io::mout << "Uploading file '" << file << "'." << io::endl;
     }
-    CURLcode res = curl_easy_perform(m_curl);
-    curl_formfree(formpost);
-    if (res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
-    std::string r = s_data;
+    std::string r = perform();
     process_attach_responce(r, s);
-    s_data.clear();
     return r;
 }
 
@@ -493,14 +477,12 @@ std::string engine::send_attachments_impl(std::string server,
         const std::string& user,
         const std::string& subject,
         const std::string& message,
-        const files& fs,
+        const strings& fs,
         report_level s)
 {
     server += "/message";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_slist* slist = 0;
-    slist = curl_slist_append(slist, "Content-Type: text/xml");
-    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    curl_header_guard hg(m_curl);
     std::string data = std::string(
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
   <message>\
@@ -513,7 +495,7 @@ std::string engine::send_attachments_impl(std::string server,
     <authorization>3</authorization>\
     <attachments type='array'>\
 ");
-    for (files::const_iterator i = fs.begin(); i != fs.end(); ++i) {
+    for (strings::const_iterator i = fs.begin(); i != fs.end(); ++i) {
         data += "      <attachment>";
         data += *i;
         data += "</attachment>\n";
@@ -525,14 +507,7 @@ std::string engine::send_attachments_impl(std::string server,
     if (s >= NORMAL) {
         io::mout << "Sending message to user '" << user << "'" << io::endl;
     }
-    CURLcode res = curl_easy_perform(m_curl);
-    curl_slist_free_all(slist);
-    if (res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
-    std::string r = s_data;
-    s_data.clear();
-    return process_send_responce(r, s);
+    return process_send_responce(perform(), s);
 }
 
 std::string engine::filelink_impl(std::string server, const std::string& expire,
@@ -540,9 +515,7 @@ std::string engine::filelink_impl(std::string server, const std::string& expire,
 {
     server += "/link";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_slist* slist = 0;
-    slist = curl_slist_append(slist, "Content-Type: text/xml");
-    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    curl_header_guard hg(m_curl);
     std::string data = std::string(
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
   <link>\
@@ -556,14 +529,7 @@ std::string engine::filelink_impl(std::string server, const std::string& expire,
     if (s >= NORMAL) {
         io::mout << "Creating filelink" << io::endl;
     }
-    CURLcode res = curl_easy_perform(m_curl);
-    curl_slist_free_all(slist);
-    if (res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
-    std::string r = s_data;
-    s_data.clear();
-    return process_create_filelink_responce(r, s);
+    return process_create_filelink_responce(perform(), s);
 }
 
 void engine::process_attach_responce(const std::string& r, report_level s) const
@@ -617,20 +583,11 @@ std::string engine::message_impl(std::string server, const std::string& key,
     server += "/message/";
     server += id;
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_slist* slist = 0;
-    slist = curl_slist_append(slist, "Content-Type: text/xml");
-    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    curl_header_guard hg(m_curl);
     if (s >= NORMAL) {
         io::mout << log << io::endl;
     }
-    CURLcode res = curl_easy_perform(m_curl);
-    curl_slist_free_all(slist);
-    if (res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
-    std::string r = s_data;
-    s_data.clear();
-    return r;
+    return perform();
 }
 
 std::string engine::messages_impl(std::string server, const std::string& key, std::string l,
@@ -646,20 +603,11 @@ std::string engine::messages_impl(std::string server, const std::string& key, st
         server += f;
     }
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_slist* slist = 0;
-    slist = curl_slist_append(slist, "Content-Type: text/xml");
-    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, slist);
+    curl_header_guard hg(m_curl);
     if (s >= NORMAL) {
         io::mout << "Getting messages from the server." << io::endl;
     }
-    CURLcode res = curl_easy_perform(m_curl);
-    curl_slist_free_all(slist);
-    if (res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
-    std::string r = s_data;
-    s_data.clear();
-    return r;
+    return perform();
 }
 
 void engine::download_impl(const std::string& url,
@@ -677,15 +625,9 @@ void engine::download_impl(const std::string& url,
     if (fp == 0) {
         throw file_error(name, strerror(errno));
     }
+    curl_file_guard fg(m_curl, fp);
     curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, fp);
-    CURLcode res = curl_easy_perform(m_curl);
-    fclose(fp);
-    curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, 0);
-    if (res != CURLE_OK) {
-        throw curl_error(std::string(curl_easy_strerror(res)));
-    }
-    s_data.clear();
+    perform();
 }
 
 std::string engine::process_file_request_responce(const std::string& r, report_level s) const
@@ -779,6 +721,17 @@ std::string engine::process_create_filelink_responce(const std::string& r, repor
         throw request_error("create_filelink", r);
     }
     return q;
+}
+
+std::string engine::perform()
+{
+    CURLcode res = curl_easy_perform(m_curl);
+    if (res != CURLE_OK) {
+        throw curl_error(std::string(curl_easy_strerror(res)));
+    }
+    std::string r = s_data;
+    s_data.clear();
+    return r;
 }
 
 }
