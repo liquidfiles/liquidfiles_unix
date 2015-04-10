@@ -8,6 +8,7 @@ noinst_LIBRARIES = libui.a
 libui_a_SOURCES = credentials.cpp \
 				  common_arguments.cpp \
 				  attach_command.cpp \
+				  attach_chunk_command.cpp \
 				  delete_attachments_command.cpp \
 				  delete_filelink_command.cpp \
 				  download_command.cpp \

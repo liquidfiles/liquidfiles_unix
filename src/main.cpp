@@ -3,6 +3,7 @@
 #include <lf/engine.h>
 #include <ui/credentials.h>
 #include <ui/attach_command.h>
+#include <ui/attach_chunk_command.h>
 #include <ui/delete_attachments_command.h>
 #include <ui/delete_filelink_command.h>
 #include <ui/download_command.h>
@@ -22,6 +23,7 @@ int main(int argc, char** argv)
     cmd::command_processor p(io::mout);
     ui::credentials::init();
     p.register_command(new ui::attach_command(e));
+    p.register_command(new ui::attach_chunk_command(e));
     p.register_command(new ui::delete_attachments_command(e));
     p.register_command(new ui::delete_filelink_command(e));
     p.register_command(new ui::download_command(e));
