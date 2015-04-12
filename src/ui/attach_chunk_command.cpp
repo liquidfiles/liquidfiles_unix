@@ -35,6 +35,8 @@ void attach_chunk_command::execute(const cmd::arguments& args)
     if (unnamed_args.size() != 1) {
         throw cmd::invalid_arguments("Need to specify only one file.");
     }
+    m_engine.attach(c.server(), c.api_key(), *unnamed_args.begin(),
+            filename, chunk, chunks, rl, c.validate_flag());
 }
 
 }

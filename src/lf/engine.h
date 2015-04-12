@@ -94,6 +94,27 @@ public:
             validate_cert v);
 
     /**
+     * @brief Uploads given chunk of the whole file to server.
+     * @param server Server URL.
+     * @param key API Key of Liquidfiles.
+     * @param file Chunk file.
+     * @param filename Name of result file.
+     * @param chunk_id Id of current chunk.
+     * @param num_chunks Count of chunks.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error, request_error.
+     */
+    void attach(std::string server,
+            const std::string& key,
+            const std::string& file,
+            const std::string& filename,
+            int chunk_id,
+            int num_chunks,
+            report_level s,
+            validate_cert v);
+
+    /**
      * @brief Lists all the messages.
      * @param server Server URL.
      * @param key API Key of Liquidfiles.
@@ -326,6 +347,7 @@ private:
 private:
     std::string process_send_responce(const std::string& r, report_level s) const;
     void process_attach_responce(const std::string& r, report_level s) const;
+    void process_attach_chunk_responce(const std::string& r, report_level s) const;
     std::string process_file_request_responce(const std::string& r, report_level s) const;
     std::string process_get_api_key_responce(const std::string& r, report_level s) const;
     std::string process_create_filelink_responce(const std::string& r, report_level s) const;

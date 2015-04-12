@@ -5,6 +5,7 @@
 #include "messages_responce.h"
 #include "message_responce.h"
 
+#include <base/string.h>
 #include <io/messenger.h>
 #include <xml/xml.h>
 #include <xml/xml_iterators.h>
@@ -169,6 +170,48 @@ void engine::attach(std::string server,
     for (; i != fs.end(); ++i) {
         attach_impl(server, *i, s);
     }
+}
+
+void engine::attach(std::string server,
+        const std::string& key,
+        const std::string& file,
+        const std::string& filename,
+        int chunk_id,
+        int num_chunks,
+        report_level s,
+        validate_cert v)
+{
+    init_curl(key, s, v);
+    server += "/attachments";
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    struct curl_httppost* formpost=NULL;
+    struct curl_httppost* lastptr=NULL;
+    curl_formadd(&formpost,
+            &lastptr,
+            CURLFORM_COPYNAME, "Filedata",
+            CURLFORM_FILE, file.c_str(),
+            CURLFORM_END);
+    curl_formadd(&formpost,
+            &lastptr,
+            CURLFORM_COPYNAME, "name",
+            CURLFORM_COPYCONTENTS, filename.c_str(),
+            CURLFORM_END);
+    curl_formadd(&formpost,
+            &lastptr,
+            CURLFORM_COPYNAME, "chunk",
+            CURLFORM_COPYCONTENTS, base::to_string(chunk_id).c_str(),
+            CURLFORM_END);
+    curl_formadd(&formpost,
+            &lastptr,
+            CURLFORM_COPYNAME, "chunks",
+            CURLFORM_COPYCONTENTS, base::to_string(num_chunks).c_str(),
+            CURLFORM_END);
+    curl_form_guard fg(formpost);
+    curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, formpost);
+    if (s >= NORMAL) {
+        io::mout << "Uploading chunk '" << file << "'." << io::endl;
+    }
+    process_attach_chunk_responce(perform(), s);
 }
 
 void engine::messages(std::string server,
@@ -530,6 +573,23 @@ std::string engine::filelink_impl(std::string server, const std::string& expire,
         io::mout << "Creating filelink" << io::endl;
     }
     return process_create_filelink_responce(perform(), s);
+}
+
+void engine::process_attach_chunk_responce(const std::string& r, report_level s) const
+{
+    if (r.empty() || r == " ") {
+        if (s >= NORMAL) {
+            io::mout << "Current chunk uploaded successfully." << io::endl;
+        }
+        return;
+    }
+    if (r.size() == s_normal_id_size) {
+        if (s >= NORMAL) {
+            io::mout << "All chunks of file uploaded successfully. ID: " << r << io::endl;
+        }
+        return;
+    }
+    throw request_error("upload_chunk", r);
 }
 
 void engine::process_attach_responce(const std::string& r, report_level s) const
