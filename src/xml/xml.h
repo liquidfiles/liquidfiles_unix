@@ -36,16 +36,16 @@ enum node_type
 ///////////////////////////////////////////////////////////////////////
 // Parsing flags
 
-//! Parse flag instructing the parser to not create data nodes. 
+//! Parse flag instructing the parser to not create data nodes.
 //! Text of first data node will still be placed in value of parent element, unless xml::parse_no_element_values flag is also specified.
 //! Can be combined with other flags by use of | operator.
 //! <br><br>
 //! See document::parse() function.
-const int parse_no_data_nodes = 0x1;            
+const int parse_no_data_nodes = 0x1;
 
 //! Parse flag instructing the parser to not use text of first data node as a value of parent element.
 //! Can be combined with other flags by use of | operator.
-//! Note that child data nodes of element node take precendence over its value when printing. 
+//! Note that child data nodes of element node take precendence over its value when printing.
 //! That is, if element has one or more child data nodes <em>and</em> a value, the value will be ignored.
 //! Use xml::parse_no_data_nodes flag to prevent creation of data nodes if you want to manipulate data using values of elements.
 //! <br><br>
@@ -102,7 +102,7 @@ const int parse_doctype_node = 0x80;
 //! See document::parse() function.
 const int parse_pi_nodes = 0x100;
 
-//! Parse flag instructing the parser to validate closing tag names. 
+//! Parse flag instructing the parser to validate closing tag names.
 //! If not set, name inside closing tag is irrelevant to the parser.
 //! By default, closing tags are not validated.
 //! Can be combined with other flags by use of | operator.
@@ -111,7 +111,7 @@ const int parse_pi_nodes = 0x100;
 const int parse_validate_closing_tags = 0x200;
 
 //! Parse flag instructing the parser to trim all leading and trailing whitespace of data nodes.
-//! By default, whitespace is not trimmed. 
+//! By default, whitespace is not trimmed.
 //! This flag does not cause the parser to modify source text.
 //! Can be combined with other flags by use of | operator.
 //! <br><br>
@@ -120,7 +120,7 @@ const int parse_trim_whitespace = 0x400;
 
 //! Parse flag instructing the parser to condense all whitespace runs of data nodes to a single space character.
 //! Trimming of leading and trailing whitespace of data is controlled by xml::parse_trim_whitespace flag.
-//! By default, whitespace is not normalized. 
+//! By default, whitespace is not normalized.
 //! If this flag is specified, source text will be modified.
 //! Can be combined with other flags by use of | operator.
 //! <br><br>
@@ -129,17 +129,17 @@ const int parse_normalize_whitespace = 0x800;
 
 // Compound flags
 
-//! Parse flags which represent default behaviour of the parser. 
+//! Parse flags which represent default behaviour of the parser.
 //! This is always equal to 0, so that all other flags can be simply ored together.
 //! Normally there is no need to inconveniently disable flags by anding with their negated (~) values.
-//! This also means that meaning of each flag is a <i>negation</i> of the default setting. 
+//! This also means that meaning of each flag is a <i>negation</i> of the default setting.
 //! For example, if flag name is xml::parse_no_utf8, it means that utf-8 is <i>enabled</i> by default,
 //! and using the flag will disable it.
 //! <br><br>
 //! See document::parse() function.
 const int parse_default = 0;
 
-//! A combination of parse flags that forbids any modifications of the source text. 
+//! A combination of parse flags that forbids any modifications of the source text.
 //! This also results in faster parsing. However, note that the following will occur:
 //! <ul>
 //! <li>names and values of nodes will not be zero terminated, you have to use xml_base::name_size() and xml_base::value_size() functions to determine where name and value ends</li>
@@ -154,7 +154,7 @@ const int parse_non_destructive = parse_no_string_terminators | parse_no_entity_
 //! See document::parse() function.
 const int parse_fastest = parse_non_destructive | parse_no_data_nodes;
 
-//! A combination of parse flags resulting in largest amount of data being extracted. 
+//! A combination of parse flags resulting in largest amount of data being extracted.
 //! This usually results in slowest parsing.
 //! <br><br>
 //! See document::parse() function.
@@ -191,7 +191,7 @@ namespace internal
     inline std::size_t measure(const Ch *p)
     {
         const Ch *tmp = p;
-        while (*tmp) 
+        while (*tmp)
             ++tmp;
         return tmp - p;
     }
@@ -223,27 +223,27 @@ namespace internal
 // Memory pool
 
 //! This class is used by the parser to create new nodes and attributes, without overheads of dynamic memory allocation.
-//! In most cases, you will not need to use this class directly. 
-//! However, if you need to create nodes manually or modify names/values of nodes, 
-//! you are encouraged to use memory_pool of relevant document to allocate the memory. 
-//! Not only is this faster than allocating them by using <code>new</code> operator, 
-//! but also their lifetime will be tied to the lifetime of document, 
-//! possibly simplyfing memory management. 
+//! In most cases, you will not need to use this class directly.
+//! However, if you need to create nodes manually or modify names/values of nodes,
+//! you are encouraged to use memory_pool of relevant document to allocate the memory.
+//! Not only is this faster than allocating them by using <code>new</code> operator,
+//! but also their lifetime will be tied to the lifetime of document,
+//! possibly simplyfing memory management.
 //! <br><br>
-//! Call allocate_node() or allocate_attribute() functions to obtain new nodes or attributes from the pool. 
+//! Call allocate_node() or allocate_attribute() functions to obtain new nodes or attributes from the pool.
 //! You can also call allocate_string() function to allocate strings.
 //! Such strings can then be used as names or values of nodes without worrying about their lifetime.
-//! Note that there is no <code>free()</code> function -- all allocations are freed at once when clear() function is called, 
+//! Note that there is no <code>free()</code> function -- all allocations are freed at once when clear() function is called,
 //! or when the pool is destroyed.
 //! <br><br>
-//! It is also possible to create a standalone memory_pool, and use it 
+//! It is also possible to create a standalone memory_pool, and use it
 //! to allocate nodes, whose lifetime will not be tied to any document.
 //! <br><br>
-//! Pool maintains <code>XML_STATIC_POOL_SIZE</code> bytes of statically allocated memory. 
+//! Pool maintains <code>XML_STATIC_POOL_SIZE</code> bytes of statically allocated memory.
 //! Until static memory is exhausted, no dynamic memory allocations are done.
 //! When static memory is exhausted, pool allocates additional blocks of memory of size <code>XML_DYNAMIC_POOL_SIZE</code> each,
-//! by using global <code>new[]</code> and <code>delete[]</code> operators. 
-//! This behaviour can be changed by setting custom allocation routines. 
+//! by using global <code>new[]</code> and <code>delete[]</code> operators.
+//! This behaviour can be changed by setting custom allocation routines.
 //! Use set_allocator() function to set them.
 //! <br><br>
 //! Allocations for nodes, attributes and strings are aligned at <code>XML_ALIGNMENT</code> bytes.
@@ -252,21 +252,21 @@ namespace internal
 //! To obtain absolutely top performance from the parser,
 //! it is important that all nodes are allocated from a single, contiguous block of memory.
 //! Otherwise, cache misses when jumping between two (or more) disjoint blocks of memory can slow down parsing quite considerably.
-//! If required, you can tweak <code>XML_STATIC_POOL_SIZE</code>, <code>XML_DYNAMIC_POOL_SIZE</code> and <code>XML_ALIGNMENT</code> 
+//! If required, you can tweak <code>XML_STATIC_POOL_SIZE</code>, <code>XML_DYNAMIC_POOL_SIZE</code> and <code>XML_ALIGNMENT</code>
 //! to obtain best wasted memory to performance compromise.
 //! To do it, define their values before xml.hpp file is included.
-//! \param Ch Character type of created nodes. 
+//! \param Ch Character type of created nodes.
 template<class Ch = char>
 class memory_pool
 {
-    
+
 public:
 
     //! \cond internal
     typedef void *(alloc_func)(std::size_t);       // Type of user-defined function used to allocate memory
     typedef void (free_func)(void *);              // Type of user-defined function used to free memory
     //! \endcond
-    
+
     //! Constructs empty pool with default allocator functions.
     memory_pool()
         : m_alloc_func(0)
@@ -275,7 +275,7 @@ public:
         init();
     }
 
-    //! Destroys pool and frees all the memory. 
+    //! Destroys pool and frees all the memory.
     //! This causes memory occupied by nodes allocated by the pool to be freed.
     //! Nodes allocated from the pool are no longer valid.
     ~memory_pool()
@@ -283,7 +283,7 @@ public:
         clear();
     }
 
-    //! Allocates a new node from the pool, and optionally assigns name and value to it. 
+    //! Allocates a new node from the pool, and optionally assigns name and value to it.
     //! If the allocation request cannot be accomodated, this function will throw <code>std::bad_alloc</code>.
     //! \param type Type of node to create.
     //! \param name Name to assign to the node, or 0 to assign no name.
@@ -291,8 +291,8 @@ public:
     //! \param name_size Size of name to assign, or 0 to automatically calculate size from name string.
     //! \param value_size Size of value to assign, or 0 to automatically calculate size from value string.
     //! \return Pointer to allocated node. This pointer will never be NULL.
-    node<Ch> *allocate_node(node_type type, 
-                                const Ch *name = 0, const Ch *value = 0, 
+    node<Ch> *allocate_node(node_type type,
+                                const Ch *name = 0, const Ch *value = 0,
                                 std::size_t name_size = 0, std::size_t value_size = 0)
     {
         void *memory = allocate_aligned(sizeof(node<Ch>));
@@ -321,7 +321,7 @@ public:
     //! \param name_size Size of name to assign, or 0 to automatically calculate size from name string.
     //! \param value_size Size of value to assign, or 0 to automatically calculate size from value string.
     //! \return Pointer to allocated attribute. This pointer will never be NULL.
-    attribute<Ch> *allocate_attribute(const Ch *name = 0, const Ch *value = 0, 
+    attribute<Ch> *allocate_attribute(const Ch *name = 0, const Ch *value = 0,
                                           std::size_t name_size = 0, std::size_t value_size = 0)
     {
         void *memory = allocate_aligned(sizeof(attribute<Ch>));
@@ -363,7 +363,7 @@ public:
     //! Clones an node and its hierarchy of child nodes and attributes.
     //! Nodes and attributes are allocated from this memory pool.
     //! Names and values are not cloned, they are shared between the clone and the source.
-    //! Result node can be optionally specified as a second parameter, 
+    //! Result node can be optionally specified as a second parameter,
     //! in which case its contents will be replaced with cloned source node.
     //! This is useful when you want to clone entire document.
     //! \param source Node to clone.
@@ -394,7 +394,7 @@ public:
         return result;
     }
 
-    //! Clears the pool. 
+    //! Clears the pool.
     //! This causes memory occupied by nodes allocated by the pool to be freed.
     //! Any nodes or strings allocated from the pool will no longer be valid.
     void clear()
@@ -414,7 +414,7 @@ public:
     //! Sets or resets the user-defined memory allocation functions for the pool.
     //! This can only be called when no memory is allocated from the pool yet, otherwise results are undefined.
     //! Allocation function must not return invalid pointer on failure. It should either throw,
-    //! stop the program, or use <code>longjmp()</code> function to pass control to other place of program. 
+    //! stop the program, or use <code>longjmp()</code> function to pass control to other place of program.
     //! If it returns invalid pointer, results are undefined.
     //! <br><br>
     //! User defined allocation functions must have the following forms:
@@ -444,17 +444,17 @@ private:
         m_ptr = align(m_begin);
         m_end = m_static_memory + sizeof(m_static_memory);
     }
-    
+
     char *align(char *ptr)
     {
         std::size_t alignment = ((XML_ALIGNMENT - (std::size_t(ptr) & (XML_ALIGNMENT - 1))) & (XML_ALIGNMENT - 1));
         return ptr + alignment;
     }
-    
+
     char *allocate_raw(std::size_t size)
     {
         // Allocate
-        void *memory;   
+        void *memory;
         if (m_alloc_func)   // Allocate memory using either user-specified allocation function or global operator new[]
         {
             memory = m_alloc_func(size);
@@ -466,7 +466,7 @@ private:
         }
         return static_cast<char *>(memory);
     }
-    
+
     void *allocate_aligned(std::size_t size)
     {
         // Calculate aligned pointer
@@ -479,11 +479,11 @@ private:
             std::size_t pool_size = XML_DYNAMIC_POOL_SIZE;
             if (pool_size < size)
                 pool_size = size;
-            
+
             // Allocate
             std::size_t alloc_size = sizeof(header) + (2 * XML_ALIGNMENT - 2) + pool_size;     // 2 alignments required in worst case: one for header, one for actual allocation
             char *raw_memory = allocate_raw(alloc_size);
-                
+
             // Setup new pool in allocated memory
             char *pool = align(raw_memory);
             header *new_header = reinterpret_cast<header *>(pool);
@@ -512,7 +512,7 @@ private:
 ///////////////////////////////////////////////////////////////////////////
 // XML base
 
-//! Base class for node and attribute implementing common functions: 
+//! Base class for node and attribute implementing common functions:
 //! name(), name_size(), value(), value_size() and parent().
 //! \param Ch Character type to use
 template<class Ch = char>
@@ -520,7 +520,7 @@ class xml_base
 {
 
 public:
-    
+
     ///////////////////////////////////////////////////////////////////////////
     // Construction & destruction
 
@@ -535,7 +535,7 @@ public:
     ///////////////////////////////////////////////////////////////////////////
     // Node data access
 
-    //! Gets name of the node. 
+    //! Gets name of the node.
     //! Interpretation of name depends on type of node.
     //! Note that name will not be zero-terminated if xml::parse_no_string_terminators option was selected during parse.
     //! <br><br>
@@ -554,7 +554,7 @@ public:
         return m_name ? m_name_size : 0;
     }
 
-    //! Gets value of node. 
+    //! Gets value of node.
     //! Interpretation of value depends on type of node.
     //! Note that value will not be zero-terminated if xml::parse_no_string_terminators option was selected during parse.
     //! <br><br>
@@ -579,7 +579,7 @@ public:
     //! Sets name of node to a non zero-terminated string.
     //! See \ref ownership_of_strings.
     //! <br><br>
-    //! Note that node does not own its name or value, it only stores a pointer to it. 
+    //! Note that node does not own its name or value, it only stores a pointer to it.
     //! It will not delete or otherwise free the pointer on destruction.
     //! It is reponsibility of the user to properly manage lifetime of the string.
     //! The easiest way to achieve it is to use memory_pool of the document to allocate the string -
@@ -606,7 +606,7 @@ public:
     //! Sets value of node to a non zero-terminated string.
     //! See \ref ownership_of_strings.
     //! <br><br>
-    //! Note that node does not own its name or value, it only stores a pointer to it. 
+    //! Note that node does not own its name or value, it only stores a pointer to it.
     //! It will not delete or otherwise free the pointer on destruction.
     //! It is reponsibility of the user to properly manage lifetime of the string.
     //! The easiest way to achieve it is to use memory_pool of the document to allocate the string -
@@ -660,9 +660,9 @@ protected:
 
 };
 
-//! Class representing attribute node of XML document. 
+//! Class representing attribute node of XML document.
 //! Each attribute has name and value strings, which are available through name() and value() functions (inherited from xml_base).
-//! Note that after parse, both name and value of attribute will point to interior of source text used for parsing. 
+//! Note that after parse, both name and value of attribute will point to interior of source text used for parsing.
 //! Thus, this text must persist in memory for the lifetime of attribute.
 //! \param Ch Character type to use.
 template<class Ch = char>
@@ -676,7 +676,7 @@ public:
     ///////////////////////////////////////////////////////////////////////////
     // Construction & destruction
 
-    //! Constructs an empty attribute with the specified type. 
+    //! Constructs an empty attribute with the specified type.
     //! Consider using memory_pool of appropriate document if allocating attributes manually.
     attribute()
     {
@@ -699,7 +699,7 @@ public:
             return 0;
     }
 
-    //! Gets previous attribute, optionally matching attribute name. 
+    //! Gets previous attribute, optionally matching attribute name.
     //! \param name Name of attribute to find, or 0 to return previous attribute regardless of its name; this string doesn't have to be zero-terminated if name_size is non-zero
     //! \param name_size Size of name, in characters, or 0 to have size calculated automatically from string
     //! \param case_sensitive Should name comparison be case-sensitive; non case-sensitive comparison works properly only for ASCII characters
@@ -719,7 +719,7 @@ public:
             return this->m_parent ? m_prev_attribute : 0;
     }
 
-    //! Gets next attribute, optionally matching attribute name. 
+    //! Gets next attribute, optionally matching attribute name.
     //! \param name Name of attribute to find, or 0 to return next attribute regardless of its name; this string doesn't have to be zero-terminated if name_size is non-zero
     //! \param name_size Size of name, in characters, or 0 to have size calculated automatically from string
     //! \param case_sensitive Should name comparison be case-sensitive; non case-sensitive comparison works properly only for ASCII characters
@@ -749,12 +749,12 @@ private:
 ///////////////////////////////////////////////////////////////////////////
 // XML node
 
-//! Class representing a node of XML document. 
-//! Each node may have associated name and value strings, which are available through name() and value() functions. 
+//! Class representing a node of XML document.
+//! Each node may have associated name and value strings, which are available through name() and value() functions.
 //! Interpretation of name and value depends on type of the node.
 //! Type of node can be determined by using type() function.
 //! <br><br>
-//! Note that after parse, both name and value of node, if any, will point interior of source text used for parsing. 
+//! Note that after parse, both name and value of node, if any, will point interior of source text used for parsing.
 //! Thus, this text must persist in the memory for the lifetime of node.
 //! \param Ch Character type to use.
 template<class Ch = char>
@@ -766,7 +766,7 @@ public:
     ///////////////////////////////////////////////////////////////////////////
     // Construction & destruction
 
-    //! Constructs an empty node with the specified type. 
+    //! Constructs an empty node with the specified type.
     //! Consider using memory_pool of appropriate document to allocate nodes manually.
     //! \param type Type of node to construct.
     node(node_type type)
@@ -819,7 +819,7 @@ public:
             return m_first_node;
     }
 
-    //! Gets last child node, optionally matching node name. 
+    //! Gets last child node, optionally matching node name.
     //! Behaviour is undefined if node has no children.
     //! Use first_node() to test if node has children.
     //! \param name Name of child to find, or 0 to return last child regardless of its name; this string doesn't have to be zero-terminated if name_size is non-zero
@@ -842,7 +842,7 @@ public:
             return m_last_node;
     }
 
-    //! Gets previous sibling node, optionally matching node name. 
+    //! Gets previous sibling node, optionally matching node name.
     //! Behaviour is undefined if node has no parent.
     //! Use parent() to test if node has a parent.
     //! \param name Name of sibling to find, or 0 to return previous sibling regardless of its name; this string doesn't have to be zero-terminated if name_size is non-zero
@@ -865,7 +865,7 @@ public:
             return m_prev_sibling;
     }
 
-    //! Gets next sibling node, optionally matching node name. 
+    //! Gets next sibling node, optionally matching node name.
     //! Behaviour is undefined if node has no parent.
     //! Use parent() to test if node has a parent.
     //! \param name Name of sibling to find, or 0 to return next sibling regardless of its name; this string doesn't have to be zero-terminated if name_size is non-zero
@@ -962,7 +962,7 @@ public:
         child->m_prev_sibling = 0;
     }
 
-    //! Appends a new child node. 
+    //! Appends a new child node.
     //! The appended child becomes the last child.
     //! \param child Node to append.
     void append_node(node<Ch> *child)
@@ -983,7 +983,7 @@ public:
         child->m_next_sibling = 0;
     }
 
-    //! Inserts a new child node at specified place inside the node. 
+    //! Inserts a new child node at specified place inside the node.
     //! All children after and including the specified node are moved one position back.
     //! \param where Place where to insert the child, or 0 to insert at the back.
     //! \param child Node to insert.
@@ -1005,7 +1005,7 @@ public:
         }
     }
 
-    //! Removes first child node. 
+    //! Removes first child node.
     //! If node has no children, behaviour is undefined.
     //! Use first_node() to test if node has children.
     void remove_first_node()
@@ -1020,7 +1020,7 @@ public:
         child->m_parent = 0;
     }
 
-    //! Removes last child of the node. 
+    //! Removes last child of the node.
     //! If node has no children, behaviour is undefined.
     //! Use first_node() to test if node has children.
     void remove_last_node()
@@ -1103,7 +1103,7 @@ public:
         attribute->m_next_attribute = 0;
     }
 
-    //! Inserts a new attribute at specified place inside the node. 
+    //! Inserts a new attribute at specified place inside the node.
     //! All attributes after and including the specified attribute are moved one position back.
     //! \param where Place where to insert the attribute, or 0 to insert at the back.
     //! \param attribute Attribute to insert.
@@ -1125,7 +1125,7 @@ public:
         }
     }
 
-    //! Removes first attribute of the node. 
+    //! Removes first attribute of the node.
     //! If node has no attributes, behaviour is undefined.
     //! Use first_attribute() to test if node has attributes.
     void remove_first_attribute()
@@ -1142,7 +1142,7 @@ public:
         m_first_attribute = attribute->m_next_attribute;
     }
 
-    //! Removes last attribute of the node. 
+    //! Removes last attribute of the node.
     //! If node has no attributes, behaviour is undefined.
     //! Use first_attribute() to test if node has attributes.
     void remove_last_attribute()
@@ -1183,7 +1183,7 @@ public:
             attribute->m_parent = 0;
         m_first_attribute = 0;
     }
-    
+
 private:
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1197,7 +1197,7 @@ private:
     // Data members
 
     // Note that some of the pointers below have UNDEFINED values if certain other pointers are 0.
-    // This is required for maximum performance, as it allows the parser to omit initialization of 
+    // This is required for maximum performance, as it allows the parser to omit initialization of
     // unneded/redundant values.
     //
     // The rules are as follows:
@@ -1218,10 +1218,10 @@ private:
 ///////////////////////////////////////////////////////////////////////////
 // XML document
 
-//! This class represents root of the DOM hierarchy. 
+//! This class represents root of the DOM hierarchy.
 //! It is also an node and a memory_pool through public inheritance.
 //! Use parse() function to build a DOM tree from a zero-terminated XML text string.
-//! parse() function allocates memory for nodes and attributes by using functions of document, 
+//! parse() function allocates memory for nodes and attributes by using functions of document,
 //! which are inherited from memory_pool.
 //! To access root node of the document, use the document itself, as if it was an node.
 //! \param Ch Character type to use.
@@ -1245,21 +1245,21 @@ public:
     //! If you want to parse contents of a file, you must first load the file into the memory, and pass pointer to its beginning.
     //! Make sure that data is zero-terminated.
     //! <br><br>
-    //! Document can be parsed into multiple times. 
+    //! Document can be parsed into multiple times.
     //! Each new call to parse removes previous nodes and attributes (if any), but does not clear memory pool.
     //! \param text XML data to parse; pointer is non-const to denote fact that this data may be modified by the parser.
     template<int Flags>
     void parse(Ch *text)
     {
         assert(text);
-        
+
         // Remove current contents
         this->remove_all_nodes();
         this->remove_all_attributes();
-        
+
         // Parse BOM, if any
         parse_bom<Flags>(text);
-        
+
         // Parse children
         while (1)
         {
@@ -1289,12 +1289,12 @@ public:
         this->remove_all_attributes();
         memory_pool<Ch>::clear();
     }
-    
+
 private:
 
     ///////////////////////////////////////////////////////////////////////
     // Internal character utility functions
-    
+
     // Detect whitespace character
     struct whitespace_pred
     {
@@ -1441,14 +1441,14 @@ private:
     static Ch *skip_and_expand_character_refs(Ch *&text)
     {
         // If entity translation, whitespace condense and whitespace trimming is disabled, use plain skip
-        if (Flags & parse_no_entity_translation && 
+        if (Flags & parse_no_entity_translation &&
             !(Flags & parse_normalize_whitespace) &&
             !(Flags & parse_trim_whitespace))
         {
             skip<StopPred, Flags>(text);
             return text;
         }
-        
+
         // Use simple skip until first modification is detected
         skip<StopPredPure, Flags>(text);
 
@@ -1457,7 +1457,7 @@ private:
         Ch *dest = src;
         while (StopPred::test(*src))
         {
-            // If entity translation is enabled    
+            // If entity translation is enabled
             if (!(Flags & parse_no_entity_translation))
             {
                 // Test if replacement is needed
@@ -1467,7 +1467,7 @@ private:
                     {
 
                     // &amp; &apos;
-                    case Ch('a'): 
+                    case Ch('a'):
                         if (src[2] == Ch('m') && src[3] == Ch('p') && src[4] == Ch(';'))
                         {
                             *dest = Ch('&');
@@ -1485,7 +1485,7 @@ private:
                         break;
 
                     // &quot;
-                    case Ch('q'): 
+                    case Ch('q'):
                         if (src[2] == Ch('u') && src[3] == Ch('o') && src[4] == Ch('t') && src[5] == Ch(';'))
                         {
                             *dest = Ch('"');
@@ -1496,7 +1496,7 @@ private:
                         break;
 
                     // &gt;
-                    case Ch('g'): 
+                    case Ch('g'):
                         if (src[2] == Ch('t') && src[3] == Ch(';'))
                         {
                             *dest = Ch('>');
@@ -1507,7 +1507,7 @@ private:
                         break;
 
                     // &lt;
-                    case Ch('l'): 
+                    case Ch('l'):
                         if (src[2] == Ch('t') && src[3] == Ch(';'))
                         {
                             *dest = Ch('<');
@@ -1518,7 +1518,7 @@ private:
                         break;
 
                     // &#...; - assumes ASCII
-                    case Ch('#'): 
+                    case Ch('#'):
                         if (src[2] == Ch('x'))
                         {
                             unsigned long code = 0;
@@ -1561,11 +1561,11 @@ private:
                     }
                 }
             }
-            
+
             // If whitespace condensing is enabled
             if (Flags & parse_normalize_whitespace)
             {
-                // Test if condensing is needed                 
+                // Test if condensing is needed
                 if (whitespace_pred::test(*src))
                 {
                     *dest = Ch(' '); ++dest;    // Put single space in dest
@@ -1590,14 +1590,14 @@ private:
 
     ///////////////////////////////////////////////////////////////////////
     // Internal parsing functions
-    
+
     // Parse BOM, if any
     template<int Flags>
     void parse_bom(Ch *&text)
     {
         // UTF-8?
-        if (static_cast<unsigned char>(text[0]) == 0xEF && 
-            static_cast<unsigned char>(text[1]) == 0xBB && 
+        if (static_cast<unsigned char>(text[0]) == 0xEF &&
+            static_cast<unsigned char>(text[1]) == 0xBB &&
             static_cast<unsigned char>(text[2]) == 0xBF)
         {
             text += 3;      // Skup utf-8 bom
@@ -1630,12 +1630,12 @@ private:
 
         // Parse declaration attributes
         parse_node_attributes<Flags>(text, declaration);
-        
+
         // Skip ?>
         if (text[0] != Ch('?') || text[1] != Ch('>'))
             throw parse_error("expected ?>", text);
         text += 2;
-        
+
         return declaration;
     }
 
@@ -1671,11 +1671,11 @@ private:
         // Create comment node
         node<Ch> *comment = this->allocate_node(node_comment);
         comment->value(value, text - value);
-        
+
         // Place zero terminator after comment value
         if (!(Flags & parse_no_string_terminators))
             *text = Ch('\0');
-        
+
         text += 3;     // Skip '-->'
         return comment;
     }
@@ -1693,7 +1693,7 @@ private:
             // Determine character type
             switch (*text)
             {
-            
+
             // If '[' encountered, scan for matching ending ']' using naive algorithm with depth
             // This works for all W3C test files except for 2 most wicked
             case Ch('['):
@@ -1712,25 +1712,25 @@ private:
                 }
                 break;
             }
-            
+
             // Error on end of text
             case Ch('\0'):
                 throw parse_error("unexpected end of data", text);
-            
+
             // Other character, skip it
             default:
                 ++text;
 
             }
         }
-        
+
         // If DOCTYPE nodes enabled
         if (Flags & parse_doctype_node)
         {
             // Create a new doctype node
             node<Ch> *doctype = this->allocate_node(node_doctype);
             doctype->value(value, text - value);
-            
+
             // Place zero terminator after value
             if (!(Flags & parse_no_string_terminators))
                 *text = Ch('\0');
@@ -1762,13 +1762,13 @@ private:
             if (text == name)
                 throw parse_error("expected PI target", text);
             pi->name(name, text - name);
-            
+
             // Skip whitespace between pi target and pi
             skip<whitespace_pred, Flags>(text);
 
             // Remember start of pi
             Ch *value = text;
-            
+
             // Skip to '?>'
             while (text[0] != Ch('?') || text[1] != Ch('>'))
             {
@@ -1778,15 +1778,15 @@ private:
             }
 
             // Set pi value (verbatim, no entity expansion or whitespace normalization)
-            pi->value(value, text - value);     
-            
+            pi->value(value, text - value);
+
             // Place zero terminator after name and value
             if (!(Flags & parse_no_string_terminators))
             {
                 pi->name()[pi->name_size()] = Ch('\0');
                 pi->value()[pi->value_size()] = Ch('\0');
             }
-            
+
             text += 2;                          // Skip '?>'
             return pi;
         }
@@ -1812,12 +1812,12 @@ private:
     {
         // Backup to contents start if whitespace trimming is disabled
         if (!(Flags & parse_trim_whitespace))
-            text = contents_start;     
-        
+            text = contents_start;
+
         // Skip until end of data
         Ch *value = text, *end;
         if (Flags & parse_normalize_whitespace)
-            end = skip_and_expand_character_refs<text_pred, text_pure_with_ws_pred, Flags>(text);   
+            end = skip_and_expand_character_refs<text_pred, text_pure_with_ws_pred, Flags>(text);
         else
             end = skip_and_expand_character_refs<text_pred, text_pure_no_ws_pred, Flags>(text);
 
@@ -1837,7 +1837,7 @@ private:
                     --end;
             }
         }
-        
+
         // If characters are still left between end and value (this test is only necessary if normalization is enabled)
         // Create new data node
         if (!(Flags & parse_no_data_nodes))
@@ -1848,7 +1848,7 @@ private:
         }
 
         // Add data to parent node if no data exists yet
-        if (!(Flags & parse_no_element_values)) 
+        if (!(Flags & parse_no_element_values))
             if (*n->value() == Ch('\0'))
                 n->value(value, end - value);
 
@@ -1902,7 +1902,7 @@ private:
         text += 3;      // Skip ]]>
         return cdata;
     }
-    
+
     // Parse element node
     template<int Flags>
     node<Ch> *parse_element(Ch *&text)
@@ -1916,7 +1916,7 @@ private:
         if (text == name)
             throw parse_error("expected element name", text);
         element->name(name, text - name);
-        
+
         // Skip whitespace between element name and attributes or >
         skip<whitespace_pred, Flags>(text);
 
@@ -1956,15 +1956,15 @@ private:
         {
 
         // <...
-        default: 
+        default:
             // Parse and append element node
             return parse_element<Flags>(text);
 
         // <?...
-        case Ch('?'): 
+        case Ch('?'):
             ++text;     // Skip ?
             if ((text[0] == Ch('x') || text[0] == Ch('X')) &&
-                (text[1] == Ch('m') || text[1] == Ch('M')) && 
+                (text[1] == Ch('m') || text[1] == Ch('M')) &&
                 (text[2] == Ch('l') || text[2] == Ch('L')) &&
                 whitespace_pred::test(text[3]))
             {
@@ -1977,14 +1977,14 @@ private:
                 // Parse PI
                 return parse_pi<Flags>(text);
             }
-        
+
         // <!...
-        case Ch('!'): 
+        case Ch('!'):
 
             // Parse proper subset of <! node
-            switch (text[1])    
+            switch (text[1])
             {
-            
+
             // <!-
             case Ch('-'):
                 if (text[2] == Ch('-'))
@@ -1997,7 +1997,7 @@ private:
 
             // <![
             case Ch('['):
-                if (text[2] == Ch('C') && text[3] == Ch('D') && text[4] == Ch('A') && 
+                if (text[2] == Ch('C') && text[3] == Ch('D') && text[4] == Ch('A') &&
                     text[5] == Ch('T') && text[6] == Ch('A') && text[7] == Ch('['))
                 {
                     // '<![CDATA[' - cdata
@@ -2008,8 +2008,8 @@ private:
 
             // <!D
             case Ch('D'):
-                if (text[2] == Ch('O') && text[3] == Ch('C') && text[4] == Ch('T') && 
-                    text[5] == Ch('Y') && text[6] == Ch('P') && text[7] == Ch('E') && 
+                if (text[2] == Ch('O') && text[3] == Ch('C') && text[4] == Ch('T') &&
+                    text[5] == Ch('Y') && text[6] == Ch('P') && text[7] == Ch('E') &&
                     whitespace_pred::test(text[8]))
                 {
                     // '<!DOCTYPE ' - doctype
@@ -2049,12 +2049,12 @@ private:
         // This is because zero termination inside parse_and_append_data() function
         // would wreak havoc with the above code.
         // Also, skipping whitespace after data nodes is unnecessary.
-        after_data_node:    
-            
+        after_data_node:
+
             // Determine what comes next: node closing, child node, data node, or 0?
             switch (next_char)
             {
-            
+
             // Node closing or child node
             case Ch('<'):
                 if (text[1] == Ch('/'))
@@ -2102,12 +2102,12 @@ private:
             }
         }
     }
-    
+
     // Parse XML attributes of the node
     template<int Flags>
     void parse_node_attributes(Ch *&text, node<Ch> *n)
     {
-        // For all attributes 
+        // For all attributes
         while (attribute_name_pred::test(*text))
         {
             // Extract attribute name
@@ -2150,10 +2150,10 @@ private:
                 end = skip_and_expand_character_refs<attribute_value_pred<Ch('\'')>, attribute_value_pure_pred<Ch('\'')>, AttFlags>(text);
             else
                 end = skip_and_expand_character_refs<attribute_value_pred<Ch('"')>, attribute_value_pure_pred<Ch('"')>, AttFlags>(text);
-            
+
             // Set attribute value
             attribute->value(value, end - value);
-            
+
             // Make sure that end quote is present
             if (*text != quote)
                 throw parse_error("expected ' or \"", text);
@@ -2176,7 +2176,7 @@ namespace internal
 
     // Whitespace (space \n \r \t)
     template<int Dummy>
-    const unsigned char lookup_tables<Dummy>::lookup_whitespace[256] = 
+    const unsigned char lookup_tables<Dummy>::lookup_whitespace[256] =
     {
       // 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
          0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  0,  0,  1,  0,  0,  // 0
@@ -2199,7 +2199,7 @@ namespace internal
 
     // Node name (anything but space \n \r \t / > ? \0)
     template<int Dummy>
-    const unsigned char lookup_tables<Dummy>::lookup_node_name[256] = 
+    const unsigned char lookup_tables<Dummy>::lookup_node_name[256] =
     {
       // 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
          0,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  1,  1,  0,  1,  1,  // 0
@@ -2222,7 +2222,7 @@ namespace internal
 
     // Text (i.e. PCDATA) (anything but < \0)
     template<int Dummy>
-    const unsigned char lookup_tables<Dummy>::lookup_text[256] = 
+    const unsigned char lookup_tables<Dummy>::lookup_text[256] =
     {
       // 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
          0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  // 0
@@ -2243,10 +2243,10 @@ namespace internal
          1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1   // F
     };
 
-    // Text (i.e. PCDATA) that does not require processing when ws normalization is disabled 
+    // Text (i.e. PCDATA) that does not require processing when ws normalization is disabled
     // (anything but < \0 &)
     template<int Dummy>
-    const unsigned char lookup_tables<Dummy>::lookup_text_pure_no_ws[256] = 
+    const unsigned char lookup_tables<Dummy>::lookup_text_pure_no_ws[256] =
     {
       // 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
          0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  // 0
@@ -2270,7 +2270,7 @@ namespace internal
     // Text (i.e. PCDATA) that does not require processing when ws normalizationis is enabled
     // (anything but < \0 & space \n \r \t)
     template<int Dummy>
-    const unsigned char lookup_tables<Dummy>::lookup_text_pure_with_ws[256] = 
+    const unsigned char lookup_tables<Dummy>::lookup_text_pure_with_ws[256] =
     {
       // 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
          0,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  1,  1,  0,  1,  1,  // 0
@@ -2293,7 +2293,7 @@ namespace internal
 
     // Attribute name (anything but space \n \r \t / < > = ? ! \0)
     template<int Dummy>
-    const unsigned char lookup_tables<Dummy>::lookup_attribute_name[256] = 
+    const unsigned char lookup_tables<Dummy>::lookup_attribute_name[256] =
     {
       // 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
          0,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  1,  1,  0,  1,  1,  // 0
@@ -2316,7 +2316,7 @@ namespace internal
 
     // Attribute data with single quote (anything but ' \0)
     template<int Dummy>
-    const unsigned char lookup_tables<Dummy>::lookup_attribute_data_1[256] = 
+    const unsigned char lookup_tables<Dummy>::lookup_attribute_data_1[256] =
     {
       // 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
          0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  // 0
@@ -2339,7 +2339,7 @@ namespace internal
 
     // Attribute data with single quote that does not require processing (anything but ' \0 &)
     template<int Dummy>
-    const unsigned char lookup_tables<Dummy>::lookup_attribute_data_1_pure[256] = 
+    const unsigned char lookup_tables<Dummy>::lookup_attribute_data_1_pure[256] =
     {
       // 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
          0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  // 0
@@ -2362,7 +2362,7 @@ namespace internal
 
     // Attribute data with double quote (anything but " \0)
     template<int Dummy>
-    const unsigned char lookup_tables<Dummy>::lookup_attribute_data_2[256] = 
+    const unsigned char lookup_tables<Dummy>::lookup_attribute_data_2[256] =
     {
       // 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
          0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  // 0
@@ -2385,7 +2385,7 @@ namespace internal
 
     // Attribute data with double quote that does not require processing (anything but " \0 &)
     template<int Dummy>
-    const unsigned char lookup_tables<Dummy>::lookup_attribute_data_2_pure[256] = 
+    const unsigned char lookup_tables<Dummy>::lookup_attribute_data_2_pure[256] =
     {
       // 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
          0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  // 0
@@ -2408,7 +2408,7 @@ namespace internal
 
     // Digits (dec and hex, 255 denotes end of numeric character reference)
     template<int Dummy>
-    const unsigned char lookup_tables<Dummy>::lookup_digits[256] = 
+    const unsigned char lookup_tables<Dummy>::lookup_digits[256] =
     {
       // 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
        255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,  // 0
@@ -2431,7 +2431,7 @@ namespace internal
 
     // Upper case conversion
     template<int Dummy>
-    const unsigned char lookup_tables<Dummy>::lookup_upcase[256] = 
+    const unsigned char lookup_tables<Dummy>::lookup_upcase[256] =
     {
       // 0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  A   B   C   D   E   F
        0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15,   // 0

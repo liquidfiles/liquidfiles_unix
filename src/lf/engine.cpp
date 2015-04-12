@@ -184,8 +184,8 @@ void engine::attach(std::string server,
     init_curl(key, s, v);
     server += "/attachments";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_httppost* formpost=NULL;
-    struct curl_httppost* lastptr=NULL;
+    struct curl_httppost* formpost = NULL;
+    struct curl_httppost* lastptr = NULL;
     curl_formadd(&formpost,
             &lastptr,
             CURLFORM_COPYNAME, "Filedata",
@@ -337,7 +337,7 @@ std::string engine::file_request(std::string server,
 ");
     data += "</request>\n";
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
-    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str()); 
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str());
     if (s >= NORMAL) {
         io::mout << "Sending file request to user '" << user << "'" << io::endl;
     }
@@ -375,7 +375,7 @@ std::string engine::get_api_key(std::string server,
 ");
     data += "</user>\n";
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
-    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str()); 
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str());
     if (s >= NORMAL) {
         io::mout << "Getting API key for user '" << user << "'" << io::endl;
     }
@@ -499,8 +499,8 @@ std::string engine::attach_impl(std::string server,
 {
     server += "/attachments";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_httppost* formpost=NULL;
-    struct curl_httppost* lastptr=NULL;
+    struct curl_httppost* formpost = NULL;
+    struct curl_httppost* lastptr = NULL;
     curl_formadd(&formpost,
                &lastptr,
                CURLFORM_COPYNAME, "Filedata",
@@ -546,7 +546,7 @@ std::string engine::send_attachments_impl(std::string server,
     data += "    </attachments>\
   </message>\n";
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
-    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str()); 
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str());
     if (s >= NORMAL) {
         io::mout << "Sending message to user '" << user << "'" << io::endl;
     }
@@ -568,7 +568,7 @@ std::string engine::filelink_impl(std::string server, const std::string& expire,
     }
     data += "  </link>\n";
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
-    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str()); 
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str());
     if (s >= NORMAL) {
         io::mout << "Creating filelink" << io::endl;
     }
@@ -681,7 +681,7 @@ void engine::download_impl(const std::string& url,
     if (!path.empty()) {
         name = path + "/" + name;
     }
-    FILE* fp = fopen(name.c_str(),"wb");
+    FILE* fp = fopen(name.c_str(), "wb");
     if (fp == 0) {
         throw file_error(name, strerror(errno));
     }

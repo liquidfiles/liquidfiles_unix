@@ -12,7 +12,7 @@ namespace lf {
 /**
  * @class engine
  * @brief API for liquidfiles.
- * 
+ *
  *        engine is main class to do operations with liquidfiles.
  *        It provides interface to send, receive files and other operations
  *        supported by liquidfiles.
@@ -50,7 +50,7 @@ public:
      */
     std::string send(std::string server,
             const std::string& key,
-            const std::string& user, 
+            const std::string& user,
             const std::string& subject,
             const std::string& message,
             const strings& fs,
@@ -214,7 +214,7 @@ public:
      */
     std::string file_request(std::string server,
             const std::string& key,
-            const std::string& user, 
+            const std::string& user,
             const std::string& subject,
             const std::string& message,
             report_level s,
@@ -230,7 +230,7 @@ public:
      * @throw curl_error, request_error.
      */
     std::string get_api_key(std::string server,
-            const std::string& user, 
+            const std::string& user,
             const std::string& password,
             report_level s,
             validate_cert v);

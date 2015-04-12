@@ -68,7 +68,7 @@ public:
 public:
     /**
      * @brief Executes the given string command.
-     *         
+     *
      *        This function parses given string, gets command name and
      *        executes it by given arguments.
      * @param cn Command string.

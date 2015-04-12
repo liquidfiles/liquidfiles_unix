@@ -31,7 +31,7 @@ void messages_responce::read(xml::node<>* s)
                 if (n == "recipients") {
                     xml::node_iterator<> ri(nn);
                     while(ri != e) {
-                        r.m_recipients.push_back(std::string(ri->value(), 
+                        r.m_recipients.push_back(std::string(ri->value(),
                                     ri->value_size()));
                         ++ri;
                     }

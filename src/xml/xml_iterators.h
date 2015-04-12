@@ -17,7 +17,7 @@ public:
     typedef node<Ch> *pointer;
     typedef std::ptrdiff_t difference_type;
     typedef std::bidirectional_iterator_tag iterator_category;
-    
+
     node_iterator()
         : m_node(0)
     {
@@ -27,7 +27,7 @@ public:
         : m_node(node->first_node())
     {
     }
-    
+
     reference operator *() const
     {
         assert(m_node);
@@ -96,7 +96,7 @@ public:
     typedef attribute<Ch> *pointer;
     typedef std::ptrdiff_t difference_type;
     typedef std::bidirectional_iterator_tag iterator_category;
-    
+
     attribute_iterator()
         : m_attribute(0)
     {
@@ -106,7 +106,7 @@ public:
         : m_attribute(node->first_attribute())
     {
     }
-    
+
     reference operator *() const
     {
         assert(m_attribute);

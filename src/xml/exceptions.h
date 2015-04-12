@@ -6,9 +6,9 @@ namespace xml {
 
 /**
  * @class parse_error.
- * @brief Parse error exception. 
+ * @brief Parse error exception.
  *
- * This exception is thrown by the parser when an error occurs. 
+ * This exception is thrown by the parser when an error occurs.
  */
 class parse_error: public base::exception
 {

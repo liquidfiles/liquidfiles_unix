@@ -29,7 +29,7 @@ void message_responce::read(xml::node<>* s)
         if (n == "recipients") {
             xml::node_iterator<> ri(nn);
             while(ri != e) {
-                m_recipients.push_back(std::string(ri->value(), 
+                m_recipients.push_back(std::string(ri->value(),
                             ri->value_size()));
                 ++ri;
             }
@@ -38,7 +38,7 @@ void message_responce::read(xml::node<>* s)
         if (n == "ccs") {
             xml::node_iterator<> ri(nn);
             while(ri != e) {
-                m_ccs.push_back(std::string(ri->value(), 
+                m_ccs.push_back(std::string(ri->value(),
                             ri->value_size()));
                 ++ri;
             }
@@ -47,7 +47,7 @@ void message_responce::read(xml::node<>* s)
         if (n == "bccs") {
             xml::node_iterator<> ri(nn);
             while(ri != e) {
-                m_bccs.push_back(std::string(ri->value(), 
+                m_bccs.push_back(std::string(ri->value(),
                             ri->value_size()));
                 ++ri;
             }
@@ -114,7 +114,7 @@ void message_responce::write_table(std::stringstream& m) const
         i = m_recipients.begin();
         m << *i++;
         while (i != m_recipients.end()) {
-            m << ", " << *i++; 
+            m << ", " << *i++;
         }
         m << "\n";
     }

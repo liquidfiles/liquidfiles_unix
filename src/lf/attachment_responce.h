@@ -40,7 +40,7 @@ public:
     {
         return m_content_type;
     }
-    
+
     /// @brief Access to checksum.
     const std::string& checksum() const
     {
@@ -64,7 +64,7 @@ public:
     {
         return m_size;
     }
-    
+
 private:
     std::string m_filename;
     std::string m_content_type;
