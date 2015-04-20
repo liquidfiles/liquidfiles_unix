@@ -1,8 +1,7 @@
 #! /bin/bash
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-
-SERVER=https://pink.liquidfiles.net
+source $DIR/common.sh
 
 $DIR/../src/liquidfiles get_api_key --server=$SERVER -k --username=xustup@gmail.com --password=TestPassword_1 -s
 KEY=${KEY##* }

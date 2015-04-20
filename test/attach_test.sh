@@ -1,11 +1,7 @@
 #! /bin/bash
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-
-SERVER=https://pink.liquidfiles.net
-
-KEY=`$DIR/../src/liquidfiles get_api_key --server=$SERVER -k --username=xustup@gmail.com --password=TestPassword_1`
-KEY=${KEY##* }
+source $DIR/common.sh
 
 ID1=`$DIR/../src/liquidfiles attach --server=$SERVER -k --api_key=$KEY $DIR/send_test.sh`
 status=$?
