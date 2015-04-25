@@ -123,6 +123,8 @@ Liquidfiles is command line utility. It invokes one command per session and exit
 
 The list of supported commands is:
 * attach              Uploads given files to server.
+* attach_chunk        Uploads given chunk of file to server.
+* delete_attachments  Deletes the given attachments.
 * delete_filelink     Deletes the given filelink.
 * download            Download given files.
 * file_request        Sends the file request to specified user.
@@ -168,6 +170,80 @@ Arguments:
 
 	<file> ...
 	    File path(s) to upload.
+
+### attach_chunk
+Description:
+
+	Uploads given chunk of file to server.
+
+Usage:
+
+	liquidfiles attach_chunk [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] --chunk=<int> --chunks=<int> --filename=<string> <file>
+
+Arguments:
+
+	--server
+	    The server URL. If not specified, tries to retrieve from saved credentials.
+
+	--api_key
+	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
+
+	-k
+	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
+
+	-s
+	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
+
+	--report_level
+	    Level of reporting.
+	    Valid values: silent, normal, verbose.
+	    Default value: "normal".
+
+	--chunk
+	    ID of current chunk.
+
+	--chunks
+	    Whole count of chunks.
+
+	--filename
+	    Name of target file.
+
+	<file>
+	    File chunk path to upload.
+
+### delete_attachments
+Description:
+
+	Deletes the given attachments.
+
+Usage:
+
+	liquidfiles delete_attachments [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] [--message_id=<id>] [<id> ...]
+
+Arguments:
+
+	--server
+	    The server URL. If not specified, tries to retrieve from saved credentials.
+
+	--api_key
+	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
+
+	-k
+	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
+
+	-s
+	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
+
+	--report_level
+	    Level of reporting.
+	    Valid values: silent, normal, verbose.
+	    Default value: "normal".
+
+	--message_id
+	    Message id to delete attachments of it.
+
+	<id> ...
+	    Id(s) of attachments to delete.
 
 ### delete_filelink
 Description:
