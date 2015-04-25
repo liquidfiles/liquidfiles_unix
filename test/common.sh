@@ -23,12 +23,12 @@ function test_status {
 }
 
 function test_message {
-    $DIR/../src/liquidfiles messages --server=$SERVER -k --api_key=$KEY --message_id=$1
+    $EXEC messages --server=$SERVER -k --api_key=$KEY --message_id=$1
     test_status "Couldn't retrieve message."
-    $DIR/../src/liquidfiles messages --server=$SERVER -k --api_key=$KEY --message_id=$1 --output_format=csv
+    $EXEC messages --server=$SERVER -k --api_key=$KEY --message_id=$1 --output_format=csv
     test_status "Couldn't retrieve message in csv format."
     echo ""
     mkdir .tmp_test
-    $DIR/../src/liquidfiles download --server=$SERVER -k --api_key=$KEY --message_id=$1 --download_to=.tmp_test
+    $EXEC download --server=$SERVER -k --api_key=$KEY --message_id=$1 --download_to=.tmp_test
     test_status "Couldn't download file."
 }
