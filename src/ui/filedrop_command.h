@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmd/command.h>
+#include <lf/declarations.h>
 
 namespace lf {
 class engine;
@@ -25,7 +26,9 @@ public:
 
 private:
     lf::engine& m_engine;
-    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_from_argument;
+    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, true> m_server_arg;
+    cmd::argument_definition<lf::validate_cert, cmd::BOOLEAN_ARGUMENT, false> m_validate_cert_arg;
+    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, true> m_from_argument;
     cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_message_argument;
     cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_subject_argument;
     cmd::argument_definition<bool, cmd::BOOLEAN_ARGUMENT, false> m_attachment_argument;

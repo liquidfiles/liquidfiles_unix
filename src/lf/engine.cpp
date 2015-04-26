@@ -493,6 +493,26 @@ void engine::delete_attachments(std::string server,
     }
 }
 
+void engine::filedrop(std::string server,
+        const std::string& user,
+        const std::string& subject,
+        const std::string& message,
+        const strings& fs,
+        report_level s,
+        validate_cert v)
+{
+}
+
+void engine::filedrop_attachments(std::string server,
+            const std::string& user,
+            const std::string& subject,
+            const std::string& message,
+            const strings& fs,
+            report_level s,
+            validate_cert v)
+{
+}
+
 std::string engine::attach_impl(std::string server,
         const std::string& file,
         report_level s)

@@ -327,6 +327,44 @@ public:
             const std::string& id,
             report_level s,
             validate_cert v);
+
+    /**
+     * @brief Sends the files by filedrop.
+     * @param server Filedrop server URL.
+     * @param user User name or email.
+     * @param subject Subject of composed email.
+     * @param message Message body of email.
+     * @param fs Files list to send.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error, request_error.
+     */
+    void filedrop(std::string server,
+            const std::string& user,
+            const std::string& subject,
+            const std::string& message,
+            const strings& fs,
+            report_level s,
+            validate_cert v);
+
+    /**
+     * @brief Sends the given attachments by filedrop
+     * @param server Filedrop server URL.
+     * @param user User name or email.
+     * @param subject Subject of composed email.
+     * @param message Message body of email.
+     * @param fs Attachment IDs.
+     * @param s Silence flag.
+     * @param v Validate certificate flag for HTTP request.
+     * @throw curl_error, request_error.
+     */
+    void filedrop_attachments(std::string server,
+            const std::string& user,
+            const std::string& subject,
+            const std::string& message,
+            const strings& fs,
+            report_level s,
+            validate_cert v);
     /// @}
 
 private:
