@@ -12,6 +12,7 @@ libui_a_SOURCES = credentials.cpp \
 				  delete_attachments_command.cpp \
 				  delete_filelink_command.cpp \
 				  download_command.cpp \
+				  filedrop_command.cpp \
 				  filelink_command.cpp \
 				  filelinks_command.cpp \
 				  file_request_command.cpp \

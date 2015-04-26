@@ -7,9 +7,10 @@
 #include <ui/delete_attachments_command.h>
 #include <ui/delete_filelink_command.h>
 #include <ui/download_command.h>
+#include <ui/file_request_command.h>
+#include <ui/filedrop_command.h>
 #include <ui/filelink_command.h>
 #include <ui/filelinks_command.h>
-#include <ui/file_request_command.h>
 #include <ui/get_api_key_command.h>
 #include <ui/help_command.h>
 #include <ui/messages_command.h>
@@ -27,9 +28,10 @@ int main(int argc, char** argv)
     p.register_command(new ui::delete_attachments_command(e));
     p.register_command(new ui::delete_filelink_command(e));
     p.register_command(new ui::download_command(e));
+    p.register_command(new ui::file_request_command(e));
+    p.register_command(new ui::filedrop_command(e));
     p.register_command(new ui::filelink_command(e));
     p.register_command(new ui::filelinks_command(e));
-    p.register_command(new ui::file_request_command(e));
     p.register_command(new ui::get_api_key_command(e));
     p.register_command(new ui::help_command(p));
     p.register_command(new ui::messages_command(e));
