@@ -501,6 +501,22 @@ void engine::filedrop(std::string server,
         report_level s,
         validate_cert v)
 {
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    struct curl_httppost* formpost = NULL;
+    struct curl_httppost* lastptr = NULL;
+    curl_formadd(&formpost,
+               &lastptr,
+               CURLFORM_COPYNAME, "Filedata",
+               CURLFORM_FILE, file.c_str(),
+               CURLFORM_END);
+    curl_form_guard fg(formpost);
+    curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, formpost);
+    if (s >= NORMAL) {
+        io::mout << "Uploading file '" << file << "' through filedrop." << io::endl;
+    }
+    std::string r = perform();
+    process_filedrop_responce(r, s);
+    return r;
 }
 
 void engine::filedrop_attachments(std::string server,
@@ -511,6 +527,38 @@ void engine::filedrop_attachments(std::string server,
             report_level s,
             validate_cert v)
 {
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    struct curl_httppost* formpost = NULL;
+    struct curl_httppost* lastptr = NULL;
+    curl_formadd(&formpost,
+               &lastptr,
+               CURLFORM_COPYNAME, "Filedata",
+               CURLFORM_FILE, file.c_str(),
+               CURLFORM_END);
+    curl_form_guard fg(formpost);
+    curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, formpost);
+    if (s >= NORMAL) {
+        io::mout << "Uploading file '" << file << "' through filedrop." << io::endl;
+    }
+    std::string r = perform();
+    process_filedrop_responce(r, s);
+    return r;
+}
+
+void engine::filedrop_attachments(std::string server,
+            const std::string& user,
+            const std::string& subject,
+            const std::string& message,
+            const strings& fs,
+            report_level s,
+            validate_cert v)
+{
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    if (s >= NORMAL) {
+        io::mout << "Uploading file '" << file << "' through filedrop." << io::endl;
+    }
+    std::string r = perform();
+    process_filedrop_responce(r, s);
 }
 
 std::string engine::attach_impl(std::string server,
