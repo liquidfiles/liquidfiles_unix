@@ -31,7 +31,6 @@ private:
     cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, true> m_from_argument;
     cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_message_argument;
     cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_subject_argument;
-    cmd::argument_definition<bool, cmd::BOOLEAN_ARGUMENT, false> m_attachment_argument;
     cmd::argument_definition<std::string, cmd::UNNAMED_ARGUMENT, true> m_files_argument;
 };
 

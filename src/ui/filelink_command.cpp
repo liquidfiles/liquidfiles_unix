@@ -12,13 +12,12 @@ filelink_command::filelink_command(lf::engine& e)
     : cmd::command("filelink", "Uploads given file and creates filelink on it.")
     , m_engine(e)
     , m_expire_argument("expires", "<YYYY-MM-DD>", "Expire date for the filelink.")
-    , m_attachment_argument("r", "If specified, it means that unnamed argument is attachment ID, otherwise it is file path.")
     , m_file_argument("<file>", "File path or attachment id to create filelink.")
 {
     get_arguments().push_back(credentials::get_arguments());
     get_arguments().push_back(s_report_level_arg);
     get_arguments().push_back(m_expire_argument);
-    get_arguments().push_back(m_attachment_argument);
+    get_arguments().push_back(s_attachment_argument);
     get_arguments().push_back(m_file_argument);
 }
 
@@ -31,7 +30,7 @@ void filelink_command::execute(const cmd::arguments& args)
     if (unnamed_args.size() != 1) {
         throw cmd::invalid_arguments("Need to specify only one file.");
     }
-    bool r = m_attachment_argument.value(args);
+    bool r = s_attachment_argument.value(args);
     if (r) {
         m_engine.filelink_attachment(c.server(), c.api_key(), expire, *unnamed_args.begin(),
                 rl, c.validate_flag());
