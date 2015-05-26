@@ -7,6 +7,7 @@ tests="
     attach_test
     credential_test
     file_request_test
+    filedrop_test
     filelinks_test
     send_test
     sending_many_files

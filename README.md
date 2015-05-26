@@ -128,6 +128,7 @@ The list of supported commands is:
 * delete_filelink     Deletes the given filelink.
 * download            Download given files.
 * file_request        Sends the file request to specified user.
+* filedrop            Sends the file(s) by filedrop.
 * filelink            Uploads given file and creates filelink on it.
 * filelinks           Lists the available filelinks.
 * get_api_key         Retrieves api key for the specified user.
@@ -361,6 +362,45 @@ Arguments:
 	--message
 	    Message text of composed email.
 	    Default value: "".
+
+### filedrop
+Description:
+
+	Sends the file(s) by filedrop.
+
+Usage:
+
+	liquidfiles filedrop --server=<url> [-k] [--report_level=<level>] --from=<username> [--subject=<string>] [--message=<string>] [-r] <file> ...
+
+Arguments:
+
+	--server
+	    The server URL.
+
+	-k
+	    If specified, do not validate server certificate.
+
+	--report_level
+	    Level of reporting.
+	    Valid values: silent, normal, verbose.
+	    Default value: "normal".
+
+	--from
+	    User who sends the files
+
+	--subject
+	    Subject of composed email.
+	    Default value: "".
+
+	--message
+	    Message text of composed email.
+	    Default value: "".
+
+	-r
+	    If specified, it means that unnamed arguments are attachment IDs, otherwise they are file paths.
+
+	<file> ...
+	    File path(s) or attachments IDs to send to user.
 
 ### filelink
 Description:

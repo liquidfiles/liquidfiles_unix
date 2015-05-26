@@ -381,6 +381,10 @@ private:
     std::string messages_impl(std::string server, const std::string& key, std::string l,
             std::string f, report_level s, validate_cert v);
     void download_impl(const std::string& url, const std::string& path, std::string name, report_level s);
+    std::string get_filedrop_api_key(const std::string& url, report_level s, validate_cert v);
+    void filedrop_attachments_impl(std::string server, const std::string& key,
+            const std::string& user, const std::string& subject,
+            const std::string& message, const strings& fs, report_level s);
 
 private:
     std::string process_send_responce(const std::string& r, report_level s) const;
@@ -389,6 +393,7 @@ private:
     std::string process_file_request_responce(const std::string& r, report_level s) const;
     std::string process_get_api_key_responce(const std::string& r, report_level s) const;
     std::string process_create_filelink_responce(const std::string& r, report_level s) const;
+    void process_filedrop_responce(const std::string& r, report_level s) const;
 
     template <typename T>
     void process_output_responce(const std::string& r, report_level s, output_format f) const;

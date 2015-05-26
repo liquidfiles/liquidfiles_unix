@@ -95,7 +95,7 @@ private:
 void engine::init_curl(std::string key, report_level s, validate_cert v)
 {
     if (m_curl != 0) {
-        return;
+        curl_easy_cleanup(m_curl);
     }
     m_curl = curl_easy_init();
     if (m_curl == 0) {
@@ -103,8 +103,10 @@ void engine::init_curl(std::string key, report_level s, validate_cert v)
     }
     curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, &data_get);
     curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, 0);
-    key += ":x";
-    curl_easy_setopt(m_curl, CURLOPT_USERPWD, key.c_str());
+    if (!key.empty()) {
+        key += ":x";
+        curl_easy_setopt(m_curl, CURLOPT_USERPWD, key.c_str());
+    }
     if (v == NOT_VALIDATE) {
         curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYPEER, false);
     }
@@ -493,6 +495,16 @@ void engine::delete_attachments(std::string server,
     }
 }
 
+namespace {
+
+std::string get_server_from_filedrop(const std::string& server)
+{
+    std::size_t i = server.find('/', 8);
+    return std::string(server, 0, i);
+}
+
+}
+
 void engine::filedrop(std::string server,
         const std::string& user,
         const std::string& subject,
@@ -501,6 +513,18 @@ void engine::filedrop(std::string server,
         report_level s,
         validate_cert v)
 {
+    std::string key = get_filedrop_api_key(server, s, v);
+    init_curl(key, s, v);
+    strings::const_iterator i = fs.begin();
+    strings rs;
+    std::string url = get_server_from_filedrop(server);
+    for (; i != fs.end(); ++i) {
+        std::string id = attach_impl(url, *i, s);
+        rs.insert(id);
+    }
+    curl_easy_setopt(m_curl, CURLOPT_USERPWD, "");
+    filedrop_attachments_impl(server, key, user, subject, message,
+            rs, s);
 }
 
 void engine::filedrop_attachments(std::string server,
@@ -511,6 +535,9 @@ void engine::filedrop_attachments(std::string server,
             report_level s,
             validate_cert v)
 {
+    std::string key = get_filedrop_api_key(server, s, v);
+    filedrop_attachments_impl(server, key, user, subject, message,
+            fs, s);
 }
 
 std::string engine::attach_impl(std::string server,
@@ -710,6 +737,83 @@ void engine::download_impl(const std::string& url,
     perform();
 }
 
+std::string engine::get_filedrop_api_key(const std::string& url, report_level s, validate_cert v)
+{
+    init_curl("", s, v);
+    curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
+    curl_header_guard hg(m_curl);
+    if (s >= VERBOSE) {
+        io::mout << "Getting filedrop API key" << io::endl;
+    }
+    std::string r = perform();
+    xml::document<> d;
+    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
+    if (d.first_node() == 0) {
+        throw request_error("filedrop info", r);
+    }
+    std::string h(d.first_node()->name(), d.first_node()->name_size());
+    xml::node_iterator<> i(d.first_node());
+    xml::node_iterator<> e;
+    if (h == "error") {
+        while(i != e) {
+            std::string n(i->name(), i->name_size());
+            if (n == "message") {
+                std::string m = std::string(i->value(), i->value_size());
+                throw request_error("filedrop info", m);
+                break;
+            }
+            ++i;
+        }
+        throw request_error("filedrop info", r);
+    }
+    std::string q;
+    while(i != e) {
+        std::string n(i->name(), i->name_size());
+        if (n == "api_key") {
+            q = std::string(i->value(), i->value_size());
+            if (s >= VERBOSE) {
+                io::mout << "Got filedrop API key: " << q << io::endl;
+            }
+            break;
+        }
+        ++i;
+    }
+    if (q.empty()) {
+        throw request_error("filedrop info", r);
+    }
+    return q;
+}
+
+void engine::filedrop_attachments_impl(std::string server, const std::string& key,
+        const std::string& user, const std::string& subject,
+        const std::string& message, const strings& fs, report_level s)
+{
+    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
+    curl_header_guard hg(m_curl);
+    std::string data = std::string(
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
+  <message>\
+    <api_key>") + key + std::string("</api_key>\
+    <from>") + user + std::string("</from>\
+    <subject>") + subject + std::string("</subject>\
+    <message>") + message + std::string("</message>\
+    <attachments type='array'>\
+");
+    for (strings::const_iterator i = fs.begin(); i != fs.end(); ++i) {
+        data += "      <attachment>";
+        data += *i;
+        data += "</attachment>\n";
+    }
+    data += "    </attachments>\
+  </message>\n";
+    curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str());
+    if (s >= NORMAL) {
+        io::mout << "Sending message to filedrop" << io::endl;
+    }
+    process_filedrop_responce(perform(), s);
+}
+
 std::string engine::process_file_request_responce(const std::string& r, report_level s) const
 {
     xml::document<> d;
@@ -801,6 +905,33 @@ std::string engine::process_create_filelink_responce(const std::string& r, repor
         throw request_error("create_filelink", r);
     }
     return q;
+}
+
+void engine::process_filedrop_responce(const std::string& r, report_level s) const
+{
+    xml::document<> d;
+    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
+    if (d.first_node() == 0) {
+        throw request_error("filedrop", r);
+    }
+    std::string h(d.first_node()->name(), d.first_node()->name_size());
+    xml::node_iterator<> i(d.first_node());
+    xml::node_iterator<> e;
+    std::string q;
+    while(i != e) {
+        std::string n(i->name(), i->name_size());
+        if (n == "status") {
+            q = std::string(i->value(), i->value_size());
+            if (s >= NORMAL) {
+                io::mout << q << io::endl;
+            }
+            break;
+        }
+        ++i;
+    }
+    if (q.empty()) {
+        throw request_error("filedrop", r);
+    }
 }
 
 std::string engine::perform()
