@@ -92,7 +92,7 @@ PROGRAMS = $(bin_PROGRAMS)
 am_liquidfiles_OBJECTS = main.$(OBJEXT)
 liquidfiles_OBJECTS = $(am_liquidfiles_OBJECTS)
 liquidfiles_DEPENDENCIES = ui/libui.a lf/liblf.a cmd/libcmd.a \
-	io/libio.a
+	io/libio.a base/libbase.a
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -285,10 +285,10 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
 # what flags you want to pass to the C compiler & linker
-SUBDIRS = ui lf cmd io
+SUBDIRS = ui lf cmd io base
 AM_CPPFLAGS = -Wall -I .
 liquidfiles_SOURCES = main.cpp
-liquidfiles_LDADD = ui/libui.a lf/liblf.a cmd/libcmd.a io/libio.a
+liquidfiles_LDADD = ui/libui.a lf/liblf.a cmd/libcmd.a io/libio.a base/libbase.a
 all: all-recursive
 
 .SUFFIXES:
@@ -302,9 +302,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu src/Makefile
+	  $(AUTOMAKE) --foreign src/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

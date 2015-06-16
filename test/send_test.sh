@@ -3,7 +3,7 @@
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 source $DIR/common.sh
 
-MESSAGE=`$EXEC send --to=xustup@example.com --server=$SERVER -k --api_key=$KEY --message="Hello" --subject="Hello!" $DIR/send_test.sh`
+MESSAGE=`$EXEC send --to=xustup@example.com --server=$SERVER -k --api_key=$KEY --message_file="hello" --subject="Hello!" $DIR/send_test.sh`
 test_status "Couldn't send message."
 MESSAGE=${MESSAGE##* }
 

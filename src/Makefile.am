@@ -1,5 +1,5 @@
 # what flags you want to pass to the C compiler & linker
-SUBDIRS = ui lf cmd io
+SUBDIRS = ui lf cmd io base
 
 AM_CPPFLAGS = -Wall -I .
 
@@ -8,4 +8,4 @@ AM_CPPFLAGS = -Wall -I .
 bin_PROGRAMS = liquidfiles
 liquidfiles_SOURCES = main.cpp
 
-liquidfiles_LDADD = ui/libui.a lf/liblf.a cmd/libcmd.a io/libio.a
+liquidfiles_LDADD = ui/libui.a lf/liblf.a cmd/libcmd.a io/libio.a base/libbase.a

@@ -76,7 +76,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-subdir = src/io
+subdir = src/base
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/depcomp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -93,10 +93,10 @@ AM_V_AR = $(am__v_AR_@AM_V@)
 am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
 am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
-libio_a_AR = $(AR) $(ARFLAGS)
-libio_a_LIBADD =
-am_libio_a_OBJECTS = messenger.$(OBJEXT) table_printer.$(OBJEXT)
-libio_a_OBJECTS = $(am_libio_a_OBJECTS)
+libbase_a_AR = $(AR) $(ARFLAGS)
+libbase_a_LIBADD =
+am_libbase_a_OBJECTS = filesystem.$(OBJEXT)
+libbase_a_OBJECTS = $(am_libbase_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -126,8 +126,8 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(libio_a_SOURCES)
-DIST_SOURCES = $(libio_a_SOURCES)
+SOURCES = $(libbase_a_SOURCES)
+DIST_SOURCES = $(libbase_a_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -251,10 +251,8 @@ AM_CPPFLAGS = -Wall -I ../
 
 # this lists the binaries to produce, the (non-PHONY, binary) targets in
 # the previous manual Makefile
-noinst_LIBRARIES = libio.a
-libio_a_SOURCES = messenger.cpp \
-				  table_printer.cpp
-
+noinst_LIBRARIES = libbase.a
+libbase_a_SOURCES = filesystem.cpp
 all: all-am
 
 .SUFFIXES:
@@ -268,9 +266,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/io/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/base/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign src/io/Makefile
+	  $(AUTOMAKE) --foreign src/base/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -293,10 +291,10 @@ $(am__aclocal_m4_deps):
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
 
-libio.a: $(libio_a_OBJECTS) $(libio_a_DEPENDENCIES) $(EXTRA_libio_a_DEPENDENCIES) 
-	$(AM_V_at)-rm -f libio.a
-	$(AM_V_AR)$(libio_a_AR) libio.a $(libio_a_OBJECTS) $(libio_a_LIBADD)
-	$(AM_V_at)$(RANLIB) libio.a
+libbase.a: $(libbase_a_OBJECTS) $(libbase_a_DEPENDENCIES) $(EXTRA_libbase_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libbase.a
+	$(AM_V_AR)$(libbase_a_AR) libbase.a $(libbase_a_OBJECTS) $(libbase_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libbase.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -304,8 +302,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messenger.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/table_printer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/filesystem.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

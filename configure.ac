@@ -4,7 +4,7 @@
 AC_PREREQ([2.69])
 AC_INIT(liquidfiles_unix, 0.1)
 AM_INIT_AUTOMAKE(liquidfiles, 0.1)
-AC_OUTPUT(Makefile src/Makefile src/io/Makefile src/lf/Makefile src/cmd/Makefile src/ui/Makefile)
+AC_OUTPUT(Makefile src/Makefile src/base/Makefile src/io/Makefile src/lf/Makefile src/cmd/Makefile src/ui/Makefile)
 
 # Checks for programs.
 AC_PROG_CXX
