@@ -10,7 +10,7 @@ KEY=`$EXEC get_api_key --server=$SERVER -k --username=xustup@gmail.com --passwor
 KEY=${KEY##* }
 
 function fail {
-    echo  "Test FAILED"
+    echo "Test FAILED"
     exit $?
 }
 

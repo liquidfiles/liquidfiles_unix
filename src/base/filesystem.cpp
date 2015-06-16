@@ -16,8 +16,8 @@ std::string filesystem::read_file(const std::string& file)
             result += buffer + '\n';
         }
         file_to_read.close();
-        return result;
     }
+    return result;
 }
 
 }

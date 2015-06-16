@@ -57,8 +57,8 @@ public:
 class dublicate_argument : public base::exception
 {
 public:
-    dublicate_argument(const std::string& a) : 
-        base::exception(std::string("Only one of '" + a + "' arguments must be persist."), 1)
+    dublicate_argument(const std::string& a)
+        : base::exception(std::string("Only one of '" + a + "' arguments must be persist."), 1)
     {
     }
 };
