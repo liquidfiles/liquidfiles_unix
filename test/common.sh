@@ -10,14 +10,14 @@ KEY=`$EXEC get_api_key --server=$SERVER -k --username=xustup@gmail.com --passwor
 KEY=${KEY##* }
 
 function fail {
-    echo "Test FAILED"
+    echo  "Test FAILED"
     exit $?
 }
 
 function test_status {
     status=$?
     if [ $status -ne 0 ]; then
-        echo "Error: $1"
+        echo -e "Error: $1"
         fail
     fi
 }
