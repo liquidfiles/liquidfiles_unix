@@ -363,6 +363,10 @@ Arguments:
 	    Message text of composed email.
 	    Default value: "".
 
+    --message_file
+        The file in which contained message text of composed email.
+        Only one of --meassage and --message_file arguments must be given.
+
 ### filedrop
 Description:
 
@@ -558,13 +562,11 @@ Arguments:
 Description:
 
 	Sends the file(s) to specified user.
-    This command can upload given files and send them by message or get already uploaded file IDs and send them.
-    If '-r' option is specified, it means that given unnamed arguments are IDs of already uploaded files, so command just sends them
-    If '-r' is not specified, then given unnamed arguments are file paths, and command uploads that files and sends them.
+    This command can upload given files or files in given directories and send them by message or get already uploaded file IDs and send them.
 
 Usage:
 
-	liquidfiles send [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] --to=<username> [--subject=<string>] [--message=<string>] [-r] <file> ...
+	liquidfiles send [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] --to=<username> [--subject=<string>] [--message=<string>] [--message_file=<string>] [--file_type=<file_type>] <file> ...
 
 Arguments:
 
@@ -591,14 +593,23 @@ Arguments:
 	--subject
 	    Subject of composed email.
 	    Default value: "".
-
+        
 	--message
 	    Message text of composed email.
 	    Default value: "".
 
-	-r
-	    If specified, it means that unnamed arguments are attachment IDs, otherwise they are file paths.
+    --message_file
+        The file in which contained message text of composed email.
+
+	--file_type
+        It specifies the type of file must be send to user.
+        Valid values: file_names, directory, attachments.
+        Default value: "file_names".
+        values:
+            file_names : given unnamed arguments are file paths, and command uploads that files and sends them. 
+            directory :  given unnamed arguments are directory paths, and command uploads files in that directory and sends them. 
+            attachements :   given unnamed arguments are IDs of already uploaded files, so command just sends them.
 
 	<file> ...
-	    File path(s) or attachments IDs to send to user.
+	    File path(s),  attachments IDs or directories to send to user.
 

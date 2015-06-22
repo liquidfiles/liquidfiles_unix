@@ -7,7 +7,7 @@ MESSAGE=`$EXEC file_request --to=xustup@example.com --server=$SERVER -k --api_ke
 test_status "Couldn't send file request \n$MESSAGE"
 echo "Test PASSED."
 
-MESSAGE=`$EXEC file_request --to=xustup@example.com --server=$SERVER -k --api_key=$KEY --message_file="large_file" --subject="Hello!"`
+MESSAGE=`$EXEC file_request --to=xustup@example.com --server=$SERVER -k --api_key=$KEY --message_file="$DIR/large_file" --subject="Hello!"`
 test_status "Couldn't send file request \n$MESSAGE"
 
 echo "Test PASSED."
