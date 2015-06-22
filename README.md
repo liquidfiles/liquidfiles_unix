@@ -593,7 +593,7 @@ Arguments:
 	--subject
 	    Subject of composed email.
 	    Default value: "".
-        
+
 	--message
 	    Message text of composed email.
 	    Default value: "".
@@ -606,8 +606,8 @@ Arguments:
         Valid values: file_names, directory, attachments.
         Default value: "file_names".
         values:
-            file_names : given unnamed arguments are file paths, and command uploads that files and sends them. 
-            directory :  given unnamed arguments are directory paths, and command uploads files in that directory and sends them. 
+            file_names : given unnamed arguments are file paths, and command uploads that files and sends them.
+            directory :  given unnamed arguments are directory paths, and command uploads files in that directory and sends them.
             attachements :   given unnamed arguments are IDs of already uploaded files, so command just sends them.
 
 	<file> ...

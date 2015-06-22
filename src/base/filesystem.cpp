@@ -42,7 +42,7 @@ void filesystem::set_all_files(const std::set<std::string>& directory_name, std:
                         sub_dir.insert(file_path);
                     } else if (S_ISREG(stat_buf.st_mode)) {
                         files.insert(file_path);
-                    } 
+                    }
                 }
             }
         }

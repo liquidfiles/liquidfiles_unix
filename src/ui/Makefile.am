@@ -19,6 +19,4 @@ libui_a_SOURCES = credentials.cpp \
 				  get_api_key_command.cpp \
 				  help_command.cpp \
 				  messages_command.cpp \
-				  send_command.cpp 
-		
-
+				  send_command.cpp
