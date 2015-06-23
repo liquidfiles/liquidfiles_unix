@@ -5,8 +5,9 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
-namespace 
+namespace
 {
+
 void set_all_files(const std::set<std::string>& directory_name, std::set<std::string>& files)
 {
     DIR* dir;
@@ -64,7 +65,7 @@ std::string filesystem::read_file(const std::string& file)
 std::set<std::string> filesystem::get_all_files(const std::set<std::string>& directory_name)
 {
     std::set<std::string> result;
-    set_all_files(directory_name, result);
+    ::set_all_files(directory_name, result);
     return result;
 }
 
