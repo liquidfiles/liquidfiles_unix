@@ -2,7 +2,6 @@
 #include "credentials.h"
 #include "common_arguments.h"
 
-#include <iostream>
 #include <cmd/exceptions.h>
 #include <base/filesystem.h>
 #include <lf/declarations.h>
@@ -26,8 +25,8 @@ send_command::send_command(lf::engine& e)
     get_arguments().push_back(m_subject_argument);
     get_arguments().push_back(m_message_argument);
     get_arguments().push_back(m_message_file_argument);
-    get_arguments().push_back(m_files_argument);
     get_arguments().push_back(m_file_type_argument);
+    get_arguments().push_back(m_files_argument);
 }
 
 void send_command::execute(const cmd::arguments& args)

@@ -363,9 +363,9 @@ Arguments:
 	    Message text of composed email.
 	    Default value: "".
 
-    --message_file
-        The file in which contained message text of composed email.
-        Only one of --meassage and --message_file arguments must be given.
+	--message_file
+	    The file in which contained message text of composed email.
+	    Only one of --meassage and --message_file arguments must be given.
 
 ### filedrop
 Description:
@@ -562,7 +562,7 @@ Arguments:
 Description:
 
 	Sends the file(s) to specified user.
-    This command can upload given files or files in given directories and send them by message or get already uploaded file IDs and send them.
+	This command can upload given files or files in given directories and send them by message or get already uploaded file IDs and send them.
 
 Usage:
 
@@ -598,17 +598,17 @@ Arguments:
 	    Message text of composed email.
 	    Default value: "".
 
-    --message_file
-        The file in which contained message text of composed email.
+	--message_file
+	    The file in which contained message text of composed email.
 
 	--file_type
-        It specifies the type of file must be send to user.
-        Valid values: file_names, directory, attachments.
-        Default value: "file_names".
+	    It specifies the type of file must be send to user.
+	    Valid values: file_names, directory, attachments.
+	    Default value: "file_names".
         values:
-            file_names : given unnamed arguments are file paths, and command uploads that files and sends them.
-            directory :  given unnamed arguments are directory paths, and command uploads files in that directory and sends them.
-            attachements :   given unnamed arguments are IDs of already uploaded files, so command just sends them.
+	        file_names : given unnamed arguments are file paths, and command uploads that files and sends them.
+	        directory :  given unnamed arguments are directory paths, and command uploads files in that directory and sends them.
+	        attachements :   given unnamed arguments are IDs of already uploaded files, so command just sends them.
 
 	<file> ...
 	    File path(s),  attachments IDs or directories to send to user.
