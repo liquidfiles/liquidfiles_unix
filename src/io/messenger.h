@@ -5,8 +5,10 @@
 namespace io {
 
 class endl_type{};
+class flush_type{};
 
 extern endl_type endl;
+extern flush_type flush;
 
 /**
  * @class messenger.
@@ -45,6 +47,12 @@ public:
     messenger& operator<<(endl_type input)
     {
         std::cout << std::endl;
+        return *this;
+    }
+
+    messenger& operator<<(flush_type input)
+    {
+        std::cout << std::flush;
         return *this;
     }
 

@@ -13,19 +13,19 @@ send_command::send_command(lf::engine& e)
     : cmd::command("send", "Sends the file(s) to specified user.")
     , m_engine(e)
     , m_to_argument("to", "<username>", "User name or email, to send file.")
+    , m_file_type_argument("file_type", "<type>", "Type of unnamed arguments.", FILE_NAMES)
     , m_message_argument("message", "<string>", "Message text of composed email.", "")
     , m_message_file_argument("message_file", "<string>", "Message text of composed email.", "")
-    , m_file_type_argument("file_type", "<type>", "Type of unnamed arguments.", FILE_NAMES)
     , m_subject_argument("subject", "<string>", "Subject of composed email.", "")
     , m_files_argument("<file> ...", "File path(s) or attachments IDs to send to user.")
 {
     get_arguments().push_back(credentials::get_arguments());
     get_arguments().push_back(s_report_level_arg);
     get_arguments().push_back(m_to_argument);
-    get_arguments().push_back(m_subject_argument);
+    get_arguments().push_back(m_file_type_argument);
     get_arguments().push_back(m_message_argument);
     get_arguments().push_back(m_message_file_argument);
-    get_arguments().push_back(m_file_type_argument);
+    get_arguments().push_back(m_subject_argument);
     get_arguments().push_back(m_files_argument);
 }
 

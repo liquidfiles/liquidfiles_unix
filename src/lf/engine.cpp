@@ -12,6 +12,7 @@
 
 #include <cstdio>
 #include <cstring>
+#include <iomanip>
 #include <vector>
 
 #include <errno.h>
@@ -31,6 +32,33 @@ size_t data_get(void* ptr, size_t size, size_t nmemb, FILE* stream)
         fwrite(ptr, size, nmemb, stream);
     }
     return size * nmemb;
+}
+
+int progress_function(void* ptr, double td, double nd, 
+        double tu, double nu)
+{
+    int length = 80;
+    double fraction = .0;
+
+    if (td > 0.0) {
+        fraction = nd / td;
+    } else if (tu > 0) {
+        fraction = nu / tu;
+    } else {
+        return 0;
+    }
+    int dd = fraction * length;
+    io::mout << std::fixed << std::setprecision(0);
+    io::mout << std::setw(3) << fraction * 100 << "% [";
+    if (dd > 0) {
+        io::mout << std::setw(dd) << std::setfill('=') << '=';
+    }
+    if (dd < length) {
+        io::mout << std::setw(length - dd) << std::setfill(' ') << ' ';
+    }
+    io::mout << "]\r";
+    io::mout << io::flush;
+    return 0;
 }
 
 class curl_header_guard
@@ -69,12 +97,38 @@ private:
     struct curl_httppost* m_formpost;
 };
 
+class progress_guard
+{
+public:
+    progress_guard(CURL* c)
+        : m_curl(c)
+    {
+        curl_easy_setopt(m_curl, CURLOPT_PROGRESSFUNCTION, &progress_function);
+        curl_easy_setopt(m_curl, CURLOPT_NOPROGRESS, false);
+    }
+
+    void end()
+    {
+        io::mout << io::endl;
+        curl_easy_setopt(m_curl, CURLOPT_PROGRESSFUNCTION, 0);
+        curl_easy_setopt(m_curl, CURLOPT_NOPROGRESS, true);
+    }
+
+    ~progress_guard()
+    {
+    }
+
+private:
+    CURL* m_curl;
+};
+
 class curl_file_guard
 {
 public:
     curl_file_guard(CURL* c, FILE* f)
         : m_curl(c)
         , m_file(f)
+        , m_progress(c)
     {
         curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, m_file);
     }
@@ -83,11 +137,13 @@ public:
     {
         fclose(m_file);
         curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, 0);
+        m_progress.end();
     }
 
 private:
     CURL* m_curl;
     FILE* m_file;
+    progress_guard m_progress;
 };
 
 }
@@ -209,11 +265,14 @@ void engine::attach(std::string server,
             CURLFORM_COPYCONTENTS, base::to_string(num_chunks).c_str(),
             CURLFORM_END);
     curl_form_guard fg(formpost);
+    progress_guard pg(m_curl);
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, formpost);
     if (s >= NORMAL) {
         io::mout << "Uploading chunk '" << file << "'." << io::endl;
     }
-    process_attach_chunk_responce(perform(), s);
+    std::string r = perform();
+    pg.end();
+    process_attach_chunk_responce(r, s);
 }
 
 void engine::messages(std::string server,
@@ -555,10 +614,12 @@ std::string engine::attach_impl(std::string server,
                CURLFORM_END);
     curl_form_guard fg(formpost);
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, formpost);
+    progress_guard pg(m_curl);
     if (s >= NORMAL) {
         io::mout << "Uploading file '" << file << "'." << io::endl;
     }
     std::string r = perform();
+    pg.end();
     process_attach_responce(r, s);
     return r;
 }
