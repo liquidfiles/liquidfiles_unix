@@ -1,6 +1,6 @@
 #pragma once
 
-#include <base/string.h>
+#include <base/lf_string.h>
 
 namespace cmd {
 

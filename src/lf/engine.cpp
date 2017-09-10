@@ -5,7 +5,7 @@
 #include "messages_responce.h"
 #include "message_responce.h"
 
-#include <base/string.h>
+#include <base/lf_string.h>
 #include <io/messenger.h>
 #include <xml/xml.h>
 #include <xml/xml_iterators.h>
