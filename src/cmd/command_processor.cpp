@@ -53,6 +53,9 @@ int command_processor::execute(const std::string& str)
     } catch(base::exception& e) {
         m_messenger << "Error: " << e.message() << io::endl;
         return e.code();
+    } catch(std::exception& e) {
+        m_messenger << "Error: " << e.what() << io::endl;
+        return 1;
     }
     return 0;
 }
@@ -70,6 +73,9 @@ int command_processor::execute(const std::string& cn,
     } catch(base::exception& e) {
         m_messenger << "Error: " << e.message() << io::endl;
         return e.code();
+    } catch(std::exception& e) {
+        m_messenger << "Error: " << e.what() << io::endl;
+        return 1;
     }
     return 0;
 }

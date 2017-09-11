@@ -70,7 +70,7 @@ public:
     curl_header_guard(CURL* c)
         : m_slist(0)
     {
-        m_slist = curl_slist_append(m_slist, "Content-Type: text/xml");
+        m_slist = curl_slist_append(m_slist, "Content-Type: application/json");
         curl_easy_setopt(c, CURLOPT_HTTPHEADER, m_slist);
     }
 
@@ -436,13 +436,9 @@ std::string engine::get_api_key(std::string server,
     server += "/login";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
     curl_header_guard hg(m_curl);
-    std::string data = std::string(
-"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
-  <user>\
-    <email>") + user + std::string("</email>\
-    <password>") + password + std::string("</password>\
-");
-    data += "</user>\n";
+    std::string data = std::string("{\"user\":{\"email\":\"") + user +
+                               std::string("\",\"password\":\"") + password +
+                       std::string("\"}}");
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
     curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str());
     if (s >= NORMAL) {
@@ -910,42 +906,12 @@ std::string engine::process_file_request_responce(const std::string& r, report_l
 
 std::string engine::process_get_api_key_responce(const std::string& r, report_level s) const
 {
-    xml::document<> d;
-    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
-    if (d.first_node() == 0) {
-        throw request_error("get_api_key", r);
+    auto j = nlohmann::json::parse(r);
+    try {
+        return j["user"]["api_key"].get<std::string>();
+    } catch (std::exception) {
+        throw request_error("get_api_key", j["errors"][0].get<std::string>());
     }
-    std::string h(d.first_node()->name(), d.first_node()->name_size());
-    xml::node_iterator<> i(d.first_node());
-    xml::node_iterator<> e;
-    if (h == "error") {
-        while(i != e) {
-            std::string n(i->name(), i->name_size());
-            if (n == "message") {
-                std::string m = std::string(i->value(), i->value_size());
-                throw request_error("get_api_key", m);
-                break;
-            }
-            ++i;
-        }
-        throw request_error("get_api_key", r);
-    }
-    std::string q;
-    while(i != e) {
-        std::string n(i->name(), i->name_size());
-        if (n == "api_key") {
-            q = std::string(i->value(), i->value_size());
-            if (s >= NORMAL) {
-                io::mout << "Retrieved API key: " << q << io::endl;
-            }
-            break;
-        }
-        ++i;
-    }
-    if (q.empty()) {
-        throw request_error("get_api_key", r);
-    }
-    return q;
 }
 
 std::string engine::process_create_filelink_responce(const std::string& r, report_level s) const
