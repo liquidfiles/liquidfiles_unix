@@ -1,7 +1,7 @@
 # what flags you want to pass to the C compiler & linker
 SUBDIRS = ui lf cmd io base
 
-AM_CPPFLAGS = -Wall -I .
+AM_CPPFLAGS = -Wall -I . -std=c++11
 
 # this lists the binaries to produce, the (non-PHONY, binary) targets in
 # the previous manual Makefile

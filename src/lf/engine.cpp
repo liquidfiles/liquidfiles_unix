@@ -9,6 +9,7 @@
 #include <io/messenger.h>
 #include <xml/xml.h>
 #include <xml/xml_iterators.h>
+#include <io/json.h>
 
 #include <cstdio>
 #include <cstring>
