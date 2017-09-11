@@ -436,10 +436,11 @@ std::string engine::get_api_key(std::string server,
     server += "/login";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
     curl_header_guard hg(m_curl);
-    std::string data = std::string("{\"user\":{\"email\":\"") + user +
-                               std::string("\",\"password\":\"") + password +
-                       std::string("\"}}");
+    nlohmann::json j;
+    j["user"]["email"] = user;
+    j["user"]["password"] = password;
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
+    auto data = j.dump();
     curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str());
     if (s >= NORMAL) {
         io::mout << "Getting API key for user '" << user << "'" << io::endl;
