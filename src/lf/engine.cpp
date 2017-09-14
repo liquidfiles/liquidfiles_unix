@@ -11,6 +11,7 @@
 #include <xml/xml_iterators.h>
 #include <io/json.h>
 
+#include <algorithm>
 #include <cstdio>
 #include <cstring>
 #include <iomanip>
@@ -639,26 +640,15 @@ std::string engine::send_attachments_impl(std::string server,
     server += "/message";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
     curl_header_guard hg(m_curl);
-    std::string data = std::string(
-"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
-  <message>\
-    <recipients type=\"array\">\
-      <recipient>") + user + std::string("</recipient>\
-    </recipients>\
-    <subject>") + subject + std::string("</subject>\
-    <message>") + message + std::string("</message>\
-    <send_email>true</send_email>\
-    <authorization>3</authorization>\
-    <attachments type='array'>\
-");
-    for (strings::const_iterator i = fs.begin(); i != fs.end(); ++i) {
-        data += "      <attachment>";
-        data += *i;
-        data += "</attachment>\n";
-    }
-    data += "    </attachments>\
-  </message>\n";
+    nlohmann::json j;
+    j["message"]["subject"] = subject;
+    j["message"]["message"] = message;
+    j["message"]["send_email"] = "true";
+    j["message"]["authorization"] = 3;
+    j["message"]["recipients"] = std::vector<std::string>{1, user};
+    j["message"]["attachments"] = fs;
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
+    auto data = j.dump();
     curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str());
     if (s >= NORMAL) {
         io::mout << "Sending message to user '" << user << "'" << io::endl;
@@ -716,23 +706,19 @@ void engine::process_attach_responce(const std::string& r, report_level s) const
     throw request_error("upload", r);
 }
 
-std::string engine::process_send_responce(const std::string& r,
+std::string engine::process_send_responce(std::string r,
         report_level s) const
 {
-    xml::document<> d;
-    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
-    xml::node_iterator<> i(d.first_node());
-    xml::node_iterator<> e;
-    while(i != e) {
-        std::string n(i->name(), i->name_size());
-        if (n == "id") {
-            std::string v(i->value(), i->value_size());
-            if (s >= NORMAL) {
-                io::mout << "Message sent successfully. ID: " << v << io::endl;
-            }
-            return v;
+    /// @todo workaround for json parser as it does not recognize backslash.
+    std::replace(r.begin(), r.end(), '\\', '0');
+    auto j = nlohmann::json::parse(r);
+    try {
+        auto id = j["message"]["id"].get<std::string>();
+        if (s >= NORMAL) {
+            io::mout << "Message sent successfully. ID: " << id << io::endl;
         }
-        ++i;
+        return id;
+    } catch (std::exception) {
     }
     throw request_error("send", r);
     return "";

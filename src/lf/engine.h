@@ -387,7 +387,7 @@ private:
             const std::string& message, const strings& fs, report_level s);
 
 private:
-    std::string process_send_responce(const std::string& r, report_level s) const;
+    std::string process_send_responce(std::string r, report_level s) const;
     void process_attach_responce(const std::string& r, report_level s) const;
     void process_attach_chunk_responce(const std::string& r, report_level s) const;
     std::string process_file_request_responce(const std::string& r, report_level s) const;
