@@ -5,7 +5,7 @@ liquidfiles_unix is UNIX command line utility, to work with Liquidfiles server, 
 LiquidFiles Unix command line utility extends the functionality of your LiquidFiles server to command line use and scripting from supported 
 Unix and Linux servers.
 
-Liquidfiles Unix is fully based on [Liquidfiles public API](http://support.liquidfiles.com/forums/21423392-API) and user [libcurl](http://curl.haxx.se/) to send and receive data from Liquidfiles server.
+Liquidfiles Unix is fully based on [Liquidfiles public API](http://support.liquidfiles.com/forums/21423392-API) and uses [libcurl](http://curl.haxx.se/) to send and receive data from Liquidfiles server.
 
 This document consists of the following sections:
 
