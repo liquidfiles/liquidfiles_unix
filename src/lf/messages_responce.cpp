@@ -7,61 +7,19 @@ namespace lf {
 
 void messages_responce::read(const nlohmann::json& j)
 {
-    /*
-    xml::node_iterator<> ii(s->first_node());
-    xml::node_iterator<> e;
-    while(ii != e) {
-        if (std::string(ii->name(), ii->name_size()) == "message") {
-            xml::node_iterator<> i(&*ii);
-            m_messages.push_back(message_item());
-            message_item& r = m_messages.back();
-            while(i != e) {
-                std::string n(i->name(), i->name_size());
-                std::string v(i->value(), i->value_size());
-                xml::node<>* nn = &*i;
-                ++i;
-                if (n == "id") {
-                    r.m_id = v;
-                    continue;
-                }
-                if (n == "sender") {
-                    r.m_sender = v;
-                    continue;
-                }
-                if (n == "recipients") {
-                    xml::node_iterator<> ri(nn);
-                    while(ri != e) {
-                        r.m_recipients.push_back(std::string(ri->value(),
-                                    ri->value_size()));
-                        ++ri;
-                    }
-                    continue;
-                }
-                if (n == "created_at") {
-                    r.m_creation_time = v;
-                    continue;
-                }
-                if (n == "expires_at") {
-                    r.m_expire_time = v;
-                    continue;
-                }
-                if (n == "authorization") {
-                    r.m_authorization = std::atoi(v.c_str());
-                    continue;
-                }
-                if (n == "authorization_description") {
-                    r.m_authorization_description = v;
-                    continue;
-                }
-                if (n == "subject") {
-                    r.m_subject = v;
-                    continue;
-                }
-            }
-        }
-        ++ii;
+    auto ms = j["messages"].get<std::vector<nlohmann::json>>();
+    for (const auto& mm : ms) {
+        m_messages.push_back(message_item());
+        message_item& r = m_messages.back();
+        r.m_id = mm["id"].get<std::string>();
+        r.m_sender = mm["sender"].get<std::string>();
+        r.m_recipients = mm["recipients"].get<std::vector<std::string>>();
+        r.m_creation_time = mm["created_at"].get<std::string>();
+        r.m_expire_time = mm["expires_at"].get<std::string>();
+        r.m_authorization = mm["authorization"].get<int>();
+        r.m_authorization_description = mm["authorization_description"].get<std::string>();
+        r.m_subject = mm["subject"].get<std::string>();
     }
-    */
 }
 
 std::string messages_responce::to_string(output_format f) const
