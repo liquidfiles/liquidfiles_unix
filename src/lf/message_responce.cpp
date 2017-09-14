@@ -2,7 +2,6 @@
 
 #include <io/csv_stream.h>
 #include <io/table_printer.h>
-#include <io/messenger.h>
 
 #include <cstdlib>
 #include <sstream>
@@ -25,7 +24,6 @@ void message_responce::read(const nlohmann::json& j)
         m_bccs = j["message"]["bccs"].get<std::vector<std::string>>();
     }
     auto as = j["message"]["attachments"].get<std::vector<nlohmann::json>>();
-    io::mout << as.size() << io::endl;
     for (const auto& a : as) {
         m_attachments.push_back(attachment_responce());
         m_attachments.back().read(a);
