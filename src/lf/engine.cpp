@@ -726,7 +726,6 @@ template <typename T>
 void engine::process_output_responce(const std::string& r,
         report_level s, output_format f) const
 {
-    io::mout << r << io::endl;
     auto j = nlohmann::json::parse(r);
     T m;
     m.read(j);
