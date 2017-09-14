@@ -1,42 +1,19 @@
 #include "attachment_responce.h"
 
 #include <io/csv_stream.h>
-#include <xml/xml_iterators.h>
 
 #include <cstdlib>
 #include <sstream>
 
 namespace lf {
 
-void attachment_responce::read(xml::node<>* s)
+void attachment_responce::read(const nlohmann::json& j)
 {
-    xml::node_iterator<> i(s);
-    xml::node_iterator<> e;
-    while(i != e) {
-        std::string n(i->name(), i->name_size());
-        std::string v(i->value(), i->value_size());
-        ++i;
-        if (n == "filename") {
-            m_filename = v;
-            continue;
-        }
-        if (n == "checksum") {
-            m_checksum = v;
-            continue;
-        }
-        if (n == "crc32") {
-            m_crc32 = v;
-            continue;
-        }
-        if (n == "url") {
-            m_url = v;
-            continue;
-        }
-        if (n == "size") {
-            m_size = std::atoi(v.c_str());
-            continue;
-        }
-    }
+    m_filename = j["filename"].get<std::string>();
+    m_checksum = j["checksum"].get<std::string>();
+    m_crc32 = j["crc32"].get<std::string>();
+    m_url = j["url"].get<std::string>();
+    m_size = j["size"].get<int>();
 }
 
 std::string attachment_responce::to_string(output_format f) const

@@ -2,7 +2,7 @@
 
 #include "declarations.h"
 
-#include <xml/xml.h>
+#include <io/json.h>
 
 #include <string>
 
@@ -16,10 +16,10 @@ class attachment_responce
 {
 public:
     /**
-     * @brief Generates attachment_responce from xml node.
-     * @param s Xml node.
+     * @brief Generates attachment_responce from json object.
+     * @param j Json object
      */
-    void read(xml::node<>* s);
+    void read(const nlohmann::json& j);
 
 public:
     /**

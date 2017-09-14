@@ -2,12 +2,12 @@
 
 #include <io/csv_stream.h>
 #include <io/table_printer.h>
-#include <xml/xml_iterators.h>
 
 namespace lf {
 
-void filelinks_responce::read(xml::node<>* s)
+void filelinks_responce::read(const nlohmann::json& j)
 {
+    /*
     xml::node_iterator<> ii(s->first_node());
     xml::node_iterator<> e;
     while(ii != e) {
@@ -43,6 +43,7 @@ void filelinks_responce::read(xml::node<>* s)
         }
         ++ii;
     }
+    */
 }
 
 std::string filelinks_responce::to_string(output_format f) const

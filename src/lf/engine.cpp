@@ -351,10 +351,9 @@ void engine::download(std::string server,
     std::string r = message_impl(server, key, id, s, v,
         "Retrieving attachments of message.");
     try {
-        xml::document<> d;
-        d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
+        auto j = nlohmann::json::parse(r);
         message_responce m;
-        m.read(&d);
+        m.read(j);
         curl_header_guard hg(m_curl);
         const std::vector<attachment_responce>& a = m.attachments();
         std::vector<attachment_responce>::const_iterator i = a.begin();
@@ -376,10 +375,9 @@ void engine::download(std::string server,
         validate_cert v)
 {
     std::string r = messages_impl(server, key, l, f, s, v);
-    xml::document<> d;
-    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
+    auto j = nlohmann::json::parse(r);
     messages_responce m;
-    m.read(&d);
+    m.read(r);
     for (unsigned i = 0; i < m.size(); ++i) {
         download(server, path, key, m.id(i), s, v);
     }
@@ -728,10 +726,10 @@ template <typename T>
 void engine::process_output_responce(const std::string& r,
         report_level s, output_format f) const
 {
-    xml::document<> d;
-    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
+    io::mout << r << io::endl;
+    auto j = nlohmann::json::parse(r);
     T m;
-    m.read(&d);
+    m.read(j);
     io::mout << m.to_string(f);
 }
 

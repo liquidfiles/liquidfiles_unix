@@ -2,7 +2,7 @@
 
 #include "declarations.h"
 
-#include <xml/xml.h>
+#include <io/json.h>
 
 #include <string>
 #include <vector>
@@ -21,7 +21,7 @@ public:
      * @brief Generates filelinks_responce from xml node.
      * @param s Xml node.
      */
-    void read(xml::node<>* s);
+    void read(const nlohmann::json& j);
 
 public:
     /**
