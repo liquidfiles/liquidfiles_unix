@@ -660,14 +660,12 @@ std::string engine::filelink_impl(std::string server, const std::string& expire,
     server += "/link";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
     curl_header_guard hg(m_curl);
-    std::string data = std::string(
-"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
-  <link>\
-    <attachment>") + id + "</attachment>\n";
+    nlohmann::json j;
+    j["link"]["attachment"] = id;
     if (!expire.empty()) {
-        data += std::string("<expires_at>") + expire + "</expires_at>\n";
+        j["link"]["expires_at"] = expire;
     }
-    data += "  </link>\n";
+    auto data = j.dump();
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
     curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str());
     if (s >= NORMAL) {
@@ -900,28 +898,10 @@ std::string engine::process_get_api_key_responce(const std::string& r, report_le
 
 std::string engine::process_create_filelink_responce(const std::string& r, report_level s) const
 {
-    xml::document<> d;
-    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
-    if (d.first_node() == 0) {
-        throw request_error("create_filelink", r);
-    }
-    std::string h(d.first_node()->name(), d.first_node()->name_size());
-    xml::node_iterator<> i(d.first_node());
-    xml::node_iterator<> e;
-    std::string q;
-    while(i != e) {
-        std::string n(i->name(), i->name_size());
-        if (n == "url") {
-            q = std::string(i->value(), i->value_size());
-            if (s >= NORMAL) {
-                io::mout << "Created filelink sucessfully. URL: " << q << io::endl;
-            }
-            break;
-        }
-        ++i;
-    }
-    if (q.empty()) {
-        throw request_error("create_filelink", r);
+    auto j = nlohmann::json::parse(r);
+    auto q = j["link"]["url"].get<std::string>();
+    if (s >= NORMAL) {
+        io::mout << "Created filelink sucessfully. URL: " << q << io::endl;
     }
     return q;
 }

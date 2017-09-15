@@ -15,7 +15,7 @@ void filelinks_responce::read(const nlohmann::json& j)
         r.m_filename = l["filename"].get<std::string>();
         r.m_url = l["url"].get<std::string>();
         r.m_expire_time = l["expires_at"].get<std::string>();
-        r.m_size = l["size"].get<std::string>();
+        r.m_size = l["size"].get<int>();
     }
 }
 

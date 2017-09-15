@@ -36,7 +36,7 @@ private:
         std::string m_filename;
         std::string m_url;
         std::string m_expire_time;
-        std::string m_size;
+        int m_size;
     };
 
 public:
