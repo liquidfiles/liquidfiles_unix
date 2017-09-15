@@ -9,7 +9,7 @@ void messages_responce::read(const nlohmann::json& j)
 {
     auto ms = j["messages"].get<std::vector<nlohmann::json>>();
     for (const auto& mm : ms) {
-        m_messages.push_back(message_item());
+        m_messages.emplace_back();
         message_item& r = m_messages.back();
         r.m_id = mm["id"].get<std::string>();
         r.m_sender = mm["sender"].get<std::string>();

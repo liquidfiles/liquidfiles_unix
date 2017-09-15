@@ -25,7 +25,7 @@ void message_responce::read(const nlohmann::json& j)
     }
     auto as = j["message"]["attachments"].get<std::vector<nlohmann::json>>();
     for (const auto& a : as) {
-        m_attachments.push_back(attachment_responce());
+        m_attachments.emplace_back();
         m_attachments.back().read(a);
     }
 }

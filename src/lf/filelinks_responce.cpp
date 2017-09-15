@@ -7,43 +7,16 @@ namespace lf {
 
 void filelinks_responce::read(const nlohmann::json& j)
 {
-    /*
-    xml::node_iterator<> ii(s->first_node());
-    xml::node_iterator<> e;
-    while(ii != e) {
-        if (std::string(ii->name(), ii->name_size()) == "link") {
-            xml::node_iterator<> i(&*ii);
-            m_links.push_back(link_item());
-            link_item& r = m_links.back();
-            while(i != e) {
-                std::string n(i->name(), i->name_size());
-                std::string v(i->value(), i->value_size());
-                ++i;
-                if (n == "id") {
-                    r.m_id = v;
-                    continue;
-                }
-                if (n == "filename") {
-                    r.m_filename = v;
-                    continue;
-                }
-                if (n == "url") {
-                    r.m_url = v;
-                    continue;
-                }
-                if (n == "expires_at") {
-                    r.m_expire_time = v;
-                    continue;
-                }
-                if (n == "size") {
-                    r.m_size = v;
-                    continue;
-                }
-            }
-        }
-        ++ii;
+    auto ls = j["links"].get<std::vector<nlohmann::json>>();
+    for (const auto& l : ls) {
+        m_links.emplace_back();
+        link_item& r = m_links.back();
+        r.m_id = l["id"].get<std::string>();
+        r.m_filename = l["filename"].get<std::string>();
+        r.m_url = l["url"].get<std::string>();
+        r.m_expire_time = l["expires_at"].get<std::string>();
+        r.m_size = l["size"].get<std::string>();
     }
-    */
 }
 
 std::string filelinks_responce::to_string(output_format f) const
