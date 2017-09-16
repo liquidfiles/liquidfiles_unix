@@ -32,46 +32,46 @@ public:
     /// @brief Access to filiename.
     const std::string& filename() const
     {
-        return m_filename;
+        return filename_;
     }
 
     /// @brief Access to content type.
     const std::string& content_type() const
     {
-        return m_content_type;
+        return content_type_;
     }
 
     /// @brief Access to checksum.
     const std::string& checksum() const
     {
-        return m_checksum;
+        return checksum_;
     }
 
     /// @brief Access to crc32.
     const std::string& crc32() const
     {
-        return m_crc32;
+        return crc32_;
     }
 
     /// @brief Access to url string.
     const std::string& url() const
     {
-        return m_url;
+        return url_;
     }
 
     /// @brief Access to size.
     int size() const
     {
-        return m_size;
+        return size_;
     }
 
 private:
-    std::string m_filename;
-    std::string m_content_type;
-    std::string m_checksum;
-    std::string m_crc32;
-    std::string m_url;
-    int m_size;
+    std::string filename_;
+    std::string content_type_;
+    std::string checksum_;
+    std::string crc32_;
+    std::string url_;
+    int size_;
 };
 
 }

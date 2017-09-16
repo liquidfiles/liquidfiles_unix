@@ -9,11 +9,11 @@ namespace lf {
 
 void attachment_responce::read(const nlohmann::json& j)
 {
-    m_filename = j["filename"].get<std::string>();
-    m_checksum = j["checksum"].get<std::string>();
-    m_crc32 = j["crc32"].get<std::string>();
-    m_url = j["url"].get<std::string>();
-    m_size = j["size"].get<int>();
+    filename_ = j["filename"].get<std::string>();
+    checksum_ = j["checksum"].get<std::string>();
+    crc32_ = j["crc32"].get<std::string>();
+    url_ = j["url"].get<std::string>();
+    size_ = j["size"].get<int>();
 }
 
 std::string attachment_responce::to_string(output_format f) const
@@ -21,27 +21,27 @@ std::string attachment_responce::to_string(output_format f) const
     std::stringstream m;
     switch (f) {
     case TABLE_FORMAT:
-        if (!m_filename.empty()) {
-            m << "Filename: " << m_filename << "\n";
+        if (!filename_.empty()) {
+            m << "Filename: " << filename_ << "\n";
         }
-        if (!m_content_type.empty()) {
-            m << "Content Type: " << m_content_type << "\n";
+        if (!content_type_.empty()) {
+            m << "Content Type: " << content_type_ << "\n";
         }
-        if (!m_checksum.empty()) {
-            m << "Checksum: " << m_checksum << "\n";
+        if (!checksum_.empty()) {
+            m << "Checksum: " << checksum_ << "\n";
         }
-        if (!m_crc32.empty()) {
-            m << "CRC32: " << m_crc32 << "\n";
+        if (!crc32_.empty()) {
+            m << "CRC32: " << crc32_ << "\n";
         }
-        if (!m_url.empty()) {
-            m << "URL: " << m_url << "\n";
+        if (!url_.empty()) {
+            m << "URL: " << url_ << "\n";
         }
-        m << "Size: " << m_size << "\n";
+        m << "Size: " << size_ << "\n";
         break;
     case CSV_FORMAT:
     {
         io::csv_ostream cp(&m);
-        cp << m_filename << m_content_type << m_checksum << m_crc32 << m_url << m_size;
+        cp << filename_ << content_type_ << checksum_ << crc32_ << url_ << size_;
     }
     default:
         break;
