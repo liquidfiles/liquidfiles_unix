@@ -11,11 +11,11 @@ void filelinks_responce::read(const nlohmann::json& j)
     for (const auto& l : ls) {
         m_links.emplace_back();
         link_item& r = m_links.back();
-        r.m_id = l["id"].get<std::string>();
-        r.m_filename = l["filename"].get<std::string>();
-        r.m_url = l["url"].get<std::string>();
-        r.m_expire_time = l["expires_at"].get<std::string>();
-        r.m_size = l["size"].get<int>();
+        r.id = l["id"].get<std::string>();
+        r.filename = l["filename"].get<std::string>();
+        r.url = l["url"].get<std::string>();
+        r.expire_time = l["expires_at"].get<std::string>();
+        r.size = l["size"].get<int>();
     }
 }
 
@@ -40,11 +40,8 @@ std::string filelinks_responce::to_string(output_format f) const
 void filelinks_responce::write_csv(std::stringstream& m) const
 {
     io::csv_ostream cp(&m);
-    std::vector<link_item>::const_iterator j = m_links.begin();
-    while (j != m_links.end()) {
-        cp << j->m_id << j->m_filename << j->m_size <<
-            j->m_expire_time.substr(0, 10) << j->m_url;
-        ++j;
+    for (const auto& l : m_links) {
+        cp << l.id << l.filename << l.size << l.expire_time.substr(0, 10) << l.url;
     }
 }
 
@@ -57,11 +54,8 @@ void filelinks_responce::write_table(std::stringstream& m) const
     tp.add_column("Expire Date", 12);
     tp.add_column("URL", 60);
     tp.print_header();
-    std::vector<link_item>::const_iterator j = m_links.begin();
-    while (j != m_links.end()) {
-        tp << j->m_id << j->m_filename << j->m_size <<
-            j->m_expire_time.substr(0, 10) << j->m_url;
-        ++j;
+    for (const auto& l : m_links) {
+        tp << l.id << l.filename << l.size << l.expire_time.substr(0, 10) << l.url;
         tp.print_footer();
     }
 }

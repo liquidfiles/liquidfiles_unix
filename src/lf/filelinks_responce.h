@@ -32,11 +32,11 @@ public:
 
 private:
     struct link_item {
-        std::string m_id;
-        std::string m_filename;
-        std::string m_url;
-        std::string m_expire_time;
-        int m_size;
+        std::string id;
+        std::string filename;
+        std::string url;
+        std::string expire_time;
+        int size;
     };
 
 public:
