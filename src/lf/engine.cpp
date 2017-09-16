@@ -395,15 +395,12 @@ std::string engine::file_request(std::string server,
     server += "/requests";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
     curl_header_guard hg(m_curl);
-    std::string data = std::string(
-"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
-  <request>\
-    <recipient>") + user + std::string("</recipient>\
-    <subject>") + subject + std::string("</subject>\
-    <message>") + message + std::string("</message>\
-    <send_email>true</send_email>\
-");
-    data += "</request>\n";
+    nlohmann::json j;
+    j["request"]["recipient"] = user;
+    j["request"]["subject"] = subject;
+    j["request"]["message"] = message;
+    j["request"]["send_email"] = true;
+    auto data = j.dump();
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
     curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str());
     if (s >= NORMAL) {
@@ -863,25 +860,13 @@ void engine::filedrop_attachments_impl(std::string server, const std::string& ke
 
 std::string engine::process_file_request_responce(const std::string& r, report_level s) const
 {
-    xml::document<> d;
-    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
-
-    xml::node_iterator<> i(d.first_node());
-    xml::node_iterator<> e;
-    std::string q;
-    while(i != e) {
-        std::string n(i->name(), i->name_size());
-        if (n == "url") {
-            q = std::string(i->value(), i->value_size());
-            if (s >= NORMAL) {
-                    io::mout << "Request sent successfully. URL: " << q << io::endl;
-            }
-            break;
-        }
-        ++i;
-    }
+    auto j = nlohmann::json::parse(r);
+    std::string q = j["request"]["url"].get<std::string>();
     if (q.empty()) {
         throw request_error("file_request", r);
+    }
+    if (s >= NORMAL) {
+        io::mout << "Request sent successfully. URL: " << q << io::endl;
     }
     return q;
 }
