@@ -15,12 +15,12 @@ messages_command::messages_command(lf::engine& e)
     , m_sent_in_last_argument("sent_in_the_last", "<HOURS>", "Show messages sent in the last specified hours.")
     , m_sent_after_argument("sent_after", "YYYYMMDD", "Show messages sent after specified date.")
 {
-    get_arguments().push_back(credentials::get_arguments());
-    get_arguments().push_back(s_report_level_arg);
-    get_arguments().push_back(s_output_format_arg);
-    get_arguments().push_back(m_message_id_argument);
-    get_arguments().push_back(m_sent_in_last_argument);
-    get_arguments().push_back(m_sent_after_argument);
+    arguments.push_back(credentials::get_arguments());
+    arguments.push_back(s_report_level_arg);
+    arguments.push_back(s_output_format_arg);
+    arguments.push_back(m_message_id_argument);
+    arguments.push_back(m_sent_in_last_argument);
+    arguments.push_back(m_sent_after_argument);
 }
 
 void messages_command::execute(const cmd::arguments& args)

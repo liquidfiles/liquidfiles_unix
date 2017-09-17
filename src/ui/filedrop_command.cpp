@@ -18,14 +18,14 @@ filedrop_command::filedrop_command(lf::engine& e)
     , m_subject_argument("subject", "<string>", "Subject of composed email.", "")
     , m_files_argument("<file> ...", "File path(s) or attachments IDs to send to user.")
 {
-    get_arguments().push_back(m_server_arg);
-    get_arguments().push_back(m_validate_cert_arg);
-    get_arguments().push_back(s_report_level_arg);
-    get_arguments().push_back(m_from_argument);
-    get_arguments().push_back(m_subject_argument);
-    get_arguments().push_back(m_message_argument);
-    get_arguments().push_back(s_attachment_argument);
-    get_arguments().push_back(m_files_argument);
+    arguments.push_back(m_server_arg);
+    arguments.push_back(m_validate_cert_arg);
+    arguments.push_back(s_report_level_arg);
+    arguments.push_back(m_from_argument);
+    arguments.push_back(m_subject_argument);
+    arguments.push_back(m_message_argument);
+    arguments.push_back(s_attachment_argument);
+    arguments.push_back(m_files_argument);
 }
 
 void filedrop_command::execute(const cmd::arguments& args)

@@ -13,7 +13,7 @@ namespace ui {
  * @class get_api_key_command.
  * @brief Class for 'get_api_key' command.
  */
-class get_api_key_command : public cmd::command
+class get_api_key_command final : public cmd::command
 {
 public:
     /// @brief Constructor.
@@ -22,7 +22,7 @@ public:
 
 public:
     /// @brief Executes command by given arguments.
-    virtual void execute(const cmd::arguments& args);
+    void execute(const cmd::arguments& args) override;
 
 private:
     lf::engine& m_engine;

@@ -13,10 +13,10 @@ filelinks_command::filelinks_command(lf::engine& e)
     , m_engine(e)
     , m_limit_argument("limit", "<number>", "Limit of filelinks list.")
 {
-    get_arguments().push_back(credentials::get_arguments());
-    get_arguments().push_back(s_report_level_arg);
-    get_arguments().push_back(s_output_format_arg);
-    get_arguments().push_back(m_limit_argument);
+    arguments.push_back(credentials::get_arguments());
+    arguments.push_back(s_report_level_arg);
+    arguments.push_back(s_output_format_arg);
+    arguments.push_back(m_limit_argument);
 }
 
 void filelinks_command::execute(const cmd::arguments& args)

@@ -32,9 +32,8 @@ public:
     /// @brief Destructor.
     ~command_processor();
 
-private:
-    command_processor(const command_processor&);
-    command_processor& operator=(const command_processor&);
+    command_processor(const command_processor&) = delete;
+    command_processor& operator=(const command_processor&) = delete;
     /// @}
 
     /// @name Command register interface

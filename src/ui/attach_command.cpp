@@ -13,9 +13,9 @@ attach_command::attach_command(lf::engine& e)
     , m_engine(e)
     , m_files_argument("<file> ...", "File path(s) to upload.")
 {
-    get_arguments().push_back(credentials::get_arguments());
-    get_arguments().push_back(s_report_level_arg);
-    get_arguments().push_back(m_files_argument);
+    arguments.push_back(credentials::get_arguments());
+    arguments.push_back(s_report_level_arg);
+    arguments.push_back(m_files_argument);
 }
 
 void attach_command::execute(const cmd::arguments& args)

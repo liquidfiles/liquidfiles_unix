@@ -17,12 +17,12 @@ file_request_command::file_request_command(lf::engine& e)
     , m_message_file_argument("message_file", "<string>", "Message text of composed email.", "")
     , m_subject_argument("subject", "<string>", "Subject of composed email.", "")
 {
-    get_arguments().push_back(credentials::get_arguments());
-    get_arguments().push_back(s_report_level_arg);
-    get_arguments().push_back(m_to_argument);
-    get_arguments().push_back(m_subject_argument);
-    get_arguments().push_back(m_message_argument);
-    get_arguments().push_back(m_message_file_argument);
+    arguments.push_back(credentials::get_arguments());
+    arguments.push_back(s_report_level_arg);
+    arguments.push_back(m_to_argument);
+    arguments.push_back(m_subject_argument);
+    arguments.push_back(m_message_argument);
+    arguments.push_back(m_message_file_argument);
 }
 
 void file_request_command::execute(const cmd::arguments& args)

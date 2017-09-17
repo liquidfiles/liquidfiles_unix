@@ -14,7 +14,7 @@ class argument_definition_object
 public:
     template <typename T>
     argument_definition_object(T t)
-        : m_self(new model<T>(t))
+        : m_self{new model<T>(t)}
     {
     }
 
@@ -45,7 +45,7 @@ private:
     {
     public:
         model(T t)
-            : m_data(t)
+            : m_data{t}
         {
         }
 
@@ -72,22 +72,18 @@ public:
     std::string usage() const
     {
         std::string ret;
-        const_iterator i = begin();
-        while (i != end()) {
-            ret += i->usage();
+        for (const auto& i : (*this)) {
+            ret += i.usage();
             ret += " ";
-            ++i;
         }
-        return ret.substr(0, ret.size() - 1);
+        return ret;
     }
 
     std::string full_description() const
     {
         std::string ret;
-        const_iterator i = begin();
-        while (i != end()) {
-            ret += i->full_description();
-            ++i;
+        for (const auto& i : (*this)) {
+            ret += i.full_description();
         }
         return ret;
     }
@@ -116,8 +112,8 @@ class argument_definition_base<argument_name_type::unnamed, r>
 public:
     argument_definition_base(const std::string& type_string,
             const std::string& description)
-        : m_type_string(type_string)
-        , m_description(description)
+        : m_type_string{type_string}
+        , m_description{description}
     {
     }
 
@@ -159,8 +155,8 @@ class argument_definition_base<argument_name_type::boolean, r>
 public:
     argument_definition_base(const std::string& name,
             const std::string& description)
-        : m_name(name)
-        , m_description(description)
+        : m_name{name}
+        , m_description{description}
     {
     }
 
@@ -203,9 +199,9 @@ public:
     argument_definition_base(const std::string& name,
             const std::string& type_string,
             const std::string& description)
-        : m_name(name)
-        , m_type_string(type_string)
-        , m_description(description)
+        : m_name{name}
+        , m_type_string{type_string}
+        , m_description{description}
     {
     }
 
@@ -267,7 +263,7 @@ class argument_definition<T, argument_name_type::unnamed, r> :
 public:
     argument_definition(const std::string& type_string,
             const std::string& description)
-        : parent(type_string, description)
+        : parent{type_string, description}
     {
     }
 
@@ -302,7 +298,7 @@ class argument_definition<T, argument_name_type::boolean, r> :
 public:
     argument_definition(const std::string& name,
             const std::string& description)
-        : parent(name, description)
+        : parent{name, description}
     {
     }
 
@@ -344,7 +340,7 @@ public:
     argument_definition(const std::string& name,
             const std::string& type_string,
             const std::string& description)
-        : parent(name, type_string, description)
+        : parent{name, type_string, description}
     {
     }
 
@@ -386,18 +382,18 @@ public:
             const std::string& type_string,
             const std::string& description,
             T default_value)
-        : parent(name, type_string, description)
-        , m_default_value(default_value)
-        , m_default_value_specified(true)
+        : parent{name, type_string, description}
+        , m_default_value{default_value}
+        , m_default_value_specified{true}
     {
     }
 
     argument_definition(const std::string& name,
             const std::string& type_string,
             const std::string& description)
-        : parent(name, type_string, description)
-        , m_default_value()
-        , m_default_value_specified(false)
+        : parent{name, type_string, description}
+        , m_default_value{}
+        , m_default_value_specified{false}
     {
     }
 

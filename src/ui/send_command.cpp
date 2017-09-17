@@ -19,14 +19,14 @@ send_command::send_command(lf::engine& e)
     , m_subject_argument("subject", "<string>", "Subject of composed email.", "")
     , m_files_argument("<file> ...", "File path(s) or attachments IDs to send to user.")
 {
-    get_arguments().push_back(credentials::get_arguments());
-    get_arguments().push_back(s_report_level_arg);
-    get_arguments().push_back(m_to_argument);
-    get_arguments().push_back(m_file_type_argument);
-    get_arguments().push_back(m_message_argument);
-    get_arguments().push_back(m_message_file_argument);
-    get_arguments().push_back(m_subject_argument);
-    get_arguments().push_back(m_files_argument);
+    arguments.push_back(credentials::get_arguments());
+    arguments.push_back(s_report_level_arg);
+    arguments.push_back(m_to_argument);
+    arguments.push_back(m_file_type_argument);
+    arguments.push_back(m_message_argument);
+    arguments.push_back(m_message_file_argument);
+    arguments.push_back(m_subject_argument);
+    arguments.push_back(m_files_argument);
 }
 
 void send_command::execute(const cmd::arguments& args)

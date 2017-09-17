@@ -14,11 +14,11 @@ filelink_command::filelink_command(lf::engine& e)
     , m_expire_argument("expires", "<YYYY-MM-DD>", "Expire date for the filelink.")
     , m_file_argument("<file>", "File path or attachment id to create filelink.")
 {
-    get_arguments().push_back(credentials::get_arguments());
-    get_arguments().push_back(s_report_level_arg);
-    get_arguments().push_back(m_expire_argument);
-    get_arguments().push_back(s_attachment_argument);
-    get_arguments().push_back(m_file_argument);
+    arguments.push_back(credentials::get_arguments());
+    arguments.push_back(s_report_level_arg);
+    arguments.push_back(m_expire_argument);
+    arguments.push_back(s_attachment_argument);
+    arguments.push_back(m_file_argument);
 }
 
 void filelink_command::execute(const cmd::arguments& args)

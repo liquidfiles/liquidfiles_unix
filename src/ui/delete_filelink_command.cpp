@@ -13,9 +13,9 @@ delete_filelink_command::delete_filelink_command(lf::engine& e)
     , m_engine(e)
     , m_filelink_id_argument("filelink_id", "<id>", "ID of filelink to delete.")
 {
-    get_arguments().push_back(credentials::get_arguments());
-    get_arguments().push_back(s_report_level_arg);
-    get_arguments().push_back(m_filelink_id_argument);
+    arguments.push_back(credentials::get_arguments());
+    arguments.push_back(s_report_level_arg);
+    arguments.push_back(m_filelink_id_argument);
 }
 
 void delete_filelink_command::execute(const cmd::arguments& args)

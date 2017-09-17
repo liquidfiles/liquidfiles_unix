@@ -17,13 +17,13 @@ download_command::download_command(lf::engine& e)
     , m_sent_after_argument("sent_after", "YYYYMMDD", "Download files sent after specified date.")
     , m_urls_argument("<url> ...", "Url(s) of files to download.")
 {
-    get_arguments().push_back(credentials::get_arguments());
-    get_arguments().push_back(s_report_level_arg);
-    get_arguments().push_back(m_path_argument);
-    get_arguments().push_back(m_message_id_argument);
-    get_arguments().push_back(m_sent_in_last_argument);
-    get_arguments().push_back(m_sent_after_argument);
-    get_arguments().push_back(m_urls_argument);
+    arguments.push_back(credentials::get_arguments());
+    arguments.push_back(s_report_level_arg);
+    arguments.push_back(m_path_argument);
+    arguments.push_back(m_message_id_argument);
+    arguments.push_back(m_sent_in_last_argument);
+    arguments.push_back(m_sent_after_argument);
+    arguments.push_back(m_urls_argument);
 }
 
 void download_command::execute(const cmd::arguments& args)

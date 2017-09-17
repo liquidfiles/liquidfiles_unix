@@ -13,7 +13,7 @@ help_command::help_command(cmd::command_processor& p)
         "\t                 will be printed. If not specified, help for tool\n"
         "\t                 will be printed.")
 {
-    get_arguments().push_back(m_commands_argument);
+    arguments.push_back(m_commands_argument);
 }
 
 namespace {
@@ -56,7 +56,7 @@ public:
             for (unsigned j = 0; j < m_max_length - n.size(); ++j) {
                 io::mout << ' ';
             }
-            io::mout << m_command_processor.get_command(n)->description() << io::endl;
+            io::mout << m_command_processor.get_command(n)->description << io::endl;
         }
     }
 
@@ -78,7 +78,7 @@ void help_command::print_help() const
     max_length_calculator ml(max_length);
     m_command_processor.for_each_command_name(ml);
     max_length += 5;
-    commands_printer cp(m_command_processor, name(), max_length);
+    commands_printer cp(m_command_processor, name, max_length);
     m_command_processor.for_each_command_name(cp);
 
     io::mout << "\n"
@@ -112,9 +112,9 @@ void help_command::execute(const cmd::arguments& args)
         }
         io::mout <<
     "Usage:\n"
-        "\tliquidfiles " << c->name() << " " <<
+        "\tliquidfiles " << c->name << " " <<
         c->usage() << "\n\n"
-        "Description:\n\t" << c->description() << "\n\n"
+        "Description:\n\t" << c->description << "\n\n"
         "Arguments:\n" <<
         c->arg_descriptions();
     }

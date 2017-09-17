@@ -12,7 +12,7 @@ namespace ui {
  * @class filelinks_command.
  * @brief Class for 'filelinks' command.
  */
-class filelinks_command : public cmd::command
+class filelinks_command final : public cmd::command
 {
 public:
     /// @brief Constructor.
@@ -21,7 +21,7 @@ public:
 
 public:
     /// @brief Executes command by given arguments.
-    virtual void execute(const cmd::arguments& args);
+    void execute(const cmd::arguments& args) override;
 
 private:
     lf::engine& m_engine;

@@ -23,53 +23,34 @@ public:
      */
     command(const std::string& n, const std::string& d);
 
-    virtual ~command();
+    virtual ~command() = default;
 
-private:
-    command(const command&);
-    command& operator=(const command&);
+    command(const command&) = delete;
+    command& operator=(const command&) = delete;
     /// @}
 
     /// @name Command parameters.
     /// @{
 public:
-    const std::string& name() const
-    {
-        return m_name;
-    }
-
-public:
     std::string usage() const
     {
-        return m_arguments.usage();
-    }
-
-public:
-    const std::string& description() const
-    {
-        return m_description;
+        return arguments.usage();
     }
 
 public:
     std::string arg_descriptions() const
     {
-        return m_arguments.full_description();
-    }
-
-protected:
-    argument_definition_container& get_arguments()
-    {
-        return m_arguments;
+        return arguments.full_description();
     }
     /// @}
 
 public:
     virtual void execute(const arguments& args) = 0;
 
-private:
-    const std::string m_name;
-    const std::string m_description;
-    argument_definition_container m_arguments;
+public:
+    const std::string name;
+    const std::string description;
+    argument_definition_container arguments;
 };
 
 }

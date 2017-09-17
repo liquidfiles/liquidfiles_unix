@@ -14,7 +14,7 @@ namespace ui {
  * @class help_command.
  * @brief Class for 'help' command.
  */
-class help_command : public cmd::command
+class help_command final : public cmd::command
 {
 public:
     /// @brief Constructor.
@@ -22,7 +22,7 @@ public:
 
 public:
     /// @brief Executes command by given arguments.
-    virtual void execute(const cmd::arguments& args);
+    void execute(const cmd::arguments& args) override;
 
 private:
     void print_help() const;
