@@ -789,40 +789,17 @@ std::string engine::get_filedrop_api_key(const std::string& url, report_level s,
         io::mout << "Getting filedrop API key" << io::endl;
     }
     std::string r = perform();
-    xml::document<> d;
-    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
-    if (d.first_node() == 0) {
-        throw request_error("filedrop info", r);
+    auto j = nlohmann::json::parse(r);
+    if (j.find("errors") != j.end()) {
+        auto e = j["errors"].get<std::vector<std::string>>()[0];
+        throw request_error("filedrop info", e);
     }
-    std::string h(d.first_node()->name(), d.first_node()->name_size());
-    xml::node_iterator<> i(d.first_node());
-    xml::node_iterator<> e;
-    if (h == "error") {
-        while(i != e) {
-            std::string n(i->name(), i->name_size());
-            if (n == "message") {
-                std::string m = std::string(i->value(), i->value_size());
-                throw request_error("filedrop info", m);
-                break;
-            }
-            ++i;
-        }
-        throw request_error("filedrop info", r);
-    }
-    std::string q;
-    while(i != e) {
-        std::string n(i->name(), i->name_size());
-        if (n == "api_key") {
-            q = std::string(i->value(), i->value_size());
-            if (s >= report_level::normal) {
-                io::mout << "Got filedrop API key: " << q << io::endl;
-            }
-            break;
-        }
-        ++i;
-    }
+    std::string q = j["filedrop"]["api_key"].get<std::string>();
     if (q.empty()) {
         throw request_error("filedrop info", r);
+    }
+    if (s >= report_level::normal) {
+        io::mout << "Got filedrop API key: " << q << io::endl;
     }
     return q;
 }
