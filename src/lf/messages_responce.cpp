@@ -43,17 +43,13 @@ std::string messages_responce::to_string(output_format f) const
 void messages_responce::write_csv(std::stringstream& m) const
 {
     io::csv_ostream cp(&m);
-    std::vector<message_item>::const_iterator j = m_messages.begin();
-    while (j != m_messages.end()) {
-        cp << j->m_id << j->m_sender;
-        unsigned x = 0;
-        cp << j->m_recipients.size();
-        while (x < j->m_recipients.size()) {
-            cp << j->m_recipients[x++];
+    for (const auto& i : m_messages) {
+        cp << i.m_id << i.m_sender;
+        cp << i.m_recipients.size();
+        for (const auto& x : i.m_recipients) {
+            cp << x;
         }
-        cp << j->m_creation_time << j->m_expire_time << j->m_authorization <<
-            j->m_subject;
-        ++j;
+        cp << i.m_creation_time << i.m_expire_time << i.m_authorization << i.m_subject;
     }
 }
 
@@ -68,19 +64,17 @@ void messages_responce::write_table(std::stringstream& m) const
     tp.add_column("Auth", 5);
     tp.add_column("Subject", 40);
     tp.print_header();
-    std::vector<message_item>::const_iterator j = m_messages.begin();
-    while (j != m_messages.end()) {
+    for (const auto& i : m_messages) {
         unsigned x = 0;
-        tp << j->m_id << j->m_sender;
-        if (x < j->m_recipients.size()) {
-            tp << j->m_recipients[x++];
+        tp << i.m_id << i.m_sender;
+        if (x < i.m_recipients.size()) {
+            tp << i.m_recipients[x++];
         }
-        tp << j->m_creation_time.substr(0, 10) << j->m_expire_time.substr(0, 10) << j->m_authorization <<
-            j->m_subject;
-        while (x < j->m_recipients.size()) {
-            tp << " " << " " << j->m_recipients[x++] << " " << " " << " " << " ";
+        tp << i.m_creation_time.substr(0, 10) << i.m_expire_time.substr(0, 10) << i.m_authorization <<
+            i.m_subject;
+        while (x < i.m_recipients.size()) {
+            tp << " " << " " << i.m_recipients[x++] << " " << " " << " " << " ";
         }
-        ++j;
         tp.print_footer();
     }
 }

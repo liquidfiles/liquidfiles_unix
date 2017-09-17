@@ -204,9 +204,8 @@ std::string engine::send(std::string server,
 {
     init_curl(key, s, v);
     std::set<std::string> attachments;
-    strings::const_iterator i = fs.begin();
-    for (; i != fs.end(); ++i) {
-        std::string a = attach_impl(server, *i, s);
+    for (const auto& f : fs) {
+        std::string a = attach_impl(server, f, s);
         attachments.insert(a);
     }
     return send_attachments_impl(server, user, subject, message,
