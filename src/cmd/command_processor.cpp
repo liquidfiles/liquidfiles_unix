@@ -51,8 +51,8 @@ int command_processor::execute(const std::string& str)
         arguments args = arguments::construct(p.second);
         c->execute(args);
     } catch(base::exception& e) {
-        m_messenger << "Error: " << e.message() << io::endl;
-        return e.code();
+        m_messenger << "Error: " << e.message << io::endl;
+        return e.code;
     } catch(std::exception& e) {
         m_messenger << "Error: " << e.what() << io::endl;
         return 1;
@@ -71,8 +71,8 @@ int command_processor::execute(const std::string& cn,
         arguments a = arguments::construct(args);
         c->execute(a);
     } catch(base::exception& e) {
-        m_messenger << "Error: " << e.message() << io::endl;
-        return e.code();
+        m_messenger << "Error: " << e.message << io::endl;
+        return e.code;
     } catch(std::exception& e) {
         m_messenger << "Error: " << e.what() << io::endl;
         return 1;

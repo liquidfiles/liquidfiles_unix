@@ -4,8 +4,7 @@
 #include "argument_type.h"
 #include "exceptions.h"
 
-#include <base/shared_ptr.h>
-
+#include <memory>
 #include <set>
 
 namespace cmd {
@@ -64,7 +63,7 @@ private:
         T m_data;
     };
 
-    base::shared_ptr<concept> m_self;
+    std::shared_ptr<concept> m_self;
 };
 
 class argument_definition_container : public std::vector<argument_definition_object>
@@ -94,10 +93,10 @@ public:
     }
 };
 
-enum argument_name_type {
-    UNNAMED_ARGUMENT,
-    BOOLEAN_ARGUMENT,
-    NAMED_ARGUMENT
+enum class argument_name_type {
+    unnamed,
+    boolean,
+    named
 };
 
 template <argument_name_type t, bool r>
@@ -112,7 +111,7 @@ public:
 };
 
 template <bool r>
-class argument_definition_base<UNNAMED_ARGUMENT, r>
+class argument_definition_base<argument_name_type::unnamed, r>
 {
 public:
     argument_definition_base(const std::string& type_string,
@@ -155,7 +154,7 @@ private:
 };
 
 template <bool r>
-class argument_definition_base<BOOLEAN_ARGUMENT, r>
+class argument_definition_base<argument_name_type::boolean, r>
 {
 public:
     argument_definition_base(const std::string& name,
@@ -198,7 +197,7 @@ private:
 };
 
 template <bool r>
-class argument_definition_base<NAMED_ARGUMENT, r>
+class argument_definition_base<argument_name_type::named, r>
 {
 public:
     argument_definition_base(const std::string& name,
@@ -260,10 +259,10 @@ public:
 };
 
 template <typename T, bool r>
-class argument_definition<T, UNNAMED_ARGUMENT, r> :
-    public argument_definition_base<UNNAMED_ARGUMENT, r>
+class argument_definition<T, argument_name_type::unnamed, r> :
+    public argument_definition_base<argument_name_type::unnamed, r>
 {
-    typedef argument_definition_base<UNNAMED_ARGUMENT, r> parent;
+    typedef argument_definition_base<argument_name_type::unnamed, r> parent;
 
 public:
     argument_definition(const std::string& type_string,
@@ -295,9 +294,10 @@ public:
 };
 
 template <typename T, bool r>
-class argument_definition<T, BOOLEAN_ARGUMENT, r> : public argument_definition_base<BOOLEAN_ARGUMENT, r>
+class argument_definition<T, argument_name_type::boolean, r> :
+    public argument_definition_base<argument_name_type::boolean, r>
 {
-    typedef argument_definition_base<BOOLEAN_ARGUMENT, r> parent;
+    typedef argument_definition_base<argument_name_type::boolean, r> parent;
 
 public:
     argument_definition(const std::string& name,
@@ -335,9 +335,10 @@ private:
 };
 
 template <typename T>
-class argument_definition<T, NAMED_ARGUMENT, true> : public argument_definition_base<NAMED_ARGUMENT, true>
+class argument_definition<T, argument_name_type::named, true> :
+    public argument_definition_base<argument_name_type::named, true>
 {
-    typedef argument_definition_base<NAMED_ARGUMENT, true> parent;
+    typedef argument_definition_base<argument_name_type::named, true> parent;
 
 public:
     argument_definition(const std::string& name,
@@ -375,9 +376,10 @@ private:
 };
 
 template <typename T>
-class argument_definition<T, NAMED_ARGUMENT, false> : public argument_definition_base<NAMED_ARGUMENT, false>
+class argument_definition<T, argument_name_type::named, false> :
+    public argument_definition_base<argument_name_type::named, false>
 {
-    typedef argument_definition_base<NAMED_ARGUMENT, false> parent;
+    typedef argument_definition_base<argument_name_type::named, false> parent;
 
 public:
     argument_definition(const std::string& name,

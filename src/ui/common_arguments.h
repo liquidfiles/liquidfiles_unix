@@ -78,8 +78,8 @@ inline std::string possible_values<lf::output_format>()
 
 namespace ui {
 
-extern cmd::argument_definition<lf::report_level, cmd::NAMED_ARGUMENT, false> s_report_level_arg;
-extern cmd::argument_definition<lf::output_format, cmd::NAMED_ARGUMENT, false> s_output_format_arg;
-extern cmd::argument_definition<bool, cmd::BOOLEAN_ARGUMENT, false> s_attachment_argument;
+extern cmd::argument_definition<lf::report_level, cmd::argument_name_type::named, false> s_report_level_arg;
+extern cmd::argument_definition<lf::output_format, cmd::argument_name_type::named, false> s_output_format_arg;
+extern cmd::argument_definition<bool, cmd::argument_name_type::boolean, false> s_attachment_argument;
 
 }

@@ -25,7 +25,7 @@ public:
 
 private:
     lf::engine& m_engine;
-    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, true> m_filelink_id_argument;
+    cmd::argument_definition<std::string, cmd::argument_name_type::named, true> m_filelink_id_argument;
 };
 
 }

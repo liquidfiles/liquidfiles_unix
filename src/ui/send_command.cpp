@@ -13,7 +13,7 @@ send_command::send_command(lf::engine& e)
     : cmd::command("send", "Sends the file(s) to specified user.")
     , m_engine(e)
     , m_to_argument("to", "<username>", "User name or email, to send file.")
-    , m_file_type_argument("file_type", "<type>", "Type of unnamed arguments.", FILE_NAMES)
+    , m_file_type_argument("file_type", "<type>", "Type of unnamed arguments.", file_type::names)
     , m_message_argument("message", "<string>", "Message text of composed email.", "")
     , m_message_file_argument("message_file", "<string>", "Message text of composed email.", "")
     , m_subject_argument("subject", "<string>", "Subject of composed email.", "")
@@ -48,13 +48,13 @@ void send_command::execute(const cmd::arguments& args)
 
     std::set<std::string> unnamed_args = m_files_argument.value(args);
 
-    if (sending_file_type == ATTACHMENT) {
+    if (sending_file_type == file_type::attachment) {
         m_engine.send_attachments(c.server(), c.api_key(), user, subject, message, unnamed_args,
                 rl, c.validate_flag());
-    } else if (sending_file_type == FILE_NAMES) {
+    } else if (sending_file_type == file_type::names) {
         m_engine.send(c.server(), c.api_key(), user, subject, message, unnamed_args,
                 rl, c.validate_flag());
-    } else if (sending_file_type == DIRECTORY) {
+    } else if (sending_file_type == file_type::directory) {
         unnamed_args = base::filesystem::get_all_files(unnamed_args);
         m_engine.send(c.server(), c.api_key(), user, subject, message, unnamed_args,
                 rl, c.validate_flag());

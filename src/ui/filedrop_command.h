@@ -26,12 +26,12 @@ public:
 
 private:
     lf::engine& m_engine;
-    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, true> m_server_arg;
-    cmd::argument_definition<lf::validate_cert, cmd::BOOLEAN_ARGUMENT, false> m_validate_cert_arg;
-    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, true> m_from_argument;
-    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_message_argument;
-    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_subject_argument;
-    cmd::argument_definition<std::string, cmd::UNNAMED_ARGUMENT, true> m_files_argument;
+    cmd::argument_definition<std::string, cmd::argument_name_type::named, true> m_server_arg;
+    cmd::argument_definition<lf::validate_cert, cmd::argument_name_type::boolean, false> m_validate_cert_arg;
+    cmd::argument_definition<std::string, cmd::argument_name_type::named, true> m_from_argument;
+    cmd::argument_definition<std::string, cmd::argument_name_type::named, false> m_message_argument;
+    cmd::argument_definition<std::string, cmd::argument_name_type::named, false> m_subject_argument;
+    cmd::argument_definition<std::string, cmd::argument_name_type::unnamed, true> m_files_argument;
 };
 
 }

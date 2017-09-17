@@ -12,19 +12,19 @@
 
 namespace ui {
 
-cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false>
+cmd::argument_definition<std::string, cmd::argument_name_type::named, false>
     credentials::m_server_arg("server", "<url>", "The server URL."
             " If not specified, tries to retrieve from saved credentials.");
 
-cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false>
+cmd::argument_definition<std::string, cmd::argument_name_type::named, false>
     credentials::m_api_key_arg("api_key", "<key>", "API key of liquidfiles, to login to system."
             " If not specified, tries to retrieve from saved credentials.");
 
-cmd::argument_definition<lf::validate_cert, cmd::BOOLEAN_ARGUMENT, false>
+cmd::argument_definition<lf::validate_cert, cmd::argument_name_type::boolean, false>
     credentials::m_validate_cert_arg("k", "If specified, do not validate server certificate."
             " If not specified, tries to retrieve from saved credentials.");
 
-cmd::argument_definition<bool, cmd::BOOLEAN_ARGUMENT, false>
+cmd::argument_definition<bool, cmd::argument_name_type::boolean, false>
     credentials::m_save_arg("s", "If specified, saves current credentials in cache."
             " Credentials to save are - '-k', '--server' and '--api_key'.");
 

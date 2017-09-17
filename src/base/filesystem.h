@@ -4,7 +4,6 @@
 
 #include <string>
 #include <set>
-#include <iterator>
 
 namespace base {
 
