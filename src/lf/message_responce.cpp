@@ -34,10 +34,10 @@ std::string message_responce::to_string(output_format f) const
 {
     std::stringstream m;
     switch (f) {
-    case TABLE_FORMAT:
+    case output_format::table:
         write_table(m);
         break;
-    case CSV_FORMAT:
+    case output_format::csv:
         write_csv(m);
     default:
         break;
@@ -92,7 +92,7 @@ void message_responce::write_table(std::stringstream& m) const
         int x = 1;
         while (j != m_attachments.end()) {
             tp << x++;
-            std::stringstream ss((j++)->to_string(TABLE_FORMAT));
+            std::stringstream ss((j++)->to_string(output_format::table));
             std::string s;
             std::getline(ss, s);
             tp << s;
@@ -129,7 +129,7 @@ void message_responce::write_csv(std::stringstream& m) const
     cp << m_attachments.size();
     std::vector<attachment_responce>::const_iterator j = m_attachments.begin();
     while (j != m_attachments.end()) {
-        m << ',' << (j++)->to_string(CSV_FORMAT);
+        m << ',' << (j++)->to_string(output_format::csv);
     }
 }
 

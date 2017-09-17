@@ -26,10 +26,10 @@ std::string filelinks_responce::to_string(output_format f) const
     }
     std::stringstream m;
     switch (f) {
-    case CSV_FORMAT:
+    case output_format::csv:
         write_csv(m);
         break;
-    case TABLE_FORMAT:
+    case output_format::table:
         write_table(m);
     default:
         break;

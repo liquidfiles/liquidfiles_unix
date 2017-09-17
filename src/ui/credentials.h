@@ -82,7 +82,7 @@ public:
     credentials()
         : m_server()
         , m_api_key()
-        , m_validate_flag(lf::VALIDATE)
+        , m_validate_flag(lf::validate_cert::validate)
     {
     }
 

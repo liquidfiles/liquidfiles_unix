@@ -109,7 +109,7 @@ credentials credentials::manage(const cmd::arguments& args)
         throw cmd::missing_argument(m_server_arg.name());
     }
     lf::validate_cert vv = m_validate_cert_arg.value(args);
-    if (vv == lf::NOT_VALIDATE) {
+    if (vv == lf::validate_cert::not_validate) {
         c.m_validate_flag = vv;
     }
     bool s = m_save_arg.value(args);

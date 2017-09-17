@@ -10,11 +10,11 @@ template <>
 inline lf::report_level string_to_val(const std::string& v)
 {
     if (v == "silent") {
-        return lf::SILENT;
+        return lf::report_level::silent;
     } else if (v == "verbose") {
-        return lf::VERBOSE;
+        return lf::report_level::verbose;
     } else if (v == "normal") {
-        return lf::NORMAL;
+        return lf::report_level::normal;
     }
     throw cmd::invalid_argument_value("--report_level",
             "silent, normal, verbose");
@@ -24,11 +24,11 @@ template <>
 inline std::string val_to_string(const lf::report_level& v)
 {
     switch(v) {
-        case lf::NORMAL :
+        case lf::report_level::normal :
             return "normal";
-        case lf::SILENT :
+        case lf::report_level::silent :
             return "silent";
-        case lf::VERBOSE:
+        case lf::report_level::verbose:
             return "verbose";
         default :
             throw 1;
@@ -46,9 +46,9 @@ template <>
 inline lf::output_format string_to_val(const std::string& v)
 {
     if (v == "csv") {
-        return lf::CSV_FORMAT;
+        return lf::output_format::csv;
     } else if (v == "table") {
-        return lf::TABLE_FORMAT;
+        return lf::output_format::table;
     }
     throw cmd::invalid_argument_value("--output_format",
             "table, csv");
@@ -58,9 +58,9 @@ template <>
 inline std::string val_to_string(const lf::output_format& v)
 {
     switch(v) {
-        case lf::TABLE_FORMAT :
+        case lf::output_format::table :
             return "table";
-        case lf::CSV_FORMAT :
+        case lf::output_format::csv :
             return "csv";
         default :
             throw 1;

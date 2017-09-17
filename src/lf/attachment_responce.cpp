@@ -20,7 +20,7 @@ std::string attachment_responce::to_string(output_format f) const
 {
     std::stringstream m;
     switch (f) {
-    case TABLE_FORMAT:
+    case output_format::table:
         if (!filename_.empty()) {
             m << "Filename: " << filename_ << "\n";
         }
@@ -38,7 +38,7 @@ std::string attachment_responce::to_string(output_format f) const
         }
         m << "Size: " << size_ << "\n";
         break;
-    case CSV_FORMAT:
+    case output_format::csv:
     {
         io::csv_ostream cp(&m);
         cp << filename_ << content_type_ << checksum_ << crc32_ << url_ << size_;

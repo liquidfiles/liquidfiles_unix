@@ -1,21 +1,29 @@
 #pragma once
 
+#include <iostream>
+
 namespace lf {
 
-enum report_level {
-    SILENT,
-    NORMAL,
-    VERBOSE
+enum class report_level {
+    silent,
+    normal,
+    verbose
 };
 
-enum validate_cert {
-    VALIDATE,
-    NOT_VALIDATE
+enum class validate_cert {
+    validate,
+    not_validate
 };
 
-enum output_format {
-    TABLE_FORMAT,
-    CSV_FORMAT
+inline std::ostream& operator<<(std::ostream& s, validate_cert v)
+{
+    s << static_cast<int>(v);
+    return s;
+}
+
+enum class output_format {
+    table,
+    csv
 };
 
 }
