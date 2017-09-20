@@ -6,7 +6,7 @@
 
 namespace cmd {
 
-class duplicate_name : public base::exception
+class duplicate_name final : public base::exception
 {
 public:
     duplicate_name(const std::string& c)
@@ -16,7 +16,7 @@ public:
     }
 };
 
-class missing_argument : public base::exception
+class missing_argument final : public base::exception
 {
 public:
     missing_argument(const std::string& a)
@@ -26,7 +26,7 @@ public:
     }
 };
 
-class invalid_argument_value : public base::exception
+class invalid_argument_value final : public base::exception
 {
 public:
     invalid_argument_value(const std::string& arg, const std::string& v)
@@ -36,7 +36,7 @@ public:
     }
 };
 
-class invalid_arguments : public base::exception
+class invalid_arguments final : public base::exception
 {
 public:
     invalid_arguments(const std::string& m)
@@ -45,7 +45,7 @@ public:
     }
 };
 
-class invalid_command_name : public base::exception
+class invalid_command_name final : public base::exception
 {
 public:
     invalid_command_name(const std::string& a)
@@ -54,7 +54,7 @@ public:
     }
 };
 
-class dublicate_argument : public base::exception
+class dublicate_argument final : public base::exception
 {
 public:
     dublicate_argument(const std::string& a)
