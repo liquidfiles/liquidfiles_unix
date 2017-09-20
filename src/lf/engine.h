@@ -17,7 +17,7 @@ namespace lf {
  *        It provides interface to send, receive files and other operations
  *        supported by liquidfiles.
  */
-class engine
+class engine final
 {
 public:
     /// @brief Constructor.

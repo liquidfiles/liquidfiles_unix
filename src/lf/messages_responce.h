@@ -14,7 +14,7 @@ namespace lf {
  * @brief Class for handling messages responce from server and printing
  *        it for user.
  */
-class messages_responce
+class messages_responce final
 {
 public:
     /**

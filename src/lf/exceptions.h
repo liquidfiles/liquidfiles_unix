@@ -6,7 +6,7 @@
 
 namespace lf {
 
-class curl_error : public base::exception
+class curl_error final : public base::exception
 {
 public:
     curl_error(const std::string& a)
@@ -15,7 +15,7 @@ public:
     }
 };
 
-class request_error : public base::exception
+class request_error final : public base::exception
 {
 public:
     request_error(const std::string& r, const std::string& a)
@@ -24,7 +24,7 @@ public:
     }
 };
 
-class file_error : public base::exception
+class file_error final : public base::exception
 {
 public:
     file_error(const std::string& f, const std::string& e)
@@ -33,7 +33,7 @@ public:
     }
 };
 
-class invalid_message_id : public base::exception
+class invalid_message_id final : public base::exception
 {
 public:
     invalid_message_id(const std::string& a)
@@ -42,7 +42,7 @@ public:
     }
 };
 
-class invalid_url : public base::exception
+class invalid_url final : public base::exception
 {
 public:
     invalid_url(const std::string& a)

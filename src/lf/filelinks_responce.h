@@ -14,7 +14,7 @@ namespace lf {
  * @brief Class for handling filelinks responce from server and printing
  *        it for user.
  */
-class filelinks_responce
+class filelinks_responce final
 {
 public:
     /**

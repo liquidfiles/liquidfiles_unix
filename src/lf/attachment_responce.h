@@ -12,7 +12,7 @@ namespace lf {
  * @class attachment_responce.
  * @brief Class for handling attachments of message responce.
  */
-class attachment_responce
+class attachment_responce final
 {
 public:
     /**
