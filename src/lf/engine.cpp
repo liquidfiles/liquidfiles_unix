@@ -29,7 +29,7 @@ std::string s_data;
 
 size_t data_get(void* ptr, size_t size, size_t nmemb, FILE* stream)
 {
-    if (stream != 0) {
+    if (stream != nullptr) {
         fwrite(ptr, size, nmemb, stream);
     } else {
         s_data += std::string(static_cast<char*>(ptr), nmemb);
@@ -69,7 +69,7 @@ class curl_header_guard
 {
 public:
     curl_header_guard(CURL* c)
-        : m_slist(0)
+        : m_slist(nullptr)
     {
         m_slist = curl_slist_append(m_slist, "Content-Type: application/json");
         curl_easy_setopt(c, CURLOPT_HTTPHEADER, m_slist);
@@ -159,11 +159,11 @@ private:
 
 void engine::init_curl(std::string key, report_level s, validate_cert v)
 {
-    if (m_curl != 0) {
+    if (m_curl != nullptr) {
         curl_easy_cleanup(m_curl);
     }
     m_curl = curl_easy_init();
-    if (m_curl == 0) {
+    if (m_curl == nullptr) {
         throw curl_error("Failed to initialize CURL");
     }
     curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, &data_get);
@@ -181,15 +181,15 @@ void engine::init_curl(std::string key, report_level s, validate_cert v)
 }
 
 engine::engine()
-    : m_curl(0)
+    : m_curl(nullptr)
 {
 }
 
 engine::~engine()
 {
-    if (m_curl != 0) {
+    if (m_curl != nullptr) {
         curl_easy_cleanup(m_curl);
-        m_curl = 0;
+        m_curl = nullptr;
     }
 }
 
@@ -414,10 +414,10 @@ std::string engine::get_api_key(std::string server,
         report_level s,
         validate_cert v)
 {
-    if (m_curl == 0) {
+    if (m_curl == nullptr) {
         m_curl = curl_easy_init();
     }
-    if (m_curl == 0) {
+    if (m_curl == nullptr) {
         throw curl_error("Failed to initialize CURL");
     }
     curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, &data_get);
@@ -772,7 +772,7 @@ void engine::download_impl(const std::string& url,
         name = path + "/" + name;
     }
     FILE* fp = fopen(name.c_str(), "wb");
-    if (fp == 0) {
+    if (fp == nullptr) {
         throw file_error(name, strerror(errno));
     }
     curl_file_guard fg(m_curl, fp, s);
@@ -810,22 +810,12 @@ void engine::filedrop_attachments_impl(std::string server, const std::string& ke
 {
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
     curl_header_guard hg(m_curl);
-    std::string data = std::string(
-"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
-  <message>\
-    <api_key>") + key + std::string("</api_key>\
-    <from>") + user + std::string("</from>\
-    <subject>") + subject + std::string("</subject>\
-    <message>") + message + std::string("</message>\
-    <attachments type='array'>\
-");
-    for (strings::const_iterator i = fs.begin(); i != fs.end(); ++i) {
-        data += "      <attachment>";
-        data += *i;
-        data += "</attachment>\n";
-    }
-    data += "    </attachments>\
-  </message>\n";
+    nlohmann::json j;
+    j["message"]["from"] = user;
+    j["message"]["subject"] = subject;
+    j["message"]["message"] = message;
+    j["message"]["attachments"] = fs;
+    auto data = j.dump();
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
     curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str());
     if (s >= report_level::normal) {
@@ -869,28 +859,13 @@ std::string engine::process_create_filelink_responce(const std::string& r, repor
 
 void engine::process_filedrop_responce(const std::string& r, report_level s) const
 {
-    xml::document<> d;
-    d.parse<xml::parse_fastest | xml::parse_no_utf8>(const_cast<char*>(r.c_str()));
-    if (d.first_node() == 0) {
-        throw request_error("filedrop", r);
+    auto j = nlohmann::json::parse(r);
+    if (j.find("errors") != j.end()) {
+        auto e = j["errors"].get<std::vector<std::string>>()[0];
+        throw request_error("filedrop", e);
     }
-    std::string h(d.first_node()->name(), d.first_node()->name_size());
-    xml::node_iterator<> i(d.first_node());
-    xml::node_iterator<> e;
-    std::string q;
-    while(i != e) {
-        std::string n(i->name(), i->name_size());
-        if (n == "status") {
-            q = std::string(i->value(), i->value_size());
-            if (s >= report_level::normal) {
-                io::mout << q << io::endl;
-            }
-            break;
-        }
-        ++i;
-    }
-    if (q.empty()) {
-        throw request_error("filedrop", r);
+    if (s >= report_level::normal) {
+        io::mout << j["message"]["status"].get<std::string>() << io::endl;
     }
 }
 
