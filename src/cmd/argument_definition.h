@@ -258,7 +258,7 @@ template <typename T, bool r>
 class argument_definition<T, argument_name_type::unnamed, r> :
     public argument_definition_base<argument_name_type::unnamed, r>
 {
-    typedef argument_definition_base<argument_name_type::unnamed, r> parent;
+    using parent = argument_definition_base<argument_name_type::unnamed, r>;
 
 public:
     argument_definition(const std::string& type_string,
@@ -276,7 +276,7 @@ public:
 
     std::set<T> value(const arguments& a) const
     {
-        const std::set<std::string>& v = a.get_unnamed_arguments();
+        auto& v = a.unnamed_arguments;
         if (r && v.empty()) {
             throw missing_argument(parent::type_string());
         }
@@ -293,7 +293,7 @@ template <typename T, bool r>
 class argument_definition<T, argument_name_type::boolean, r> :
     public argument_definition_base<argument_name_type::boolean, r>
 {
-    typedef argument_definition_base<argument_name_type::boolean, r> parent;
+    using parent = argument_definition_base<argument_name_type::boolean, r>;
 
 public:
     argument_definition(const std::string& name,
@@ -322,7 +322,7 @@ public:
 private:
     bool get_value(const arguments& a)
     {
-        const std::set<std::string>& b = a.get_boolean_arguments();
+        auto& b = a.boolean_arguments;
         if (b.find(parent::name()) != b.end()) {
             return true;
         }
@@ -334,7 +334,7 @@ template <typename T>
 class argument_definition<T, argument_name_type::named, true> :
     public argument_definition_base<argument_name_type::named, true>
 {
-    typedef argument_definition_base<argument_name_type::named, true> parent;
+    using parent = argument_definition_base<argument_name_type::named, true>;
 
 public:
     argument_definition(const std::string& name,
@@ -375,7 +375,7 @@ template <typename T>
 class argument_definition<T, argument_name_type::named, false> :
     public argument_definition_base<argument_name_type::named, false>
 {
-    typedef argument_definition_base<argument_name_type::named, false> parent;
+    using parent = argument_definition_base<argument_name_type::named, false>;
 
 public:
     argument_definition(const std::string& name,

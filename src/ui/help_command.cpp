@@ -99,13 +99,13 @@ void help_command::print_help() const
 
 void help_command::execute(const cmd::arguments& args)
 {
-    if (args.get_unnamed_arguments().empty()) {
+    if (args.unnamed_arguments.empty()) {
         print_help();
         return;
     }
     std::set<std::string>::const_iterator i =
-        args.get_unnamed_arguments().begin();
-    for (; i != args.get_unnamed_arguments().end(); ++i) {
+        args.unnamed_arguments.begin();
+    for (; i != args.unnamed_arguments.end(); ++i) {
         cmd::command* c = m_command_processor.get_command(*i);
         if (c == 0) {
             throw cmd::invalid_command_name(*i);

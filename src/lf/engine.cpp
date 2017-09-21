@@ -7,8 +7,6 @@
 
 #include <base/lf_string.h>
 #include <io/messenger.h>
-#include <xml/xml.h>
-#include <xml/xml_iterators.h>
 #include <io/json.h>
 
 #include <algorithm>
@@ -88,7 +86,7 @@ class curl_form_guard
 {
 public:
     curl_form_guard(struct curl_httppost* f)
-        : m_formpost(f)
+        : m_formpost{f}
     {
     }
 
@@ -232,9 +230,8 @@ void engine::attach(std::string server,
         validate_cert v)
 {
     init_curl(key, s, v);
-    strings::const_iterator i = fs.begin();
-    for (; i != fs.end(); ++i) {
-        attach_impl(server, *i, s);
+    for (const auto& f : fs) {
+        attach_impl(server, f, s);
     }
 }
 
@@ -250,8 +247,8 @@ void engine::attach(std::string server,
     init_curl(key, s, v);
     server += "/attachments";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_httppost* formpost = NULL;
-    struct curl_httppost* lastptr = NULL;
+    struct curl_httppost* formpost = nullptr;
+    struct curl_httppost* lastptr = nullptr;
     curl_formadd(&formpost,
             &lastptr,
             CURLFORM_COPYNAME, "Filedata",
@@ -306,7 +303,7 @@ void engine::message(std::string server,
             "Getting message from the server.");
     try {
         process_output_responce<message_responce>(r, s, f);
-    } catch (xml::parse_error&) {
+    } catch (...) {
         throw invalid_message_id(id);
     }
 }
@@ -360,7 +357,7 @@ void engine::download(std::string server,
             download_impl(i->url(), path, i->filename(), s);
             ++i;
         }
-    } catch (xml::parse_error&) {
+    } catch (...) {
         throw invalid_message_id(id);
     }
 }
@@ -605,8 +602,8 @@ std::string engine::attach_impl(std::string server,
 {
     server += "/attachments";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_httppost* formpost = NULL;
-    struct curl_httppost* lastptr = NULL;
+    struct curl_httppost* formpost = nullptr;
+    struct curl_httppost* lastptr = nullptr;
     curl_formadd(&formpost,
                &lastptr,
                CURLFORM_COPYNAME, "Filedata",

@@ -18,7 +18,7 @@ class filelinks_responce final
 {
 public:
     /**
-     * @brief Generates filelinks_responce from xml node.
+     * @brief Generates filelinks_responce from json object.
      * @param s Xml node.
      */
     void read(const nlohmann::json& j);
@@ -40,7 +40,7 @@ private:
     };
 
 public:
-    typedef std::vector<link_item>::size_type size_type;
+    using size_type = std::vector<link_item>::size_type;
 
     /// @brief Returns the count of filelinks.
     size_type size() const

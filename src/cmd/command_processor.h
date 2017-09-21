@@ -84,7 +84,7 @@ public:
     /// @}
 
 private:
-    typedef std::map<std::string, command*> registry;
+    using registry = std::map<std::string, command*>;
     registry m_commands;
     io::messenger& m_messenger;
 };

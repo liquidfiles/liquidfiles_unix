@@ -33,7 +33,7 @@ private:
     /// @name API
     /// @{
 public:
-    typedef std::set<std::string> strings;
+    using strings = std::set<std::string>;
 
 public:
     /**

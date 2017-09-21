@@ -18,7 +18,7 @@ class messages_responce final
 {
 public:
     /**
-     * @brief Generates messages_responce from xml node.
+     * @brief Generates messages_responce from json object.
      * @param s Xml node.
      */
     void read(const nlohmann::json& s);
@@ -43,7 +43,7 @@ private:
     };
 
 public:
-    typedef std::vector<message_item>::size_type size_type;
+    using size_type = std::vector<message_item>::size_type;
 
     /// @brief Returns the count of messages.
     size_type size() const

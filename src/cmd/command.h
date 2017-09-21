@@ -21,7 +21,11 @@ public:
      * @param n Name of command.
      * @param d Description of command.
      */
-    command(const std::string& n, const std::string& d);
+    command(const std::string& n, const std::string& d)
+        : name{n}
+        , description{d}
+    {
+    }
 
     virtual ~command() = default;
 
