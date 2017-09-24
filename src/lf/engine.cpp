@@ -102,8 +102,8 @@ private:
 class progress_guard
 {
 public:
-    progress_guard(CURL* c , report_level s)
-        : m_curl(c) , m_report_level(s)
+    progress_guard(CURL* c, report_level s)
+        : m_curl(c), m_report_level(s)
     {
         if (m_report_level >= report_level::normal) {
             curl_easy_setopt(m_curl, CURLOPT_PROGRESSFUNCTION, &progress_function);

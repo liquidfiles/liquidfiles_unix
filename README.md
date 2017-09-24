@@ -86,7 +86,7 @@ To install OpenSSL
 5. `make`
 6. `make install`
 7. `make clean`
-8. Configure static libs	(`./config no-shared --prefix=$PATH_X`)
+8. Configure static libs (`./config no-shared --prefix=$PATH_X`)
 9. `make`
 10. `make install`
 
@@ -106,17 +106,17 @@ After having OpenSSL, you need to install curl
 
 #### Installing liquidfiles
 1. Download LiquidFiles Unix CLI Source
-2. Configure static LiquidFiles** (e.g. `./configure --with-curl=$EXT_PATH --prefix=$LF_EXT_PATH --enable-static`)
+2. Configure static LiquidFiles (e.g. `./configure --with-curl=$EXT_PATH --prefix=$LF_EXT_PATH --enable-static`)
 3. `make`
 4. `make install`
 
 > Using these instructions, you will need the external path however if your Curl is on system default paths, then 
 you don't need to specify --with-curl option.
 
-#### Alternative build with __CMake__
+#### Alternative build with CMake
 1. Download LiquidFiles Unix CLI Source
 2. `mkdir build && cd build`
-3. `cmake ..`
+3. `cmake ../`
 4. `make`
 4. `make install`
 
@@ -126,18 +126,18 @@ Liquidfiles is command line utility. It invokes one command per session and exit
     liquidfiles <command> <command_args>
 
 The list of supported commands is:
-* attach              Uploads given files to server.
-* attach_chunk        Uploads given chunk of file to server.
-* delete_attachments  Deletes the given attachments.
-* delete_filelink     Deletes the given filelink.
-* download            Download given files.
-* file_request        Sends the file request to specified user.
-* filedrop            Sends the file(s) by filedrop.
-* filelink            Uploads given file and creates filelink on it.
-* filelinks           Lists the available filelinks.
-* get_api_key         Retrieves api key for the specified user.
-* messages            Lists the available messages.
-* send                Sends the file(s) to specified user.
+* __attach__  Uploads given files to server.
+* __attach_chunk__ Uploads given chunk of file to server.
+* __delete_attachments__ Deletes the given attachments.
+* __delete_filelink__ Deletes the given filelink.
+* __download__ Download given files.
+* __file_request__ Sends the file request to specified user.
+* __filedrop__ Sends the file(s) by filedrop.
+* __filelink__ Uploads given file and creates filelink on it.
+* __filelinks__ Lists the available filelinks.
+* __get_api_key__ Retrieves api key for the specified user.
+* __messages__ Lists the available messages.
+* __send__ Sends the file(s) to specified user.
 
 To get command's detailed description, options and usage 'help' command can be used:
 
