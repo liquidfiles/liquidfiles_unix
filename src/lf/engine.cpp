@@ -79,13 +79,13 @@ public:
     }
 
 private:
-    struct curl_slist* m_slist;
+    curl_slist* m_slist;
 };
 
 class curl_form_guard
 {
 public:
-    curl_form_guard(struct curl_httppost* f)
+    curl_form_guard(curl_httppost* f)
         : m_formpost{f}
     {
     }
@@ -96,7 +96,7 @@ public:
     }
 
 private:
-    struct curl_httppost* m_formpost;
+    curl_httppost* m_formpost;
 };
 
 class progress_guard
@@ -206,8 +206,7 @@ std::string engine::send(std::string server,
         std::string a = attach_impl(server, f, s);
         attachments.insert(a);
     }
-    return send_attachments_impl(server, user, subject, message,
-            attachments, s);
+    return send_attachments_impl(server, user, subject, message, attachments, s);
 }
 
 std::string engine::send_attachments(std::string server,
@@ -247,8 +246,8 @@ void engine::attach(std::string server,
     init_curl(key, s, v);
     server += "/attachments";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_httppost* formpost = nullptr;
-    struct curl_httppost* lastptr = nullptr;
+    curl_httppost* formpost = nullptr;
+    curl_httppost* lastptr = nullptr;
     curl_formadd(&formpost,
             &lastptr,
             CURLFORM_COPYNAME, "Filedata",
@@ -579,8 +578,7 @@ void engine::filedrop(std::string server,
         rs.insert(id);
     }
     curl_easy_setopt(m_curl, CURLOPT_USERPWD, "");
-    filedrop_attachments_impl(server, key, user, subject, message,
-            rs, s);
+    filedrop_attachments_impl(server, key, user, subject, message, rs, s);
 }
 
 void engine::filedrop_attachments(std::string server,
@@ -602,8 +600,8 @@ std::string engine::attach_impl(std::string server,
 {
     server += "/attachments";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    struct curl_httppost* formpost = nullptr;
-    struct curl_httppost* lastptr = nullptr;
+    curl_httppost* formpost = nullptr;
+    curl_httppost* lastptr = nullptr;
     curl_formadd(&formpost,
                &lastptr,
                CURLFORM_COPYNAME, "Filedata",
