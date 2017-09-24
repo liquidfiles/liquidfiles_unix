@@ -9,14 +9,14 @@
 namespace ui {
 
 filedrop_command::filedrop_command(lf::engine& e)
-    : cmd::command("filedrop", "Sends the file(s) by filedrop.")
-    , m_engine(e)
-    , m_server_arg("server", "<url>", "The server URL.")
-    , m_validate_cert_arg("k", "If specified, do not validate server certificate.")
-    , m_from_argument("from", "<username>", "User who sends the files")
-    , m_message_argument("message", "<string>", "Message text of composed email.", "")
-    , m_subject_argument("subject", "<string>", "Subject of composed email.", "")
-    , m_files_argument("<file> ...", "File path(s) or attachments IDs to send to user.")
+    : cmd::command{"filedrop", "Sends the file(s) by filedrop."}
+    , m_engine{e}
+    , m_server_arg{"server", "<url>", "The server URL."}
+    , m_validate_cert_arg{"k", "If specified, do not validate server certificate."}
+    , m_from_argument{"from", "<username>", "User who sends the files"}
+    , m_message_argument{"message", "<string>", "Message text of composed email.", ""}
+    , m_subject_argument{"subject", "<string>", "Subject of composed email.", ""}
+    , m_files_argument{"<file> ...", "File path(s) or attachments IDs to send to user."}
 {
     arguments.push_back(m_server_arg);
     arguments.push_back(m_validate_cert_arg);

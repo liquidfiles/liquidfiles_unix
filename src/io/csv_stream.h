@@ -15,10 +15,10 @@ class csv_istream
 public:
     /// @brief Constructor.
     csv_istream(std::istream* s, char d = ',')
-        : m_stream(s)
-        , m_string()
-        , m_position(0)
-        , m_delimiter(d)
+        : m_stream{s}
+        , m_string{}
+        , m_position{0}
+        , m_delimiter{d}
     {
     }
 
@@ -81,9 +81,9 @@ class csv_ostream
 public:
     /// @brief Constructor.
     csv_ostream(std::ostream* s, char d = ',')
-        : m_stream(s)
-        , m_after_newline(true)
-        , m_delimiter(d)
+        : m_stream{s}
+        , m_after_newline{true}
+        , m_delimiter{d}
     {
     }
 

@@ -7,10 +7,10 @@ namespace io {
 
 table_printer::table_printer(std::ostream* output,
         const std::string& separator)
-    : m_out_stream(output)
-    , m_separator(separator)
-    , m_i(0)
-    , m_j(0)
+    : m_out_stream{output}
+    , m_separator{separator}
+    , m_i{0}
+    , m_j{0}
 {
 }
 

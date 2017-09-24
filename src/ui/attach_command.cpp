@@ -9,9 +9,9 @@
 namespace ui {
 
 attach_command::attach_command(lf::engine& e)
-    : cmd::command("attach", "Uploads given files to server.")
-    , m_engine(e)
-    , m_files_argument("<file> ...", "File path(s) to upload.")
+    : cmd::command{"attach", "Uploads given files to server."}
+    , m_engine{e}
+    , m_files_argument{"<file> ...", "File path(s) to upload."}
 {
     arguments.push_back(credentials::get_arguments());
     arguments.push_back(s_report_level_arg);

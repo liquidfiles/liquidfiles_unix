@@ -9,13 +9,13 @@
 namespace ui {
 
 download_command::download_command(lf::engine& e)
-    : cmd::command("download", "Download given files.")
-    , m_engine(e)
-    , m_path_argument("download_to", "<path>", "Directory path to download files there.", "")
-    , m_message_id_argument("message_id", "<id>", "Message id to download attachments of it.")
-    , m_sent_in_last_argument("sent_in_the_last", "<HOURS>", "Download files sent in the last specified hours.")
-    , m_sent_after_argument("sent_after", "YYYYMMDD", "Download files sent after specified date.")
-    , m_urls_argument("<url> ...", "Url(s) of files to download.")
+    : cmd::command{"download", "Download given files."}
+    , m_engine{e}
+    , m_path_argument{"download_to", "<path>", "Directory path to download files there.", ""}
+    , m_message_id_argument{"message_id", "<id>", "Message id to download attachments of it."}
+    , m_sent_in_last_argument{"sent_in_the_last", "<HOURS>", "Download files sent in the last specified hours."}
+    , m_sent_after_argument{"sent_after", "YYYYMMDD", "Download files sent after specified date."}
+    , m_urls_argument{"<url> ...", "Url(s) of files to download."}
 {
     arguments.push_back(credentials::get_arguments());
     arguments.push_back(s_report_level_arg);
