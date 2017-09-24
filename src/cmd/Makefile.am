@@ -6,6 +6,5 @@ AM_CPPFLAGS = -Wall -I .. -std=c++11
 noinst_LIBRARIES = libcmd.a
 
 libcmd_a_SOURCES = arguments.cpp \
-				   command.cpp \
 				   command_processor.cpp \
 				   utility.cpp 
