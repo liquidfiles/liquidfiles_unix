@@ -36,8 +36,7 @@ size_t data_get(void* ptr, size_t size, size_t nmemb, FILE* stream)
     return size * nmemb;
 }
 
-int progress_function(void* ptr, double td, double nd, 
-        double tu, double nu)
+int progress_function(void* ptr, double td, double nd, double tu, double nu)
 {
     int length = 80;
     double fraction = .0;
@@ -67,7 +66,7 @@ class curl_header_guard
 {
 public:
     curl_header_guard(CURL* c)
-        : m_slist(nullptr)
+        : m_slist{nullptr}
     {
         m_slist = curl_slist_append(m_slist, "Content-Type: application/json");
         curl_easy_setopt(c, CURLOPT_HTTPHEADER, m_slist);
@@ -103,7 +102,8 @@ class progress_guard
 {
 public:
     progress_guard(CURL* c, report_level s)
-        : m_curl(c), m_report_level(s)
+        : m_curl{c}
+        , m_report_level{s}
     {
         if (m_report_level >= report_level::normal) {
             curl_easy_setopt(m_curl, CURLOPT_PROGRESSFUNCTION, &progress_function);
@@ -133,9 +133,9 @@ class curl_file_guard
 {
 public:
     curl_file_guard(CURL* c, FILE* f, report_level s)
-        : m_curl(c)
-        , m_file(f)
-        , m_progress(c,s)
+        : m_curl{c}
+        , m_file{f}
+        , m_progress{c, s}
     {
         curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, m_file);
     }
@@ -179,7 +179,7 @@ void engine::init_curl(std::string key, report_level s, validate_cert v)
 }
 
 engine::engine()
-    : m_curl(nullptr)
+    : m_curl{nullptr}
 {
 }
 
@@ -298,8 +298,7 @@ void engine::message(std::string server,
         report_level s,
         validate_cert v)
 {
-    std::string r =  message_impl(server, key, id, s, v,
-            "Getting message from the server.");
+    std::string r = message_impl(server, key, id, s, v, "Getting message from the server.");
     try {
         process_output_responce<message_responce>(r, s, f);
     } catch (...) {
@@ -343,8 +342,7 @@ void engine::download(std::string server,
         report_level s,
         validate_cert v)
 {
-    std::string r = message_impl(server, key, id, s, v,
-        "Retrieving attachments of message.");
+    std::string r = message_impl(server, key, id, s, v, "Retrieving attachments of message.");
     try {
         auto j = nlohmann::json::parse(r);
         message_responce m;
