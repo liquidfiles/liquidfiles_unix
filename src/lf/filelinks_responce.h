@@ -2,7 +2,7 @@
 
 #include "declarations.h"
 
-#include <xml/xml.h>
+#include <io/json.h>
 
 #include <string>
 #include <vector>
@@ -14,14 +14,14 @@ namespace lf {
  * @brief Class for handling filelinks responce from server and printing
  *        it for user.
  */
-class filelinks_responce
+class filelinks_responce final
 {
 public:
     /**
-     * @brief Generates filelinks_responce from xml node.
+     * @brief Generates filelinks_responce from json object.
      * @param s Xml node.
      */
-    void read(xml::node<>* s);
+    void read(const nlohmann::json& j);
 
 public:
     /**
@@ -32,15 +32,15 @@ public:
 
 private:
     struct link_item {
-        std::string m_id;
-        std::string m_filename;
-        std::string m_url;
-        std::string m_expire_time;
-        std::string m_size;
+        std::string id;
+        std::string filename;
+        std::string url;
+        std::string expire_time;
+        int size;
     };
 
 public:
-    typedef std::vector<link_item>::size_type size_type;
+    using size_type = std::vector<link_item>::size_type;
 
     /// @brief Returns the count of filelinks.
     size_type size() const

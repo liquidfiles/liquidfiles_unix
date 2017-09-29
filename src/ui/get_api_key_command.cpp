@@ -9,21 +9,21 @@
 namespace ui {
 
 get_api_key_command::get_api_key_command(lf::engine& e)
-    : cmd::command("get_api_key", "Retrieves api key for the specified user.")
-    , m_engine(e)
-    , m_validate_cert_argument("k", "If specified, do not validate server certificate.")
-    , m_server_argument("server", "<url>", "The server URL.")
-    , m_username_argument("username", "<email>", "Username.")
-    , m_password_argument("password", "<password>", "Password.")
-    , m_save_argument("s", "If specified, saves current credentials in cache."
-            " Credentials to save are - '-k', '--server' and retrieved key.")
+    : cmd::command{"get_api_key", "Retrieves api key for the specified user."}
+    , m_engine{e}
+    , m_validate_cert_argument{"k", "If specified, do not validate server certificate."}
+    , m_server_argument{"server", "<url>", "The server URL."}
+    , m_username_argument{"username", "<email>", "Username."}
+    , m_password_argument{"password", "<password>", "Password."}
+    , m_save_argument{"s", "If specified, saves current credentials in cache."
+            " Credentials to save are - '-k', '--server' and retrieved key."}
 {
-    get_arguments().push_back(m_validate_cert_argument);
-    get_arguments().push_back(m_server_argument);
-    get_arguments().push_back(m_username_argument);
-    get_arguments().push_back(m_password_argument);
-    get_arguments().push_back(m_save_argument);
-    get_arguments().push_back(s_report_level_arg);
+    arguments.push_back(m_validate_cert_argument);
+    arguments.push_back(m_server_argument);
+    arguments.push_back(m_username_argument);
+    arguments.push_back(m_password_argument);
+    arguments.push_back(m_save_argument);
+    arguments.push_back(s_report_level_arg);
 }
 
 void get_api_key_command::execute(const cmd::arguments& args)

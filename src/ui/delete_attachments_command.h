@@ -12,7 +12,7 @@ namespace ui {
  * @class delete_attachments_command.
  * @brief Class for 'delete_attachments' command.
  */
-class delete_attachments_command : public cmd::command
+class delete_attachments_command final : public cmd::command
 {
 public:
     /// @brief Constructor.
@@ -21,12 +21,12 @@ public:
 
 public:
     /// @brief Executes command by given arguments.
-    virtual void execute(const cmd::arguments& args);
+    void execute(const cmd::arguments& args) override;
 
 private:
     lf::engine& m_engine;
-    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_message_id_argument;
-    cmd::argument_definition<std::string, cmd::UNNAMED_ARGUMENT, false> m_attachment_ids_argument;
+    cmd::argument_definition<std::string, cmd::argument_name_type::named, false> m_message_id_argument;
+    cmd::argument_definition<std::string, cmd::argument_name_type::unnamed, false> m_attachment_ids_argument;
 };
 
 }

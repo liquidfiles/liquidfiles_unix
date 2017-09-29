@@ -9,26 +9,24 @@
 namespace cmd {
 
 command_processor::command_processor(io::messenger& m)
-    : m_messenger(m)
+    : m_messenger{m}
 {
 }
 
 command_processor::~command_processor()
 {
-    registry::iterator i = m_commands.begin();
-    while (i != m_commands.end()) {
-        delete i->second;
-        ++i;
+    for (const auto& i : m_commands) {
+        delete i.second;
     }
     m_commands.clear();
 }
 
 void command_processor::register_command(command* c)
 {
-    if (m_commands.find(c->name()) != m_commands.end()) {
-        throw duplicate_name(c->name());
+    if (m_commands.find(c->name) != m_commands.end()) {
+        throw duplicate_name(c->name);
     }
-    m_commands[c->name()] = c;
+    m_commands[c->name] = c;
 }
 
 command* command_processor::get_command(std::string name)
@@ -51,8 +49,11 @@ int command_processor::execute(const std::string& str)
         arguments args = arguments::construct(p.second);
         c->execute(args);
     } catch(base::exception& e) {
-        m_messenger << "Error: " << e.message() << io::endl;
-        return e.code();
+        m_messenger << "Error: " << e.message << io::endl;
+        return e.code;
+    } catch(std::exception& e) {
+        m_messenger << "Error: " << e.what() << io::endl;
+        return 1;
     }
     return 0;
 }
@@ -68,8 +69,11 @@ int command_processor::execute(const std::string& cn,
         arguments a = arguments::construct(args);
         c->execute(a);
     } catch(base::exception& e) {
-        m_messenger << "Error: " << e.message() << io::endl;
-        return e.code();
+        m_messenger << "Error: " << e.message << io::endl;
+        return e.code;
+    } catch(std::exception& e) {
+        m_messenger << "Error: " << e.what() << io::endl;
+        return 1;
     }
     return 0;
 }

@@ -1,70 +1,47 @@
 #include "attachment_responce.h"
 
 #include <io/csv_stream.h>
-#include <xml/xml_iterators.h>
 
 #include <cstdlib>
 #include <sstream>
 
 namespace lf {
 
-void attachment_responce::read(xml::node<>* s)
+void attachment_responce::read(const nlohmann::json& j)
 {
-    xml::node_iterator<> i(s);
-    xml::node_iterator<> e;
-    while(i != e) {
-        std::string n(i->name(), i->name_size());
-        std::string v(i->value(), i->value_size());
-        ++i;
-        if (n == "filename") {
-            m_filename = v;
-            continue;
-        }
-        if (n == "checksum") {
-            m_checksum = v;
-            continue;
-        }
-        if (n == "crc32") {
-            m_crc32 = v;
-            continue;
-        }
-        if (n == "url") {
-            m_url = v;
-            continue;
-        }
-        if (n == "size") {
-            m_size = std::atoi(v.c_str());
-            continue;
-        }
-    }
+    filename_ = j["filename"].get<std::string>();
+    checksum_ = j["checksum"].get<std::string>();
+    crc32_ = j["crc32"].get<std::string>();
+    url_ = j["url"].get<std::string>();
+    size_ = j["size"].get<int>();
 }
 
 std::string attachment_responce::to_string(output_format f) const
 {
     std::stringstream m;
     switch (f) {
-    case TABLE_FORMAT:
-        if (!m_filename.empty()) {
-            m << "Filename: " << m_filename << "\n";
+    case output_format::table:
+        if (!filename_.empty()) {
+            m << "Filename: " << filename_ << "\n";
         }
-        if (!m_content_type.empty()) {
-            m << "Content Type: " << m_content_type << "\n";
+        if (!content_type_.empty()) {
+            m << "Content Type: " << content_type_ << "\n";
         }
-        if (!m_checksum.empty()) {
-            m << "Checksum: " << m_checksum << "\n";
+        if (!checksum_.empty()) {
+            m << "Checksum: " << checksum_ << "\n";
         }
-        if (!m_crc32.empty()) {
-            m << "CRC32: " << m_crc32 << "\n";
+        if (!crc32_.empty()) {
+            m << "CRC32: " << crc32_ << "\n";
         }
-        if (!m_url.empty()) {
-            m << "URL: " << m_url << "\n";
+        if (!url_.empty()) {
+            m << "URL: " << url_ << "\n";
         }
-        m << "Size: " << m_size << "\n";
+        m << "Size: " << size_ << "\n";
         break;
-    case CSV_FORMAT:
+    case output_format::csv:
     {
         io::csv_ostream cp(&m);
-        cp << m_filename << m_content_type << m_checksum << m_crc32 << m_url << m_size;
+        cp << filename_ << content_type_ << checksum_ << crc32_ << url_ << size_;
     }
     default:
         break;

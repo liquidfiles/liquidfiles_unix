@@ -5,7 +5,7 @@ liquidfiles_unix is UNIX command line utility, to work with Liquidfiles server, 
 LiquidFiles Unix command line utility extends the functionality of your LiquidFiles server to command line use and scripting from supported 
 Unix and Linux servers.
 
-Liquidfiles Unix is fully based on [Liquidfiles public API](http://support.liquidfiles.com/forums/21423392-API) and user [libcurl](http://curl.haxx.se/) to send and receive data from Liquidfiles server.
+Liquidfiles Unix is fully based on [Liquidfiles public API](https://man.liquidfiles.com/api/) and uses [libcurl](http://curl.haxx.se/) to send and receive data from Liquidfiles server.
 
 This document consists of the following sections:
 
@@ -22,8 +22,8 @@ identical machine and executed there, offering portability for larger or more co
 installed system only.
 
 These instructions use the following keys for substituting user defined values:
-* &lt;xxx-VERSION&gt;  (downloaded_version_filename)
-* $PATH_X  (user_defined_path).
+* `<xxx-VERSION>`  (downloaded_version_filename)
+* `$PATH_X`  (user_defined_path).
 
 ### Installing shared
 Shared build will need to be performed on each system you wish to run Liquidfiles command line utility from. The following instructions assume 
@@ -36,32 +36,30 @@ the default paths, you will not require the prefix option that allows user speci
 Install OpenSSL first:
 
 1. Download latest OpenSSL version from official site.
-2. Extract archive (e.g. tar –xz &lt;openssl-VERSION&gt;.tar.gz)
-3. Go to directory (e.g. cd &lt;openssl-VERSION&gt;)
-4. run Configure './config shared'
-5. in the directory run 'make'
-6. then run 'make install'
+2. Extract archive (`tar -xz <openssl-VERSION>.tar.gz`)
+3. Go to directory (`cd <openssl-VERSION>`)
+4. `./config shared`
+5. `make`
+6. `make install`
 
 After installing OpenSSL, you need to install Curl:
 
 1. Download latest curl version from official site.
-2. Extract archive	(e.g. tar –xz &lt;curl-VERSION&gt;.tar.gz)
-3. Go to directory	(e.g. cd &lt;curl-VERSION&gt;)
-4. run Configure** './configure'
-5. in the directory run 'make'
-6. then run 'make install'
+2. Extract archive (`tar -xz <curl-VERSION>.tar.gz`)
+3. Go to directory (`cd <curl-VERSION>`)
+4. `./configure`
+5. `make`
+6. `make install`
 
-**Note - if your OpenSSL is installed in a non-system path, then you need to specify --with-ssl=$PATH_SSL  option.  
-Refer to OpenSSL installation instructions and options for further information.**
+> If your OpenSSL is installed in a non-system path, then you need to specify --with-ssl=$PATH_SSL option. Refer to OpenSSL installation instructions and options for further information.
 
 #### Installing liquidfiles command line utility
-1. Download LiquidFiles [Source Code] (github_link_here) and unpack the files, then enter the directory
-2. Run Configure* './configure'
-3. Make			make
-4. Install		make install
+1. Download LiquidFiles [Source Code] (https://github.com/liquidfiles/liquidfiles_unix) and unpack the files, then enter the directory
+2. `./configure`
+3. `make`
+4. `make install`
 
-**Note - if your OpenSSL and Curl is installed in non-system path, then you need to specify using the install options
-  --with-curl=$PATH_CURL   and/or  --with-ssl=$PATH_SSL**
+> If your OpenSSL and Curl is installed in non-system path, then you need to specify using the install options `--with-curl=$PATH_CURL` and/or `--with-ssl=$PATH_SSL`
 
 ### Installing static
 The benefit of building statically is that you do not necessarily have to install OpenSSL and Curl into default system 
@@ -82,39 +80,44 @@ assume this is the case to provide a reliable installation option.
 To install OpenSSL
 
 1. Download latest OpenSSL version from official site.
-2. Extract archive (e.g. tar –xz &lt;openssl-VERSION&gt;.tar.gz)
-3. Go to directory (e.g. cd &lt;openssl-VERSION&gt;)
-4. Configure shared libs (e.g. ./config shared --prefix=$PATH_X)
-5. in the directory run 'make'
-6. then run 'make install'
-7. then run 'make clean'
-8. Configure static libs	(./config no-shared --prefix=$PATH_X)
-9. in the directory run 'make'
-10. then run 'make install'
+2. Extract archive (`tar -xz <openssl-VERSION>.tar.gz`)
+3. Go to directory (`cd <openssl-VERSION>`)
+4. Configure shared libs (`./config shared --prefix=$PATH_X`)
+5. `make`
+6. `make install`
+7. `make clean`
+8. Configure static libs (`./config no-shared --prefix=$PATH_X`)
+9. `make`
+10. `make install`
 
-**NOTE - For some cases, Curl static build is also not passed with only static OpenSSL.  In these cases you need to build 
-OpenSSL both statically and shared, in some instances you may be able to skip step 7-10 above, if in doubt do both.**
+> For some cases, Curl static build is also not passed with only static OpenSSL.  In these cases you need to build OpenSSL both statically and shared, in some instances you may be able to skip step 7-10 above, if in doubt do both.**
 
 After having OpenSSL, you need to install curl
 
 1. Download latest curl version from official site.
-2. Extract archive (e.g. tar –xz &lt;curl-VERSION&gt;.tar.gz)
-3. Go to directory (cd &lt;curl-VERSION&gt;)
-4. Configure static files (e.g. ./configure --with-static --prefix=$PATH_X --with-ssl=$PATH_X --disable-shared)
-5. in the directory run 'make'
-6. then run 'make install'
+2. Extract archive (`tar -xz <curl-VERSION>.tar.gz`)
+3. Go to directory (`cd <curl-VERSION>`)
+4. Configure static files (`./configure --with-static --prefix=$PATH_X --with-ssl=$PATH_X --disable-shared`)
+5. `make`
+6. `make install`
 
-**Note - Using these instructions, you will need the external path however if your OpenSSL is on system default paths, 
-then you may not need to specify --with-ssl option, or if you have specified custom path you need to substitute.**
+> Using these instructions, you will need the external path however if your OpenSSL is on system default paths, then you may not need to specify --with-ssl option, or if you have specified custom path you need to substitute.
 
 #### Installing liquidfiles
 1. Download LiquidFiles Unix CLI Source
-2. Configure static LiquidFiles** (e.g. ./configure --with-curl=$EXT_PATH --prefix=$LF_EXT_PATH --enable-static)
-3. in the directory run 'make'
-4. then run 'make install'
+2. Configure static LiquidFiles (e.g. `./configure --with-curl=$EXT_PATH --prefix=$LF_EXT_PATH --enable-static`)
+3. `make`
+4. `make install`
 
-**Note - Using these instructions, you will need the external path however if your Curl is on system default paths, then 
-you don’t need to specify --with-curl option.**
+> Using these instructions, you will need the external path however if your Curl is on system default paths, then 
+you don't need to specify --with-curl option.
+
+#### Alternative build with CMake
+1. Download LiquidFiles Unix CLI Source
+2. `mkdir build && cd build`
+3. `cmake ../`
+4. `make`
+4. `make install`
 
 ## Usage
 Liquidfiles is command line utility. It invokes one command per session and exits. General usage is the following:
@@ -122,18 +125,18 @@ Liquidfiles is command line utility. It invokes one command per session and exit
     liquidfiles <command> <command_args>
 
 The list of supported commands is:
-* attach              Uploads given files to server.
-* attach_chunk        Uploads given chunk of file to server.
-* delete_attachments  Deletes the given attachments.
-* delete_filelink     Deletes the given filelink.
-* download            Download given files.
-* file_request        Sends the file request to specified user.
-* filedrop            Sends the file(s) by filedrop.
-* filelink            Uploads given file and creates filelink on it.
-* filelinks           Lists the available filelinks.
-* get_api_key         Retrieves api key for the specified user.
-* messages            Lists the available messages.
-* send                Sends the file(s) to specified user.
+* __attach__  Uploads given files to server.
+* __attach_chunk__ Uploads given chunk of file to server.
+* __delete_attachments__ Deletes the given attachments.
+* __delete_filelink__ Deletes the given filelink.
+* __download__ Download given files.
+* __file_request__ Sends the file request to specified user.
+* __filedrop__ Sends the file(s) by filedrop.
+* __filelink__ Uploads given file and creates filelink on it.
+* __filelinks__ Lists the available filelinks.
+* __get_api_key__ Retrieves api key for the specified user.
+* __messages__ Lists the available messages.
+* __send__ Sends the file(s) to specified user.
 
 To get command's detailed description, options and usage 'help' command can be used:
 

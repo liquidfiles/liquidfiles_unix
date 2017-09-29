@@ -3,10 +3,10 @@
 #include "attachment_responce.h"
 #include "declarations.h"
 
-#include <xml/xml.h>
-
 #include <string>
 #include <vector>
+
+#include <io/json.h>
 
 namespace lf {
 
@@ -15,14 +15,14 @@ namespace lf {
  * @brief Class for handling message responce from server and printing
  *        it for user.
  */
-class message_responce
+class message_responce final
 {
 public:
     /**
-     * @brief Generates message_responce from xml node.
-     * @param s Xml node.
+     * @brief Generates message_responce from json object.
+     * @param j Json object.
      */
-    void read(xml::node<>* s);
+    void read(const nlohmann::json& j);
 
 public:
     /**

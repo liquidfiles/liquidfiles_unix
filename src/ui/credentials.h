@@ -82,7 +82,7 @@ public:
     credentials()
         : m_server()
         , m_api_key()
-        , m_validate_flag(lf::VALIDATE)
+        , m_validate_flag(lf::validate_cert::validate)
     {
     }
 
@@ -104,10 +104,10 @@ private:
     std::string m_api_key;
     lf::validate_cert m_validate_flag;
     static cmd::argument_definition_container m_arguments;
-    static cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_server_arg;
-    static cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_api_key_arg;
-    static cmd::argument_definition<lf::validate_cert, cmd::BOOLEAN_ARGUMENT, false> m_validate_cert_arg;
-    static cmd::argument_definition<bool, cmd::BOOLEAN_ARGUMENT, false> m_save_arg;
+    static cmd::argument_definition<std::string, cmd::argument_name_type::named, false> m_server_arg;
+    static cmd::argument_definition<std::string, cmd::argument_name_type::named, false> m_api_key_arg;
+    static cmd::argument_definition<lf::validate_cert, cmd::argument_name_type::boolean, false> m_validate_cert_arg;
+    static cmd::argument_definition<bool, cmd::argument_name_type::boolean, false> m_save_arg;
 };
 
 }

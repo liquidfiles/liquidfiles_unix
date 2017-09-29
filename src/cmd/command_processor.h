@@ -20,7 +20,7 @@ class command;
  *        command_processor is the class which is used to create new commands
  *        and execute them.
  */
-class command_processor
+class command_processor final
 {
     /// @name Construction
     /// @{
@@ -32,9 +32,8 @@ public:
     /// @brief Destructor.
     ~command_processor();
 
-private:
-    command_processor(const command_processor&);
-    command_processor& operator=(const command_processor&);
+    command_processor(const command_processor&) = delete;
+    command_processor& operator=(const command_processor&) = delete;
     /// @}
 
     /// @name Command register interface
@@ -85,37 +84,17 @@ public:
     /// @}
 
 private:
-    typedef std::map<std::string, command*> registry;
+    using registry = std::map<std::string, command*>;
     registry m_commands;
     io::messenger& m_messenger;
 };
 
-namespace {
-
-template <typename F>
-struct helper_functor
-{
-    helper_functor(F f)
-        : m_unary_function(f)
-    {
-    }
-
-    void operator()(const std::pair<std::string, command*>& p)
-    {
-        m_unary_function(p.first);
-    }
-
-private:
-    F m_unary_function;
-};
-
-}
-
 template <typename F>
 void command_processor::for_each_command_name(F f) const
 {
-    helper_functor<F> ff(f);
-    std::for_each(m_commands.begin(), m_commands.end(), ff);
+    std::for_each(m_commands.begin(), m_commands.end(), [&f](const std::pair<std::string, command*>&p) {
+            f(p.first);
+        });
 }
 
 }

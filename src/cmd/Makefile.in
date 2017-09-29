@@ -104,8 +104,8 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libcmd_a_AR = $(AR) $(ARFLAGS)
 libcmd_a_LIBADD =
-am_libcmd_a_OBJECTS = arguments.$(OBJEXT) command.$(OBJEXT) \
-	command_processor.$(OBJEXT) utility.$(OBJEXT)
+am_libcmd_a_OBJECTS = arguments.$(OBJEXT) command_processor.$(OBJEXT) \
+	utility.$(OBJEXT)
 libcmd_a_OBJECTS = $(am_libcmd_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -264,7 +264,6 @@ AM_CPPFLAGS = -Wall -I .. -std=c++11
 # the previous manual Makefile
 noinst_LIBRARIES = libcmd.a
 libcmd_a_SOURCES = arguments.cpp \
-				   command.cpp \
 				   command_processor.cpp \
 				   utility.cpp 
 
@@ -317,7 +316,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arguments.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/command_processor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utility.Po@am__quote@
 

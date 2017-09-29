@@ -5,32 +5,21 @@ namespace cmd {
 
 bool arguments::exists(const std::string& n) const
 {
-    return find(n) != end();
+    return named_arguments.find(n) != named_arguments.end();
 }
 
 const std::string& arguments::operator[](const std::string& n) const
 {
     static std::string empty_string;
-    const_iterator i = find(n);
-    if (i != end()) {
+    auto i = named_arguments.find(n);
+    if (i != named_arguments.end()) {
         return i->second;
     }
     return empty_string;
 }
 
-const std::set<std::string>& arguments::get_unnamed_arguments() const
-{
-    return m_unnamed_arguments;
-}
-
-const std::set<std::string>& arguments::get_boolean_arguments() const
-{
-    return m_boolean_arguments;
-}
-
 arguments arguments::construct(const std::string& str)
 {
-    arguments args;
     std::vector<std::string> v;
     utility::split(v, str, " ");
     return construct(v);
@@ -38,20 +27,22 @@ arguments arguments::construct(const std::string& str)
 
 arguments arguments::construct(const std::vector<std::string>& str)
 {
-    arguments args;
+    std::map<std::string, std::string> n;
+    std::set<std::string> u;
+    std::set<std::string> b;
     std::vector<std::string>::const_iterator i = str.begin();
     while (i != str.end()) {
         if (utility::is_named_argument(*i)) {
             std::pair<std::string, std::string> p = utility::split(*i, "=");
-            args.insert(std::make_pair(p.first, p.second));
+            n.insert(std::make_pair(p.first, p.second));
         } else if (utility::is_boolean_argument(*i)) {
-            args.m_boolean_arguments.insert(*i);
+            b.insert(*i);
         } else {
-            args.m_unnamed_arguments.insert(*i);
+            u.insert(*i);
         }
         ++i;
     }
-    return args;
+    return arguments{n, u, b};
 }
 
 }

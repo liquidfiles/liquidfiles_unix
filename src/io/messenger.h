@@ -22,7 +22,7 @@ public:
     /// @brief Access to singleton instance of messenger.
     static messenger& get()
     {
-        if (s_instance == 0) {
+        if (s_instance == nullptr) {
             s_instance = new messenger();
         }
         return *s_instance;
@@ -33,8 +33,8 @@ private:
     {
     }
 
-    messenger(const messenger&);
-    messenger& operator=(const messenger&);
+    messenger(const messenger&) = delete;
+    messenger& operator=(const messenger&) = delete;
 
 private:
     static messenger* s_instance;

@@ -2,7 +2,7 @@
 
 #include "declarations.h"
 
-#include <xml/xml.h>
+#include <io/json.h>
 
 #include <string>
 #include <vector>
@@ -14,14 +14,14 @@ namespace lf {
  * @brief Class for handling messages responce from server and printing
  *        it for user.
  */
-class messages_responce
+class messages_responce final
 {
 public:
     /**
-     * @brief Generates messages_responce from xml node.
+     * @brief Generates messages_responce from json object.
      * @param s Xml node.
      */
-    void read(xml::node<>* s);
+    void read(const nlohmann::json& s);
 
 public:
     /**
@@ -43,7 +43,7 @@ private:
     };
 
 public:
-    typedef std::vector<message_item>::size_type size_type;
+    using size_type = std::vector<message_item>::size_type;
 
     /// @brief Returns the count of messages.
     size_type size() const

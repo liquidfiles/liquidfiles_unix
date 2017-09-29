@@ -17,7 +17,7 @@ namespace lf {
  *        It provides interface to send, receive files and other operations
  *        supported by liquidfiles.
  */
-class engine
+class engine final
 {
 public:
     /// @brief Constructor.
@@ -33,7 +33,7 @@ private:
     /// @name API
     /// @{
 public:
-    typedef std::set<std::string> strings;
+    using strings = std::set<std::string>;
 
 public:
     /**
@@ -387,7 +387,7 @@ private:
             const std::string& message, const strings& fs, report_level s);
 
 private:
-    std::string process_send_responce(const std::string& r, report_level s) const;
+    std::string process_send_responce(std::string r, report_level s) const;
     void process_attach_responce(const std::string& r, report_level s) const;
     void process_attach_chunk_responce(const std::string& r, report_level s) const;
     std::string process_file_request_responce(const std::string& r, report_level s) const;

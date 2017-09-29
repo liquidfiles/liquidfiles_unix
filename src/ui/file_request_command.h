@@ -12,7 +12,7 @@ namespace ui {
  * @class file_request_command.
  * @brief Class for 'file_request' command.
  */
-class file_request_command : public cmd::command
+class file_request_command final : public cmd::command
 {
 public:
     /// @brief Constructor.
@@ -21,14 +21,14 @@ public:
 
 public:
     /// @brief Executes command by given arguments.
-    virtual void execute(const cmd::arguments& args);
+    void execute(const cmd::arguments& args) override;
 
 private:
     lf::engine& m_engine;
-    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, true> m_to_argument;
-    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_message_argument;
-    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_message_file_argument;
-    cmd::argument_definition<std::string, cmd::NAMED_ARGUMENT, false> m_subject_argument;
+    cmd::argument_definition<std::string, cmd::argument_name_type::named, true> m_to_argument;
+    cmd::argument_definition<std::string, cmd::argument_name_type::named, false> m_message_argument;
+    cmd::argument_definition<std::string, cmd::argument_name_type::named, false> m_message_file_argument;
+    cmd::argument_definition<std::string, cmd::argument_name_type::named, false> m_subject_argument;
 };
 
 }

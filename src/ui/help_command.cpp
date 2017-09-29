@@ -7,13 +7,13 @@
 namespace ui {
 
 help_command::help_command(cmd::command_processor& p)
-    : cmd::command("help", "Prints help for tool or for specific command.")
-    , m_command_processor(p)
-    , m_commands_argument("<command_name>", "Specifies the name of command for which help\n"
+    : cmd::command{"help", "Prints help for tool or for specific command."}
+    , m_command_processor{p}
+    , m_commands_argument{"<command_name>", "Specifies the name of command for which help\n"
         "\t                 will be printed. If not specified, help for tool\n"
-        "\t                 will be printed.")
+        "\t                 will be printed."}
 {
-    get_arguments().push_back(m_commands_argument);
+    arguments.push_back(m_commands_argument);
 }
 
 namespace {
@@ -56,7 +56,7 @@ public:
             for (unsigned j = 0; j < m_max_length - n.size(); ++j) {
                 io::mout << ' ';
             }
-            io::mout << m_command_processor.get_command(n)->description() << io::endl;
+            io::mout << m_command_processor.get_command(n)->description << io::endl;
         }
     }
 
@@ -78,7 +78,7 @@ void help_command::print_help() const
     max_length_calculator ml(max_length);
     m_command_processor.for_each_command_name(ml);
     max_length += 5;
-    commands_printer cp(m_command_processor, name(), max_length);
+    commands_printer cp(m_command_processor, name, max_length);
     m_command_processor.for_each_command_name(cp);
 
     io::mout << "\n"
@@ -99,22 +99,22 @@ void help_command::print_help() const
 
 void help_command::execute(const cmd::arguments& args)
 {
-    if (args.get_unnamed_arguments().empty()) {
+    if (args.unnamed_arguments.empty()) {
         print_help();
         return;
     }
     std::set<std::string>::const_iterator i =
-        args.get_unnamed_arguments().begin();
-    for (; i != args.get_unnamed_arguments().end(); ++i) {
+        args.unnamed_arguments.begin();
+    for (; i != args.unnamed_arguments.end(); ++i) {
         cmd::command* c = m_command_processor.get_command(*i);
         if (c == 0) {
             throw cmd::invalid_command_name(*i);
         }
         io::mout <<
     "Usage:\n"
-        "\tliquidfiles " << c->name() << " " <<
+        "\tliquidfiles " << c->name << " " <<
         c->usage() << "\n\n"
-        "Description:\n\t" << c->description() << "\n\n"
+        "Description:\n\t" << c->description << "\n\n"
         "Arguments:\n" <<
         c->arg_descriptions();
     }

@@ -2,90 +2,31 @@
 
 #include <io/csv_stream.h>
 #include <io/table_printer.h>
-#include <xml/xml_iterators.h>
 
 #include <cstdlib>
 #include <sstream>
 
 namespace lf {
 
-void message_responce::read(xml::node<>* s)
+void message_responce::read(const nlohmann::json& j)
 {
-    xml::node_iterator<> i(s->first_node());
-    xml::node_iterator<> e;
-    while(i != e) {
-        std::string n(i->name(), i->name_size());
-        std::string v(i->value(), i->value_size());
-        xml::node<>* nn = &*i;
-        ++i;
-        if (n == "id") {
-            m_id = v;
-            continue;
-        }
-        if (n == "sender") {
-            m_sender = v;
-            continue;
-        }
-        if (n == "recipients") {
-            xml::node_iterator<> ri(nn);
-            while(ri != e) {
-                m_recipients.push_back(std::string(ri->value(),
-                            ri->value_size()));
-                ++ri;
-            }
-            continue;
-        }
-        if (n == "ccs") {
-            xml::node_iterator<> ri(nn);
-            while(ri != e) {
-                m_ccs.push_back(std::string(ri->value(),
-                            ri->value_size()));
-                ++ri;
-            }
-            continue;
-        }
-        if (n == "bccs") {
-            xml::node_iterator<> ri(nn);
-            while(ri != e) {
-                m_bccs.push_back(std::string(ri->value(),
-                            ri->value_size()));
-                ++ri;
-            }
-            continue;
-        }
-        if (n == "created_at") {
-            m_creation_time = v;
-            continue;
-        }
-        if (n == "expires_at") {
-            m_expire_time = v;
-            continue;
-        }
-        if (n == "authorization") {
-            m_authorization = std::atoi(v.c_str());;
-            continue;
-        }
-        if (n == "authorization_description") {
-            m_authorization_description = v;
-            continue;
-        }
-        if (n == "subject") {
-            m_subject = v;
-            continue;
-        }
-        if (n == "message") {
-            m_message = v;
-            continue;
-        }
-        if (n == "attachments") {
-            xml::node_iterator<> ri(nn);
-            while(ri != e) {
-                m_attachments.push_back(attachment_responce());
-                m_attachments.back().read(&*ri);
-                ++ri;
-            }
-            continue;
-        }
+    m_id = j["message"]["id"].get<std::string>();
+    m_sender = j["message"]["sender"].get<std::string>();
+    m_creation_time = j["message"]["created_at"].get<std::string>();
+    m_expire_time = j["message"]["expires_at"].get<std::string>();
+    m_authorization = j["message"]["authorization"].get<int>();
+    m_authorization_description = j["message"]["authorization_description"].get<std::string>();
+    m_subject = j["message"]["subject"].get<std::string>();
+    m_message = j["message"]["message"].get<std::string>();
+    m_recipients = j["message"]["recipients"].get<std::vector<std::string>>();
+    m_ccs = j["message"]["ccs"].get<std::vector<std::string>>();
+    if (j["message"].find("bccs") != j["message"].end()) {
+        m_bccs = j["message"]["bccs"].get<std::vector<std::string>>();
+    }
+    auto as = j["message"]["attachments"].get<std::vector<nlohmann::json>>();
+    for (const auto& a : as) {
+        m_attachments.emplace_back();
+        m_attachments.back().read(a);
     }
 }
 
@@ -93,10 +34,10 @@ std::string message_responce::to_string(output_format f) const
 {
     std::stringstream m;
     switch (f) {
-    case TABLE_FORMAT:
+    case output_format::table:
         write_table(m);
         break;
-    case CSV_FORMAT:
+    case output_format::csv:
         write_csv(m);
     default:
         break;
@@ -151,7 +92,7 @@ void message_responce::write_table(std::stringstream& m) const
         int x = 1;
         while (j != m_attachments.end()) {
             tp << x++;
-            std::stringstream ss((j++)->to_string(TABLE_FORMAT));
+            std::stringstream ss((j++)->to_string(output_format::table));
             std::string s;
             std::getline(ss, s);
             tp << s;
@@ -188,7 +129,7 @@ void message_responce::write_csv(std::stringstream& m) const
     cp << m_attachments.size();
     std::vector<attachment_responce>::const_iterator j = m_attachments.begin();
     while (j != m_attachments.end()) {
-        m << ',' << (j++)->to_string(CSV_FORMAT);
+        m << ',' << (j++)->to_string(output_format::csv);
     }
 }
 

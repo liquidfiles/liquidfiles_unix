@@ -12,7 +12,7 @@ namespace ui {
  * @class attach_command.
  * @brief Class for 'attach' command.
  */
-class attach_command : public cmd::command
+class attach_command final : public cmd::command
 {
 public:
     /// @brief Constructor.
@@ -21,11 +21,11 @@ public:
 
 public:
     /// @brief Executes command by given arguments.
-    virtual void execute(const cmd::arguments& args);
+    void execute(const cmd::arguments& args) override;
 
 private:
     lf::engine& m_engine;
-    cmd::argument_definition<std::string, cmd::UNNAMED_ARGUMENT, true> m_files_argument;
+    cmd::argument_definition<std::string, cmd::argument_name_type::unnamed, true> m_files_argument;
 };
 
 }
