@@ -588,8 +588,7 @@ void engine::filedrop_attachments(std::string server,
             validate_cert v)
 {
     std::string key = get_filedrop_api_key(server, s, v);
-    filedrop_attachments_impl(server, key, user, subject, message,
-            fs, s);
+    filedrop_attachments_impl(server, key, user, subject, message, fs, s);
 }
 
 std::string engine::attach_impl(std::string server,
@@ -852,6 +851,9 @@ std::string engine::process_create_filelink_responce(const std::string& r, repor
 
 void engine::process_filedrop_responce(const std::string& r, report_level s) const
 {
+    if (r.empty()) {
+        throw request_error("filedrop", "Empty responce");
+    }
     auto j = nlohmann::json::parse(r);
     if (j.find("errors") != j.end()) {
         auto e = j["errors"].get<std::vector<std::string>>()[0];
