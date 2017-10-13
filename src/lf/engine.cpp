@@ -833,7 +833,11 @@ std::string engine::process_get_api_key_responce(const std::string& r, report_le
 {
     auto j = nlohmann::json::parse(r);
     try {
-        return j["user"]["api_key"].get<std::string>();
+        auto r = j["user"]["api_key"].get<std::string>();
+        if (s >= report_level::normal) {
+            io::mout << r << io::endl;
+        }
+        return r;
     } catch (std::exception) {
         throw request_error("get_api_key", j["errors"][0].get<std::string>());
     }

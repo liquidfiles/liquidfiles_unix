@@ -382,7 +382,7 @@ Usage:
 Arguments:
 
 	--server
-	    The server URL.
+	    The URL of the filedrop in server - <ServerURL>/filedrop/<FiledropName>.
 
 	-k
 	    If specified, do not validate server certificate.
