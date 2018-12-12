@@ -736,7 +736,7 @@ std::string engine::messages_impl(std::string server, const std::string& key, st
         std::string f, report_level s, validate_cert v)
 {
     init_curl(key, s, v);
-    server += "/message";
+    server += "/messages/inbox";
     if (!l.empty()) {
         server += "?sent_in_the_last=";
         server += l;
