@@ -11,7 +11,7 @@ namespace ui {
 
 send_command::send_command(lf::engine& e)
     : cmd::command{"send", "Sends the file(s) to specified user."}
-    , m_engine{e}
+    , m_engine(e)
     , m_to_argument{"to", "<username>", "User name or email, to send file."}
     , m_file_type_argument{"file_type", "<type>", "Type of unnamed arguments.", file_type::names}
     , m_message_argument{"message", "<string>", "Message text of composed email.", ""}

@@ -10,7 +10,7 @@ namespace ui {
 
 download_command::download_command(lf::engine& e)
     : cmd::command{"download", "Download given files."}
-    , m_engine{e}
+    , m_engine(e)
     , m_path_argument{"download_to", "<path>", "Directory path to download files there.", ""}
     , m_message_id_argument{"message_id", "<id>", "Message id to download attachments of it."}
     , m_sent_in_last_argument{"sent_in_the_last", "<HOURS>", "Download files sent in the last specified hours."}

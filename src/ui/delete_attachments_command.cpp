@@ -10,7 +10,7 @@ namespace ui {
 
 delete_attachments_command::delete_attachments_command(lf::engine& e)
     : cmd::command{"delete_attachments", "Deletes the given attachments."}
-    , m_engine{e}
+    , m_engine(e)
     , m_message_id_argument{"message_id", "<id>", "Message id to delete attachments of it."}
     , m_attachment_ids_argument{"<id> ...", "Id(s) of attachments to delete."}
 {

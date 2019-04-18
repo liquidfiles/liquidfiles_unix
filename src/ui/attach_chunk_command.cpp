@@ -10,7 +10,7 @@ namespace ui {
 
 attach_chunk_command::attach_chunk_command(lf::engine& e)
     : cmd::command{"attach_chunk", "Uploads given chunk of file to server."}
-    , m_engine{e}
+    , m_engine(e)
     , m_chunk_argument{"chunk", "<int>", "ID of current chunk."}
     , m_chunks_argument{"chunks", "<int>", "Whole count of chunks."}
     , m_filename_argument{"filename", "<string>", "Name of target file."}

@@ -8,7 +8,7 @@ namespace ui {
 
 help_command::help_command(cmd::command_processor& p)
     : cmd::command{"help", "Prints help for tool or for specific command."}
-    , m_command_processor{p}
+    , m_command_processor(p)
     , m_commands_argument{"<command_name>", "Specifies the name of command for which help\n"
         "\t                 will be printed. If not specified, help for tool\n"
         "\t                 will be printed."}

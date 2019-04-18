@@ -10,7 +10,7 @@ namespace ui {
 
 messages_command::messages_command(lf::engine& e)
     : cmd::command{"messages", "Lists the available messages."}
-    , m_engine{e}
+    , m_engine(e)
     , m_message_id_argument{"message_id", "<id>", "Message id to show."}
     , m_sent_in_last_argument{"sent_in_the_last", "<HOURS>", "Show messages sent in the last specified hours."}
     , m_sent_after_argument{"sent_after", "YYYYMMDD", "Show messages sent after specified date."}

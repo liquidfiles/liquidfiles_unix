@@ -10,7 +10,7 @@ namespace ui {
 
 get_api_key_command::get_api_key_command(lf::engine& e)
     : cmd::command{"get_api_key", "Retrieves api key for the specified user."}
-    , m_engine{e}
+    , m_engine(e)
     , m_validate_cert_argument{"k", "If specified, do not validate server certificate."}
     , m_server_argument{"server", "<url>", "The server URL."}
     , m_username_argument{"username", "<email>", "Username."}

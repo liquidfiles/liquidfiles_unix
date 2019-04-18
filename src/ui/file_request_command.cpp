@@ -11,7 +11,7 @@ namespace ui {
 
 file_request_command::file_request_command(lf::engine& e)
     : cmd::command{"file_request", "Sends the file request to specified user."}
-    , m_engine{e}
+    , m_engine(e)
     , m_to_argument{"to", "<username>", "User name or email, to send file request."}
     , m_message_argument{"message", "<string>", "Message text of composed email.", ""}
     , m_message_file_argument{"message_file", "<string>", "Message text of composed email.", ""}

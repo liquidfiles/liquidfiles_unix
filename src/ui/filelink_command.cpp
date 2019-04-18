@@ -10,7 +10,7 @@ namespace ui {
 
 filelink_command::filelink_command(lf::engine& e)
     : cmd::command{"filelink", "Uploads given file and creates filelink on it."}
-    , m_engine{e}
+    , m_engine(e)
     , m_expire_argument{"expires", "<YYYY-MM-DD>", "Expire date for the filelink."}
     , m_file_argument{"<file>", "File path or attachment id to create filelink."}
 {

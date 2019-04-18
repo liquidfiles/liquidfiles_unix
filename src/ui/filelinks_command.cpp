@@ -10,7 +10,7 @@ namespace ui {
 
 filelinks_command::filelinks_command(lf::engine& e)
     : cmd::command{"filelinks", "Lists the available filelinks."}
-    , m_engine{e}
+    , m_engine(e)
     , m_limit_argument{"limit", "<number>", "Limit of filelinks list."}
 {
     arguments.push_back(credentials::get_arguments());
