@@ -7,7 +7,7 @@
 
 #include <base/lf_string.h>
 #include <io/messenger.h>
-#include <io/json.h>
+#include <io/json.hpp>
 
 #include <algorithm>
 #include <cstdio>

@@ -4,7 +4,7 @@
 #include <stdexcept> // runtime_error
 #include <string> // to_string
 
-#include <nlohmann/detail/input/position_t.hpp>
+#include "input/position_t.hpp"
 
 namespace nlohmann
 {

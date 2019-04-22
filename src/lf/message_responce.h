@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include <io/json.h>
+#include <io/json.hpp>
 
 namespace lf {
 

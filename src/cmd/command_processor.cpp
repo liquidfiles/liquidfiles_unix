@@ -9,7 +9,7 @@
 namespace cmd {
 
 command_processor::command_processor(io::messenger& m)
-    : m_messenger{m}
+    : m_messenger(m)
 {
 }
 
