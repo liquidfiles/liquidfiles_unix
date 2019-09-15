@@ -1,11 +1,11 @@
 # LiquidFiles Unix Command Line Utility
 ## Introduction
-liquidfiles_unix is UNIX command line utility, to work with Liquidfiles server, for sending files, listing messages, downloading files, etc.
+liquidfiles_unix is UNIX command line utility, to work with [LiquidFiles](https://www.liquidfiles.com/) server, for sending files, listing messages, downloading files, etc.
 
 LiquidFiles Unix command line utility extends the functionality of your LiquidFiles server to command line use and scripting from supported 
 Unix and Linux servers.
 
-Liquidfiles Unix is fully based on [Liquidfiles public API](https://man.liquidfiles.com/api/) and uses [libcurl](http://curl.haxx.se/) to send and receive data from Liquidfiles server.
+Liquidfiles Unix is fully based on [LiquidFiles public API](https://man.liquidfiles.com/api/) and uses [libcurl](http://curl.haxx.se/) to send and receive data from LiquidFiles server.
 
 This document consists of the following sections:
 
@@ -26,7 +26,7 @@ These instructions use the following keys for substituting user defined values:
 * `$PATH_X`  (user_defined_path).
 
 ### Installing shared
-Shared build will need to be performed on each system you wish to run Liquidfiles command line utility from. The following instructions assume 
+Shared build will need to be performed on each system you wish to run LiquidFiles command line utility from. The following instructions assume 
 you will use default installation paths.
 
 #### Installing dependencies
