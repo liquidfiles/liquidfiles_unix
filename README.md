@@ -1,618 +1,319 @@
 # LiquidFiles Unix Command Line Utility
+
 ## Introduction
-liquidfiles_unix is UNIX command line utility, to work with [LiquidFiles](https://www.liquidfiles.com/) server, for sending files, listing messages, downloading files, etc.
 
-LiquidFiles Unix command line utility extends the functionality of your LiquidFiles server to command line use and scripting from supported 
-Unix and Linux servers.
+A Unix/Linux command line utility for working with [LiquidFiles](https://www.liquidfiles.com/)
+servers. Supports sending files, listing messages, downloading files, managing filelinks, file
+requests, and filedrops.
 
-Liquidfiles Unix is fully based on [LiquidFiles public API](https://man.liquidfiles.com/api/) and uses [libcurl](http://curl.haxx.se/) to send and receive data from LiquidFiles server.
+This utility extends the functionality of your LiquidFiles server to command line use and scripting
+from supported Unix and Linux systems.
 
-This document consists of the following sections:
+It is based on the [LiquidFiles API v4.2](https://docs.liquidfiles.com/api/v4.2/) and uses
+[libcurl](https://curl.se/) for HTTP communication and
+[nlohmann/json](https://github.com/nlohmann/json) for JSON serialization.
 
-1. Installation - describes the typical installation steps including dependent libraries.
-2. Usage of tool - contains full description of commands, their arguments as well as usage examples.
+## Requirements
+
+- C++11 compiler (GCC, Clang, etc.)
+- libcurl (with SSL support)
+- CMake 2.8+ or autotools
+
+## Quick Start
+
+### Build with CMake
+
+```
+mkdir build && cd build
+cmake ../
+make
+make install
+```
+
+### Build with autotools
+
+```
+./configure
+make
+make install
+```
+
+## Testing
+
+An integration test script is included that exercises all commands against a running LiquidFiles
+instance:
+
+```
+LF_USER=user@example.com LF_PASSWORD=secret \
+  LF_SERVER=https://liquidfiles.example.com \
+  LF_RECIPIENT=recipient@example.com \
+  ./test.sh
+```
+
+Optional environment variables:
+
+- `LF_FILEDROP` -- Full filedrop URL (e.g. `https://host/filedrop/name`)
+- `LF_SKIP_CERT` -- Set to `no` to validate certificates (default: `-k`)
+- `LF_BINARY` -- Path to the liquidfiles binary (default: `./liquidfiles`)
 
 ## Installation
-LiquidFiles can be installed statically or to use shared libraries where all system dependencies are met. LiquidFiles relies heavily on OpenSSL 
-and Curl dependencies, so you will need to ensure all system dependencies are installed. It is recommended to use the latest supported versions 
-of both OpenSSL and Curl.
 
-Both installation options work in the same way and provide the same supported functionality, while the static executable can be copied to another 
-identical machine and executed there, offering portability for larger or more controlled environments. Shared installations operate on the 
-installed system only.
+LiquidFiles can be built with shared or static libraries. Both options provide the same
+functionality. Static builds produce a single executable that can be copied to other identical
+systems without installing dependencies.
 
-These instructions use the following keys for substituting user defined values:
-* `<xxx-VERSION>`  (downloaded_version_filename)
-* `$PATH_X`  (user_defined_path).
+These instructions use the following placeholders:
 
-### Installing shared
-Shared build will need to be performed on each system you wish to run LiquidFiles command line utility from. The following instructions assume 
-you will use default installation paths.
+- `<xxx-VERSION>` -- downloaded version filename
+- `$PATH_X` -- user-defined installation path
+
+### Shared build
 
 #### Installing dependencies
-If you already have OpenSSL or Curl libraries installed, you may skip some of the below steps.  If your system has OpenSSL or Curl installed in 
-the default paths, you will not require the prefix option that allows user specified path for installation.
 
-Install OpenSSL first:
+If you already have OpenSSL and curl installed in default system paths, you can skip ahead to
+building the CLI.
 
-1. Download latest OpenSSL version from official site.
-2. Extract archive (`tar -xz <openssl-VERSION>.tar.gz`)
-3. Go to directory (`cd <openssl-VERSION>`)
+Install OpenSSL:
+
+1. Download the latest OpenSSL from the official site
+2. `tar -xz <openssl-VERSION>.tar.gz`
+3. `cd <openssl-VERSION>`
 4. `./config shared`
 5. `make`
 6. `make install`
 
-After installing OpenSSL, you need to install Curl:
+Install curl:
 
-1. Download latest curl version from official site.
-2. Extract archive (`tar -xz <curl-VERSION>.tar.gz`)
-3. Go to directory (`cd <curl-VERSION>`)
+1. Download the latest curl from the official site
+2. `tar -xz <curl-VERSION>.tar.gz`
+3. `cd <curl-VERSION>`
 4. `./configure`
 5. `make`
 6. `make install`
 
-> If your OpenSSL is installed in a non-system path, then you need to specify --with-ssl=$PATH_SSL option. Refer to OpenSSL installation instructions and options for further information.
+> If OpenSSL is installed in a non-system path, specify `--with-ssl=$PATH_SSL` when configuring
+> curl.
 
-#### Installing liquidfiles command line utility
-1. Download LiquidFiles [Source Code] (https://github.com/liquidfiles/liquidfiles_unix) and unpack the files, then enter the directory
+#### Building the CLI
+
+1. Download the [source code](https://github.com/liquidfiles/liquidfiles_unix)
 2. `./configure`
 3. `make`
 4. `make install`
 
-> If your OpenSSL and Curl is installed in non-system path, then you need to specify using the install options `--with-curl=$PATH_CURL` and/or `--with-ssl=$PATH_SSL`
+> If OpenSSL and curl are in non-system paths, use `--with-curl=$PATH_CURL` and/or
+> `--with-ssl=$PATH_SSL`.
 
-### Installing static
-The benefit of building statically is that you do not necessarily have to install OpenSSL and Curl into default system 
-path for use by other applications or when you have a different version installed on your build system.  The static 
-installation creates a single, executable file that can be used on any other identical environment to the build system 
-without the need to install the system dependencies at all.
+### Static build
 
-Static build is similar to shared in that the compiling of OpenSSL and Curl that are heavily depended on, so you need 
-to have dependent libraries to be installed statically and using the --enable-static configure option to build 
-LiquidFiles statically.
-
-This method also requires in some instances that a shared installation of OpenSSL is also present on the build system. 
-It is highly recommended to use an external path (e.g. /home/Static) for BOTH OpenSSL and Curl static installations. 
-Then specify this single path for building the LiquidFiles package into a directory of your preference. The instructions 
-assume this is the case to provide a reliable installation option.
+Static builds bundle all dependencies into a single executable. You need to build OpenSSL and curl
+as static libraries first. It is recommended to use a dedicated prefix path (e.g. `/home/Static`)
+for both.
 
 #### Installing dependencies
-To install OpenSSL
 
-1. Download latest OpenSSL version from official site.
-2. Extract archive (`tar -xz <openssl-VERSION>.tar.gz`)
-3. Go to directory (`cd <openssl-VERSION>`)
-4. Configure shared libs (`./config shared --prefix=$PATH_X`)
+Install OpenSSL (both shared and static):
+
+1. Download the latest OpenSSL from the official site
+2. `tar -xz <openssl-VERSION>.tar.gz`
+3. `cd <openssl-VERSION>`
+4. `./config shared --prefix=$PATH_X`
+5. `make && make install && make clean`
+6. `./config no-shared --prefix=$PATH_X`
+7. `make && make install`
+
+> Some curl static builds require both shared and static OpenSSL libraries. If in doubt, build
+> both.
+
+Install curl (static):
+
+1. Download the latest curl from the official site
+2. `tar -xz <curl-VERSION>.tar.gz`
+3. `cd <curl-VERSION>`
+4. `./configure --with-static --prefix=$PATH_X --with-ssl=$PATH_X --disable-shared`
 5. `make`
 6. `make install`
-7. `make clean`
-8. Configure static libs (`./config no-shared --prefix=$PATH_X`)
-9. `make`
-10. `make install`
 
-> For some cases, Curl static build is also not passed with only static OpenSSL.  In these cases you need to build OpenSSL both statically and shared, in some instances you may be able to skip step 7-10 above, if in doubt do both.**
+#### Building the CLI
 
-After having OpenSSL, you need to install curl
+```
+./configure --with-curl=$EXT_PATH --prefix=$LF_EXT_PATH --enable-static
+make
+make install
+```
 
-1. Download latest curl version from official site.
-2. Extract archive (`tar -xz <curl-VERSION>.tar.gz`)
-3. Go to directory (`cd <curl-VERSION>`)
-4. Configure static files (`./configure --with-static --prefix=$PATH_X --with-ssl=$PATH_X --disable-shared`)
-5. `make`
-6. `make install`
+> If curl is in default system paths, you can omit `--with-curl`.
 
-> Using these instructions, you will need the external path however if your OpenSSL is on system default paths, then you may not need to specify --with-ssl option, or if you have specified custom path you need to substitute.
+#### Alternative: CMake build
 
-#### Installing liquidfiles
-1. Download LiquidFiles Unix CLI Source
-2. Configure static LiquidFiles (e.g. `./configure --with-curl=$EXT_PATH --prefix=$LF_EXT_PATH --enable-static`)
-3. `make`
-4. `make install`
-
-> Using these instructions, you will need the external path however if your Curl is on system default paths, then 
-you don't need to specify --with-curl option.
-
-#### Alternative build with CMake
-1. Download LiquidFiles Unix CLI Source
-2. `mkdir build && cd build`
-3. `cmake ../`
-4. `make`
-4. `make install`
+```
+mkdir build && cd build
+cmake ../
+make
+make install
+```
 
 ## Usage
-Liquidfiles is command line utility. It invokes one command per session and exits. General usage is the following:
+
+The CLI invokes one command per session:
 
     liquidfiles <command> <command_args>
 
-The list of supported commands is:
-* __attach__  Uploads given files to server.
-* __attach_chunk__ Uploads given chunk of file to server.
-* __delete_attachments__ Deletes the given attachments.
-* __delete_filelink__ Deletes the given filelink.
-* __download__ Download given files.
-* __file_request__ Sends the file request to specified user.
-* __filedrop__ Sends the file(s) by filedrop.
-* __filelink__ Uploads given file and creates filelink on it.
-* __filelinks__ Lists the available filelinks.
-* __get_api_key__ Retrieves api key for the specified user.
-* __messages__ Lists the available messages.
-* __send__ Sends the file(s) to specified user.
+Use `liquidfiles help <command>` for detailed help on any command.
 
-To get command's detailed description, options and usage 'help' command can be used:
+### Supported commands
 
-    liquidfiles help <command>
+| Command | Description |
+|---------|-------------|
+| `attach` | Upload file(s) to server |
+| `attach_chunk` | Upload a file chunk to server |
+| `delete_attachments` | Delete attachments |
+| `delete_filelink` | Delete a filelink |
+| `download` | Download files |
+| `file_request` | Send a file request |
+| `filedrop` | Send file(s) via filedrop |
+| `filelink` | Upload file and create filelink |
+| `filelinks` | List available filelinks |
+| `get_api_key` | Retrieve API key for a user |
+| `messages` | List available messages |
+| `send` | Send file(s) to a user |
 
-Below subsections contain detailed descriptions of commands
+### Common options
+
+Most commands accept these options:
+
+    --server=<url>        Server URL
+    --api_key=<key>       API key for authentication
+    -k                    Skip certificate validation
+    -s                    Save credentials to cache
+    --report_level=<lvl>  Output level: silent, normal, verbose
 
 ### attach
-Description:
 
-    Uploads the given file(s) to the liquidfiles server and returns the id(s) of uploaded file(s).
+Upload file(s) and return their attachment IDs.
 
-Usage:
-
-	liquidfiles attach [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] <file> ...
-
-Arguments:
-
-	--server
-	    The server URL. If not specified, tries to retrieve from saved credentials.
-
-	--api_key
-	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
-
-	-k
-	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
-
-	-s
-	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
-
-	--report_level
-	    Level of reporting.
-	    Valid values: silent, normal, verbose.
-	    Default value: "normal".
-
-	<file> ...
-	    File path(s) to upload.
+    liquidfiles attach [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>]
+        <file> ...
 
 ### attach_chunk
-Description:
 
-	Uploads given chunk of file to server.
+Upload a single chunk of a file. Use this for large file uploads split into multiple parts.
 
-Usage:
+    liquidfiles attach_chunk [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>]
+        --chunk=<int> --chunks=<int> --filename=<string> <file>
 
-	liquidfiles attach_chunk [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] --chunk=<int> --chunks=<int> --filename=<string> <file>
+Options:
 
-Arguments:
-
-	--server
-	    The server URL. If not specified, tries to retrieve from saved credentials.
-
-	--api_key
-	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
-
-	-k
-	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
-
-	-s
-	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
-
-	--report_level
-	    Level of reporting.
-	    Valid values: silent, normal, verbose.
-	    Default value: "normal".
-
-	--chunk
-	    ID of current chunk.
-
-	--chunks
-	    Whole count of chunks.
-
-	--filename
-	    Name of target file.
-
-	<file>
-	    File chunk path to upload.
-
-### delete_attachments
-Description:
-
-	Deletes the given attachments.
-
-Usage:
-
-	liquidfiles delete_attachments [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] [--message_id=<id>] [<id> ...]
-
-Arguments:
-
-	--server
-	    The server URL. If not specified, tries to retrieve from saved credentials.
-
-	--api_key
-	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
-
-	-k
-	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
-
-	-s
-	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
-
-	--report_level
-	    Level of reporting.
-	    Valid values: silent, normal, verbose.
-	    Default value: "normal".
-
-	--message_id
-	    Message id to delete attachments of it.
-
-	<id> ...
-	    Id(s) of attachments to delete.
-
-### delete_filelink
-Description:
-
-	Deletes the given filelink.
-
-Usage:
-
-	liquidfiles delete_filelink [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] --filelink_id=<id>
-
-Arguments:
-
-	--server
-	    The server URL. If not specified, tries to retrieve from saved credentials.
-
-	--api_key
-	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
-
-	-k
-	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
-
-	-s
-	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
-
-	--report_level
-	    Level of reporting.
-	    Valid values: silent, normal, verbose.
-	    Default value: "normal".
-
-	--filelink_id
-	    ID of filelink to delete.
-
-### download
-Description:
-
-	Downloads given files.
-    This command gives 2 ways to download files from liquidfiles.
-    First way to by specifying direct url to file(s) by unnamed arguments. In this case command downloads the specified files from the url.
-    Second way is by specifying message(s) by '--message_id' argument or by '--sent_in_the_last' or '--sent_after'. In this case command retrieves the message(s) and downloads all the files attached to it.
-
-Usage:
-
-	liquidfiles download [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] [--download_to=<path>] [--message_id=<id>] [--sent_in_the_last=<HOURS>] [--sent_after=YYYYMMDD] [<url> ...]
-
-Arguments:
-
-	--server
-	    The server URL. If not specified, tries to retrieve from saved credentials.
-
-	--api_key
-	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
-
-	-k
-	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
-
-	-s
-	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
-
-	--report_level
-	    Level of reporting.
-	    Valid values: silent, normal, verbose.
-	    Default value: "normal".
-
-	--download_to
-	    Directory path to download files there.
-	    Default value: "".
-
-	--message_id
-	    Message id to download attachments of it.
-
-	--sent_in_the_last
-	    Download files sent in the last specified hours.
-
-	--sent_after
-	    Download files sent after specified date.
-
-	<url> ...
-	    Url(s) of files to download.
-
-### file_request
-Description:
-
-	Sends the file request to specified user.
-
-Usage:
-
-	liquidfiles file_request [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] --to=<username> [--subject=<string>] [--message=<string>]
-
-Arguments:
-
-	--server
-	    The server URL. If not specified, tries to retrieve from saved credentials.
-
-	--api_key
-	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
-
-	-k
-	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
-
-	-s
-	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
-
-	--report_level
-	    Level of reporting.
-	    Valid values: silent, normal, verbose.
-	    Default value: "normal".
-
-	--to
-	    User name or email, to send file request.
-
-	--subject
-	    Subject of composed email.
-	    Default value: "".
-
-	--message
-	    Message text of composed email.
-	    Default value: "".
-
-	--message_file
-	    The file in which contained message text of composed email.
-	    Only one of --meassage and --message_file arguments must be given.
-
-### filedrop
-Description:
-
-	Sends the file(s) by filedrop.
-
-Usage:
-
-	liquidfiles filedrop --server=<url> [-k] [--report_level=<level>] --from=<username> [--subject=<string>] [--message=<string>] [-r] <file> ...
-
-Arguments:
-
-	--server
-	    The URL of the filedrop in server - <ServerURL>/filedrop/<FiledropName>.
-
-	-k
-	    If specified, do not validate server certificate.
-
-	--report_level
-	    Level of reporting.
-	    Valid values: silent, normal, verbose.
-	    Default value: "normal".
-
-	--from
-	    User who sends the files
-
-	--subject
-	    Subject of composed email.
-	    Default value: "".
-
-	--message
-	    Message text of composed email.
-	    Default value: "".
-
-	-r
-	    If specified, it means that unnamed arguments are attachment IDs, otherwise they are file paths.
-
-	<file> ...
-	    File path(s) or attachments IDs to send to user.
-
-### filelink
-Description:
-
-	Creates filelink.
-    This command creates filelink for the given files. It can upload given file and create link on it or get already uploaded file ID and create link on it.
-    If '-r' option is specified, it means that given unnamed argument is ID of already uploaded file, so command just creates link on it.
-    If '-r' is not specified, then given unnamed argument is file path, and command uploads that file and creates link on it.
-
-Usage:
-
-	liquidfiles filelink [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] [--expires=<YYYY-MM-DD>] [-r] <file>
-
-Arguments:
-
-	--server
-	    The server URL. If not specified, tries to retrieve from saved credentials.
-
-	--api_key
-	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
-
-	-k
-	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
-
-	-s
-	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
-
-	--report_level
-	    Level of reporting.
-	    Valid values: silent, normal, verbose.
-	    Default value: "normal".
-
-	--expires
-	    Expire date for the filelink.
-
-	-r
-	    If specified, it means that unnamed argument is attachment ID, otherwise it is file path.
-
-	<file>
-	    File path or attachment id to create filelink.
-
-### filelinks
-Description:
-
-	Lists the available filelinks.
-    The output of this command is list of filelinks. The format of output depends on '--output_format' argument.
-    If '--output_format' is table, then table is printed. Each row of table represents one filelink.
-    If '--output_format' is csv, then output is csv format. All the filelinks are separated by comma.
-
-Usage:
-
-	liquidfiles filelinks [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] [--output_format=<format>] [--limit=<number>]
-
-Arguments:
-
-	--server
-	    The server URL. If not specified, tries to retrieve from saved credentials.
-
-	--api_key
-	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
-
-	-k
-	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
-
-	-s
-	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
-
-	--report_level
-	    Level of reporting.
-	    Valid values: silent, normal, verbose.
-	    Default value: "normal".
-
-	--output_format
-	    Specifies output string format.
-	    Valid values: table, csv.
-	    Default value: "table".
-
-	--limit
-	    Limit of filelinks list.
-
-### get_api_key
-Description:
-
-	Retrieves api key for the specified user.
-
-Usage:
-
-	liquidfiles get_api_key [-k] --server=<url> --username=<email> --password=<password> [-s] [--report_level=<level>]
-
-Arguments:
-
-	-k
-	    If specified, do not validate server certificate.
-
-	--server
-	    The server URL.
-
-	--username
-	    Username.
-
-	--password
-	    Password.
-
-	-s
-	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and retrieved key.
-
-	--report_level
-	    Level of reporting.
-	    Valid values: silent, normal, verbose.
-	    Default value: "normal".
-
-### messages
-Description:
-	Lists the available messages.
-    The output of this command is list of messages. The format of output depends on '--output_format' argument.
-    If '--output_format' is table, then table is printed. Each row of table represents one message.
-    If '--output_format' is csv, then output is csv format. All the messages are separated by comma.
-
-Usage:
-	liquidfiles messages [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] [--output_format=<format>] [--message_id=<id>] [--sent_in_the_last=<HOURS>] [--sent_after=YYYYMMDD]
-
-Arguments:
-	--server
-	    The server URL. If not specified, tries to retrieve from saved credentials.
-
-	--api_key
-	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
-
-	-k
-	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
-
-	-s
-	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
-
-	--report_level
-	    Level of reporting.
-	    Valid values: silent, normal, verbose.
-	    Default value: "normal".
-
-	--output_format
-	    Specifies output string format.
-	    Valid values: table, csv.
-	    Default value: "table".
-
-	--message_id
-	    Message id to show.
-
-	--sent_in_the_last
-	    Show messages sent in the last specified hours.
-
-	--sent_after
-	    Show messages sent after specified date.
+    --chunk       Current chunk number (0-indexed)
+    --chunks      Total number of chunks
+    --filename    Target filename on server
 
 ### send
-Description:
 
-	Sends the file(s) to specified user.
-	This command can upload given files or files in given directories and send them by message or get already uploaded file IDs and send them.
+Send file(s) to a specified user.
 
-Usage:
+    liquidfiles send [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>]
+        --to=<email> [--subject=<string>] [--message=<string>] [--message_file=<path>]
+        [--file_type=<type>] <file> ...
 
-	liquidfiles send [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>] --to=<username> [--subject=<string>] [--message=<string>] [--message_file=<string>] [--file_type=<file_type>] <file> ...
+Options:
 
-Arguments:
+    --to              Recipient email address
+    --subject         Email subject
+    --message         Message body text
+    --message_file    Read message body from file
+    --file_type       Type of unnamed arguments:
+                        file_names (default) - file paths to upload
+                        directory - directories to upload
+                        attachment - pre-uploaded attachment IDs
 
-	--server
-	    The server URL. If not specified, tries to retrieve from saved credentials.
+### messages
 
-	--api_key
-	    API key of liquidfiles, to login to system. If not specified, tries to retrieve from saved credentials.
+List messages or view a single message.
 
-	-k
-	    If specified, do not validate server certificate. If not specified, tries to retrieve from saved credentials.
+    liquidfiles messages [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>]
+        [--output_format=<format>] [--message_id=<id>] [--sent_in_the_last=<HOURS>]
+        [--sent_after=YYYYMMDD]
 
-	-s
-	    If specified, saves current credentials in cache. Credentials to save are - '-k', '--server' and '--api_key'.
+Options:
 
-	--report_level
-	    Level of reporting.
-	    Valid values: silent, normal, verbose.
-	    Default value: "normal".
+    --output_format      Output format: table (default), csv
+    --message_id         Show a specific message
+    --sent_in_the_last   Filter by hours (e.g. 24)
+    --sent_after         Filter by date (YYYYMMDD)
 
-	--to
-	    User name or email, to send file.
+### download
 
-	--subject
-	    Subject of composed email.
-	    Default value: "".
+Download files by URL, message ID, or date filter.
 
-	--message
-	    Message text of composed email.
-	    Default value: "".
+    liquidfiles download [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>]
+        [--download_to=<path>] [--message_id=<id>] [--sent_in_the_last=<HOURS>]
+        [--sent_after=YYYYMMDD] [<url> ...]
 
-	--message_file
-	    The file in which contained message text of composed email.
+Options:
 
-	--file_type
-	    It specifies the type of file must be send to user.
-	    Valid values: file_names, directory, attachments.
-	    Default value: "file_names".
-        values:
-	        file_names : given unnamed arguments are file paths, and command uploads that files and sends them.
-	        directory :  given unnamed arguments are directory paths, and command uploads files in that directory and sends them.
-	        attachements :   given unnamed arguments are IDs of already uploaded files, so command just sends them.
+    --download_to        Target directory for downloads
+    --message_id         Download attachments from this message
+    --sent_in_the_last   Download from messages in last N hours
+    --sent_after         Download from messages after date
 
-	<file> ...
-	    File path(s),  attachments IDs or directories to send to user.
+### file_request
 
+Send a file request to a user.
+
+    liquidfiles file_request [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>]
+        --to=<email> [--subject=<string>] [--message=<string>]
+
+### filedrop
+
+Send file(s) via a filedrop.
+
+    liquidfiles filedrop --server=<filedrop_url> [-k] [--report_level=<level>]
+        --from=<email> [--subject=<string>] [--message=<string>] [-r] <file> ...
+
+Options:
+
+    --server    The filedrop URL: <ServerURL>/filedrop/<Name>
+    --from      Sender email address
+    -r          Treat unnamed args as attachment IDs instead of files
+
+### filelink
+
+Upload a file and create a filelink, or create a filelink from an existing attachment ID.
+
+    liquidfiles filelink [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>]
+        [--expires=<YYYY-MM-DD>] [-r] <file>
+
+Options:
+
+    --expires   Expiration date for the filelink
+    -r          Treat unnamed arg as attachment ID instead of file path
+
+### filelinks
+
+List available filelinks.
+
+    liquidfiles filelinks [--server=<url>] [--api_key=<key>] [-k] [-s] [--report_level=<level>]
+        [--output_format=<format>] [--limit=<number>]
+
+### delete_filelink
+
+Delete a filelink.
+
+    liquidfiles delete_filelink [--server=<url>] [--api_key=<key>] [-k] [-s]
+        [--report_level=<level>] --filelink_id=<id>
+
+### delete_attachments
+
+Delete attachments by ID or delete all attachments from a message.
+
+    liquidfiles delete_attachments [--server=<url>] [--api_key=<key>] [-k] [-s]
+        [--report_level=<level>] [--message_id=<id>] [<id> ...]
+
+### get_api_key
+
+Retrieve the API key for a user account.
+
+    liquidfiles get_api_key --server=<url> [-k] --username=<email> --password=<password>
+        [-s] [--report_level=<level>]
