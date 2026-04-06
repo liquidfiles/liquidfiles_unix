@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT(liquidfiles_unix, 0.1)
+AC_INIT(liquidfiles_unix, 2.0.0)
 AM_INIT_AUTOMAKE
 AC_OUTPUT(Makefile src/Makefile src/base/Makefile src/io/Makefile src/lf/Makefile src/cmd/Makefile src/ui/Makefile)
 
