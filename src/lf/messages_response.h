@@ -10,22 +10,22 @@
 namespace lf {
 
 /**
- * @class messages_responce
- * @brief Class for handling messages responce from server and printing
+ * @class messages_response
+ * @brief Class for handling messages response from server and printing
  *        it for user.
  */
-class messages_responce final
+class messages_response final
 {
 public:
     /**
-     * @brief Generates messages_responce from json object.
-     * @param s Xml node.
+     * @brief Generates messages_response from json object.
+     * @param s Json object.
      */
     void read(const nlohmann::json& s);
 
 public:
     /**
-     * @brief Gets the string representation of responce.
+     * @brief Gets the string representation of response.
      * @param f Output format.
      */
     std::string to_string(output_format f) const;

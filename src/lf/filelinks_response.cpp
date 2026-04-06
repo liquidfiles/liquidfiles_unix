@@ -1,11 +1,11 @@
-#include "filelinks_responce.h"
+#include "filelinks_response.h"
 
 #include <io/csv_stream.h>
 #include <io/table_printer.h>
 
 namespace lf {
 
-void filelinks_responce::read(const nlohmann::json& j)
+void filelinks_response::read(const nlohmann::json& j)
 {
     auto ls = j["links"].get<std::vector<nlohmann::json>>();
     for (const auto& l : ls) {
@@ -19,7 +19,7 @@ void filelinks_responce::read(const nlohmann::json& j)
     }
 }
 
-std::string filelinks_responce::to_string(output_format f) const
+std::string filelinks_response::to_string(output_format f) const
 {
     if (m_links.empty()) {
         return std::string();
@@ -37,7 +37,7 @@ std::string filelinks_responce::to_string(output_format f) const
     return m.str();
 }
 
-void filelinks_responce::write_csv(std::stringstream& m) const
+void filelinks_response::write_csv(std::stringstream& m) const
 {
     io::csv_ostream cp(&m);
     for (const auto& l : m_links) {
@@ -45,7 +45,7 @@ void filelinks_responce::write_csv(std::stringstream& m) const
     }
 }
 
-void filelinks_responce::write_table(std::stringstream& m) const
+void filelinks_response::write_table(std::stringstream& m) const
 {
     io::table_printer tp(&m);
     tp.add_column("ID", 24);

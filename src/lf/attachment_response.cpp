@@ -1,4 +1,4 @@
-#include "attachment_responce.h"
+#include "attachment_response.h"
 
 #include <io/csv_stream.h>
 
@@ -7,7 +7,7 @@
 
 namespace lf {
 
-void attachment_responce::read(const nlohmann::json& j)
+void attachment_response::read(const nlohmann::json& j)
 {
     filename_ = j["filename"].get<std::string>();
     checksum_ = j["checksum"].get<std::string>();
@@ -16,7 +16,7 @@ void attachment_responce::read(const nlohmann::json& j)
     size_ = j["size"].get<int>();
 }
 
-std::string attachment_responce::to_string(output_format f) const
+std::string attachment_response::to_string(output_format f) const
 {
     std::stringstream m;
     switch (f) {

@@ -54,10 +54,10 @@ public:
     }
 };
 
-class dublicate_argument final : public base::exception
+class duplicate_argument final : public base::exception
 {
 public:
-    dublicate_argument(const std::string& a)
+    duplicate_argument(const std::string& a)
         : base::exception{std::string("Only one of '" + a + "' arguments must be persist."), 1}
     {
     }

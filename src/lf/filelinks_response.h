@@ -10,22 +10,22 @@
 namespace lf {
 
 /**
- * @class filelinks_responce
- * @brief Class for handling filelinks responce from server and printing
+ * @class filelinks_response
+ * @brief Class for handling filelinks response from server and printing
  *        it for user.
  */
-class filelinks_responce final
+class filelinks_response final
 {
 public:
     /**
-     * @brief Generates filelinks_responce from json object.
-     * @param s Xml node.
+     * @brief Generates filelinks_response from json object.
+     * @param j Json object.
      */
     void read(const nlohmann::json& j);
 
 public:
     /**
-     * @brief Gets the string representation of responce.
+     * @brief Gets the string representation of response.
      * @param f Output format.
      */
     std::string to_string(output_format f) const;

@@ -1,4 +1,4 @@
-#include "message_responce.h"
+#include "message_response.h"
 
 #include <io/csv_stream.h>
 #include <io/table_printer.h>
@@ -8,7 +8,7 @@
 
 namespace lf {
 
-void message_responce::read(const nlohmann::json& j)
+void message_response::read(const nlohmann::json& j)
 {
     m_id = j["message"]["id"].get<std::string>();
     m_sender = j["message"]["sender"].get<std::string>();
@@ -30,7 +30,7 @@ void message_responce::read(const nlohmann::json& j)
     }
 }
 
-std::string message_responce::to_string(output_format f) const
+std::string message_response::to_string(output_format f) const
 {
     std::stringstream m;
     switch (f) {
@@ -45,7 +45,7 @@ std::string message_responce::to_string(output_format f) const
     return m.str();
 }
 
-void message_responce::write_table(std::stringstream& m) const
+void message_response::write_table(std::stringstream& m) const
 {
     m << "ID: " << m_id << "\n";
     m << "From: " << m_sender << "\n";
@@ -88,7 +88,7 @@ void message_responce::write_table(std::stringstream& m) const
         tp.add_column("N", 4);
         tp.add_column("Attachment", 140);
         tp.print_header();
-        std::vector<attachment_responce>::const_iterator j = m_attachments.begin();
+        std::vector<attachment_response>::const_iterator j = m_attachments.begin();
         int x = 1;
         while (j != m_attachments.end()) {
             tp << x++;
@@ -104,7 +104,7 @@ void message_responce::write_table(std::stringstream& m) const
     }
 }
 
-void message_responce::write_csv(std::stringstream& m) const
+void message_response::write_csv(std::stringstream& m) const
 {
     io::csv_ostream cp(&m);
     cp << m_id << m_sender;
@@ -127,7 +127,7 @@ void message_responce::write_csv(std::stringstream& m) const
     cp << m_creation_time << m_expire_time << m_authorization_description
         << m_subject << m_message;
     cp << m_attachments.size();
-    std::vector<attachment_responce>::const_iterator j = m_attachments.begin();
+    std::vector<attachment_response>::const_iterator j = m_attachments.begin();
     while (j != m_attachments.end()) {
         m << ',' << (j++)->to_string(output_format::csv);
     }

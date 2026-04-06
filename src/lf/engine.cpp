@@ -1,9 +1,9 @@
 #include "engine.h"
-#include "attachment_responce.h"
+#include "attachment_response.h"
 #include "exceptions.h"
-#include "filelinks_responce.h"
-#include "messages_responce.h"
-#include "message_responce.h"
+#include "filelinks_response.h"
+#include "messages_response.h"
+#include "message_response.h"
 
 #include <base/lf_string.h>
 #include <io/messenger.h>
@@ -16,12 +16,11 @@
 #include <vector>
 
 #include <errno.h>
+#include <sys/stat.h>
 
 namespace lf {
 
 namespace {
-
-constexpr unsigned s_normal_id_size = 22;
 
 std::string s_data;
 
@@ -65,10 +64,12 @@ int progress_function(void* ptr, double td, double nd, double tu, double nu)
 class curl_header_guard
 {
 public:
-    curl_header_guard(CURL* c)
+    curl_header_guard(CURL* c, const std::string& content_type = "application/json")
         : m_slist{nullptr}
     {
-        m_slist = curl_slist_append(m_slist, "Content-Type: application/json");
+        std::string header = "Content-Type: " + content_type;
+        m_slist = curl_slist_append(m_slist, header.c_str());
+        m_slist = curl_slist_append(m_slist, "Accept: application/json");
         curl_easy_setopt(c, CURLOPT_HTTPHEADER, m_slist);
     }
 
@@ -79,23 +80,6 @@ public:
 
 private:
     curl_slist* m_slist;
-};
-
-class curl_form_guard
-{
-public:
-    curl_form_guard(curl_httppost* f)
-        : m_formpost{f}
-    {
-    }
-
-    ~curl_form_guard()
-    {
-        curl_formfree(m_formpost);
-    }
-
-private:
-    curl_httppost* m_formpost;
 };
 
 class progress_guard
@@ -153,6 +137,24 @@ private:
     progress_guard m_progress;
 };
 
+std::string get_basename(const std::string& path)
+{
+    std::string::size_type i = path.find_last_of('/');
+    if (i == std::string::npos) {
+        return path;
+    }
+    return path.substr(i + 1);
+}
+
+long get_file_size(const std::string& path)
+{
+    struct stat st;
+    if (stat(path.c_str(), &st) != 0) {
+        return -1;
+    }
+    return static_cast<long>(st.st_size);
+}
+
 }
 
 void engine::init_curl(std::string key, report_level s, validate_cert v)
@@ -166,6 +168,7 @@ void engine::init_curl(std::string key, report_level s, validate_cert v)
     }
     curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, &data_get);
     curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, 0);
+    curl_easy_setopt(m_curl, CURLOPT_FOLLOWLOCATION, 1L);
     if (!key.empty()) {
         key += ":x";
         curl_easy_setopt(m_curl, CURLOPT_USERPWD, key.c_str());
@@ -244,39 +247,31 @@ void engine::attach(std::string server,
         validate_cert v)
 {
     init_curl(key, s, v);
-    server += "/attachments";
-    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    curl_httppost* formpost = nullptr;
-    curl_httppost* lastptr = nullptr;
-    curl_formadd(&formpost,
-            &lastptr,
-            CURLFORM_COPYNAME, "Filedata",
-            CURLFORM_FILE, file.c_str(),
-            CURLFORM_END);
-    curl_formadd(&formpost,
-            &lastptr,
-            CURLFORM_COPYNAME, "name",
-            CURLFORM_COPYCONTENTS, filename.c_str(),
-            CURLFORM_END);
-    curl_formadd(&formpost,
-            &lastptr,
-            CURLFORM_COPYNAME, "chunk",
-            CURLFORM_COPYCONTENTS, base::to_string(chunk_id).c_str(),
-            CURLFORM_END);
-    curl_formadd(&formpost,
-            &lastptr,
-            CURLFORM_COPYNAME, "chunks",
-            CURLFORM_COPYCONTENTS, base::to_string(num_chunks).c_str(),
-            CURLFORM_END);
-    curl_form_guard fg(formpost);
+    std::string url = server + "/message/attachments/upload?filename=" +
+        filename + "&chunk=" + base::to_string(chunk_id) +
+        "&chunks=" + base::to_string(num_chunks);
+    curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
+
+    FILE* fp = fopen(file.c_str(), "rb");
+    if (fp == nullptr) {
+        throw file_error(file, strerror(errno));
+    }
+    long file_size = get_file_size(file);
+    curl_header_guard hg(m_curl, "application/octet-stream");
+    curl_easy_setopt(m_curl, CURLOPT_POST, 1L);
+    curl_easy_setopt(m_curl, CURLOPT_READDATA, fp);
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDSIZE, file_size);
+
     progress_guard pg(m_curl, s);
-    curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, formpost);
     if (s >= report_level::normal) {
         io::mout << "Uploading chunk '" << file << "'." << io::endl;
     }
     std::string r = perform();
+    fclose(fp);
+    curl_easy_setopt(m_curl, CURLOPT_READDATA, nullptr);
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDSIZE, -1L);
     pg.end();
-    process_attach_chunk_responce(r, s);
+    process_attach_chunk_response(r, s);
 }
 
 void engine::messages(std::string server,
@@ -288,7 +283,7 @@ void engine::messages(std::string server,
         validate_cert v)
 {
     std::string r = messages_impl(server, key, l, f, s, v);
-    process_output_responce<messages_responce>(r, s, of);
+    process_output_response<messages_response>(r, s, of);
 }
 
 void engine::message(std::string server,
@@ -298,9 +293,10 @@ void engine::message(std::string server,
         report_level s,
         validate_cert v)
 {
-    std::string r = message_impl(server, key, id, s, v, "Getting message from the server.");
+    std::string r = message_impl(server, key, id, s, v,
+        "Getting message from the server.");
     try {
-        process_output_responce<message_responce>(r, s, f);
+        process_output_response<message_response>(r, s, f);
     } catch (...) {
         throw invalid_message_id(id);
     }
@@ -308,7 +304,7 @@ void engine::message(std::string server,
 
 namespace {
 
-std::string get_filename(const std::string& url)
+std::string get_filename_from_url(const std::string& url)
 {
     std::string::size_type i = url.find_last_of('/');
     if (i == std::string::npos) {
@@ -329,7 +325,7 @@ void engine::download(const std::set<std::string>& urls,
     std::set<std::string>::const_iterator i = urls.begin();
     curl_header_guard hg(m_curl);
     while (i != urls.end()) {
-        std::string filename = get_filename(*i);
+        std::string filename = get_filename_from_url(*i);
         download_impl(*i, path, filename, s);
         ++i;
     }
@@ -342,14 +338,15 @@ void engine::download(std::string server,
         report_level s,
         validate_cert v)
 {
-    std::string r = message_impl(server, key, id, s, v, "Retrieving attachments of message.");
+    std::string r = message_impl(server, key, id, s, v,
+        "Retrieving attachments of message.");
     try {
         auto j = nlohmann::json::parse(r);
-        message_responce m;
+        message_response m;
         m.read(j);
         curl_header_guard hg(m_curl);
-        const std::vector<attachment_responce>& a = m.attachments();
-        std::vector<attachment_responce>::const_iterator i = a.begin();
+        const std::vector<attachment_response>& a = m.attachments();
+        std::vector<attachment_response>::const_iterator i = a.begin();
         while (i != a.end()) {
             download_impl(i->url(), path, i->filename(), s);
             ++i;
@@ -369,7 +366,7 @@ void engine::download(std::string server,
 {
     std::string r = messages_impl(server, key, l, f, s, v);
     auto j = nlohmann::json::parse(r);
-    messages_responce m;
+    messages_response m;
     m.read(r);
     for (unsigned i = 0; i < m.size(); ++i) {
         download(server, path, key, m.id(i), s, v);
@@ -394,12 +391,12 @@ std::string engine::file_request(std::string server,
     j["request"]["message"] = message;
     j["request"]["send_email"] = true;
     auto data = j.dump();
-    curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDSIZE, -1L);
     curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str());
     if (s >= report_level::normal) {
         io::mout << "Sending file request to user '" << user << "'" << io::endl;
     }
-    return process_file_request_responce(perform(), s);
+    return process_file_request_response(perform(), s);
 }
 
 std::string engine::get_api_key(std::string server,
@@ -408,33 +405,20 @@ std::string engine::get_api_key(std::string server,
         report_level s,
         validate_cert v)
 {
-    if (m_curl == nullptr) {
-        m_curl = curl_easy_init();
-    }
-    if (m_curl == nullptr) {
-        throw curl_error("Failed to initialize CURL");
-    }
-    curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, &data_get);
-    curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, 0);
-    if (v == validate_cert::not_validate) {
-        curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYPEER, false);
-    }
-    if (s == report_level::verbose) {
-        curl_easy_setopt(m_curl, CURLOPT_VERBOSE, 1L);
-    }
+    init_curl("", s, v);
     server += "/login";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
     curl_header_guard hg(m_curl);
     nlohmann::json j;
     j["user"]["email"] = user;
     j["user"]["password"] = password;
-    curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
     auto data = j.dump();
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDSIZE, -1L);
     curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str());
     if (s >= report_level::normal) {
         io::mout << "Getting API key for user '" << user << "'" << io::endl;
     }
-    return process_get_api_key_responce(perform(), s);
+    return process_get_api_key_response(perform(), s);
 }
 
 std::string engine::filelink(std::string server,
@@ -500,7 +484,7 @@ void engine::filelinks(std::string server,
     if (s >= report_level::normal) {
         io::mout << "Getting filelinks from the server." << io::endl;
     }
-    process_output_responce<filelinks_responce>(perform(), s, of);
+    process_output_response<filelinks_response>(perform(), s, of);
 }
 
 void engine::delete_attachments(std::string server,
@@ -510,7 +494,7 @@ void engine::delete_attachments(std::string server,
             validate_cert v)
 {
     init_curl(key, s, v);
-    server += "/attachment/";
+    server += "/message/attachments/";
     curl_easy_setopt(m_curl, CURLOPT_CUSTOMREQUEST, "DELETE");
     curl_header_guard hg(m_curl);
     std::set<std::string>::const_iterator i = ids.begin();
@@ -539,6 +523,7 @@ void engine::delete_attachments(std::string server,
     server += "/delete_attachments";
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
     curl_header_guard hg(m_curl);
+    curl_easy_setopt(m_curl, CURLOPT_CUSTOMREQUEST, "DELETE");
     if (s >= report_level::normal) {
         io::mout << "Deleting attachments of the message." << io::endl;
     }
@@ -570,12 +555,10 @@ void engine::filedrop(std::string server,
     init_curl(key, s, v);
     strings::const_iterator i = fs.begin();
     strings rs;
-    std::string url = get_server_from_filedrop(server);
     for (; i != fs.end(); ++i) {
-        std::string id = attach_impl(url, *i, s);
+        std::string id = filedrop_attach_impl(server, *i, s);
         rs.insert(id);
     }
-    curl_easy_setopt(m_curl, CURLOPT_USERPWD, "");
     filedrop_attachments_impl(server, key, user, subject, message, rs, s);
 }
 
@@ -595,25 +578,60 @@ std::string engine::attach_impl(std::string server,
         const std::string& file,
         report_level s)
 {
-    server += "/attachments";
-    curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
-    curl_httppost* formpost = nullptr;
-    curl_httppost* lastptr = nullptr;
-    curl_formadd(&formpost,
-               &lastptr,
-               CURLFORM_COPYNAME, "Filedata",
-               CURLFORM_FILE, file.c_str(),
-               CURLFORM_END);
-    curl_form_guard fg(formpost);
-    curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, formpost);
+    std::string filename = get_basename(file);
+    std::string url = server + "/message/attachments/upload?filename=" + filename;
+    curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
+
+    FILE* fp = fopen(file.c_str(), "rb");
+    if (fp == nullptr) {
+        throw file_error(file, strerror(errno));
+    }
+    long file_size = get_file_size(file);
+    curl_header_guard hg(m_curl, "application/octet-stream");
+    curl_easy_setopt(m_curl, CURLOPT_POST, 1L);
+    curl_easy_setopt(m_curl, CURLOPT_READDATA, fp);
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDSIZE, file_size);
+
     progress_guard pg(m_curl, s);
     if (s >= report_level::normal) {
         io::mout << "Uploading file '" << file << "'." << io::endl;
     }
     std::string r = perform();
+    fclose(fp);
+    curl_easy_setopt(m_curl, CURLOPT_READDATA, nullptr);
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDSIZE, -1L);
     pg.end();
-    process_attach_responce(r, s);
-    return r;
+    return process_attach_response(r, s);
+}
+
+std::string engine::filedrop_attach_impl(std::string server,
+        const std::string& file,
+        report_level s)
+{
+    std::string filename = get_basename(file);
+    std::string url = server + "/attachments/upload?filename=" + filename;
+    curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
+
+    FILE* fp = fopen(file.c_str(), "rb");
+    if (fp == nullptr) {
+        throw file_error(file, strerror(errno));
+    }
+    long file_size = get_file_size(file);
+    curl_header_guard hg(m_curl, "application/octet-stream");
+    curl_easy_setopt(m_curl, CURLOPT_POST, 1L);
+    curl_easy_setopt(m_curl, CURLOPT_READDATA, fp);
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDSIZE, file_size);
+
+    progress_guard pg(m_curl, s);
+    if (s >= report_level::normal) {
+        io::mout << "Uploading file '" << file << "'." << io::endl;
+    }
+    std::string r = perform();
+    fclose(fp);
+    curl_easy_setopt(m_curl, CURLOPT_READDATA, nullptr);
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDSIZE, -1L);
+    pg.end();
+    return process_attach_response(r, s);
 }
 
 std::string engine::send_attachments_impl(std::string server,
@@ -629,20 +647,22 @@ std::string engine::send_attachments_impl(std::string server,
     nlohmann::json j;
     j["message"]["subject"] = subject;
     j["message"]["message"] = message;
-    j["message"]["send_email"] = "true";
+    j["message"]["send_email"] = true;
     j["message"]["authorization"] = 3;
     j["message"]["recipients"] = std::vector<std::string>{1, user};
     j["message"]["attachments"] = fs;
     curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
     auto data = j.dump();
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDSIZE, -1L);
     curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str());
     if (s >= report_level::normal) {
         io::mout << "Sending message to user '" << user << "'" << io::endl;
     }
-    return process_send_responce(perform(), s);
+    return process_send_response(perform(), s);
 }
 
-std::string engine::filelink_impl(std::string server, const std::string& expire,
+std::string engine::filelink_impl(std::string server,
+            const std::string& expire,
             const std::string& id, report_level s)
 {
     server += "/link";
@@ -654,15 +674,16 @@ std::string engine::filelink_impl(std::string server, const std::string& expire,
         j["link"]["expires_at"] = expire;
     }
     auto data = j.dump();
-    curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDSIZE, -1L);
     curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str());
     if (s >= report_level::normal) {
         io::mout << "Creating filelink" << io::endl;
     }
-    return process_create_filelink_responce(perform(), s);
+    return process_create_filelink_response(perform(), s);
 }
 
-void engine::process_attach_chunk_responce(const std::string& r, report_level s) const
+void engine::process_attach_chunk_response(const std::string& r,
+        report_level s) const
 {
     if (r.empty() || r == " ") {
         if (s >= report_level::normal) {
@@ -670,46 +691,79 @@ void engine::process_attach_chunk_responce(const std::string& r, report_level s)
         }
         return;
     }
-    if (r.size() == s_normal_id_size) {
+    try {
+        auto j = nlohmann::json::parse(r);
+        if (j.find("attachment") != j.end()) {
+            auto id = j["attachment"]["id"].get<std::string>();
+            if (s >= report_level::normal) {
+                io::mout << "All chunks of file uploaded successfully. ID: "
+                    << id << io::endl;
+            }
+            return;
+        }
+    } catch (const std::exception&) {
+    }
+    // Fall back to checking for raw ID string (legacy format)
+    if (r.find('{') == std::string::npos && r.size() > 10 && r.size() < 40) {
         if (s >= report_level::normal) {
-            io::mout << "All chunks of file uploaded successfully. ID: " << r << io::endl;
+            io::mout << "All chunks of file uploaded successfully. ID: "
+                << r << io::endl;
         }
         return;
     }
     throw request_error("upload_chunk", r);
 }
 
-void engine::process_attach_responce(const std::string& r, report_level s) const
+std::string engine::process_attach_response(const std::string& r,
+        report_level s) const
 {
-    if (r.size() == s_normal_id_size) {
+    try {
+        auto j = nlohmann::json::parse(r);
+        if (j.find("attachment") != j.end()) {
+            auto id = j["attachment"]["id"].get<std::string>();
+            if (s >= report_level::normal) {
+                io::mout << "File uploaded successfully. ID: " << id << io::endl;
+            }
+            return id;
+        }
+    } catch (const std::exception&) {
+    }
+    // Fall back to checking for raw ID string (legacy format)
+    if (r.find('{') == std::string::npos && r.size() > 10 && r.size() < 40) {
         if (s >= report_level::normal) {
             io::mout << "File uploaded successfully. ID: " << r << io::endl;
         }
-        return;
+        return r;
     }
     throw request_error("upload", r);
 }
 
-std::string engine::process_send_responce(std::string r,
+std::string engine::process_send_response(std::string r,
         report_level s) const
 {
-    /// @todo workaround for json parser as it does not recognize backslash.
-    std::replace(r.begin(), r.end(), '\\', '0');
-    auto j = nlohmann::json::parse(r);
-    try {
-        auto id = j["message"]["id"].get<std::string>();
-        if (s >= report_level::normal) {
-            io::mout << "Message sent successfully. ID: " << id << io::endl;
+    // The send response may contain raw newlines in HTML email body,
+    // which causes strict JSON parsers to fail. Extract the ID using
+    // string search since it appears early in the response.
+    std::string id_key = "\"id\":\"";
+    auto pos = r.find(id_key);
+    if (pos != std::string::npos) {
+        pos += id_key.size();
+        auto end = r.find('"', pos);
+        if (end != std::string::npos) {
+            std::string id = r.substr(pos, end - pos);
+            if (s >= report_level::normal) {
+                io::mout << "Message sent successfully. ID: "
+                    << id << io::endl;
+            }
+            return id;
         }
-        return id;
-    } catch (std::exception) {
     }
-    throw request_error("send", r);
+    throw request_error("send", r.substr(0, 200));
     return "";
 }
 
 template <typename T>
-void engine::process_output_responce(const std::string& r,
+void engine::process_output_response(const std::string& r,
         report_level s, output_format f) const
 {
     auto j = nlohmann::json::parse(r);
@@ -718,8 +772,9 @@ void engine::process_output_responce(const std::string& r,
     io::mout << m.to_string(f);
 }
 
-std::string engine::message_impl(std::string server, const std::string& key,
-        std::string id, report_level s, validate_cert v, std::string log)
+std::string engine::message_impl(std::string server,
+        const std::string& key, std::string id,
+        report_level s, validate_cert v, std::string log)
 {
     init_curl(key, s, v);
     server += "/message/";
@@ -732,7 +787,8 @@ std::string engine::message_impl(std::string server, const std::string& key,
     return perform();
 }
 
-std::string engine::messages_impl(std::string server, const std::string& key, std::string l,
+std::string engine::messages_impl(std::string server,
+        const std::string& key, std::string l,
         std::string f, report_level s, validate_cert v)
 {
     init_curl(key, s, v);
@@ -772,7 +828,8 @@ void engine::download_impl(const std::string& url,
     perform();
 }
 
-std::string engine::get_filedrop_api_key(const std::string& url, report_level s, validate_cert v)
+std::string engine::get_filedrop_api_key(const std::string& url,
+        report_level s, validate_cert v)
 {
     init_curl("", s, v);
     curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
@@ -796,9 +853,10 @@ std::string engine::get_filedrop_api_key(const std::string& url, report_level s,
     return q;
 }
 
-void engine::filedrop_attachments_impl(std::string server, const std::string& key,
-        const std::string& user, const std::string& subject,
-        const std::string& message, const strings& fs, report_level s)
+void engine::filedrop_attachments_impl(std::string server,
+        const std::string& key, const std::string& user,
+        const std::string& subject, const std::string& message,
+        const strings& fs, report_level s)
 {
     curl_easy_setopt(m_curl, CURLOPT_URL, server.c_str());
     curl_header_guard hg(m_curl);
@@ -808,15 +866,16 @@ void engine::filedrop_attachments_impl(std::string server, const std::string& ke
     j["message"]["message"] = message;
     j["message"]["attachments"] = fs;
     auto data = j.dump();
-    curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, 0);
+    curl_easy_setopt(m_curl, CURLOPT_POSTFIELDSIZE, -1L);
     curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, data.c_str());
     if (s >= report_level::normal) {
         io::mout << "Sending message to filedrop" << io::endl;
     }
-    process_filedrop_responce(perform(), s);
+    process_filedrop_response(perform(), s);
 }
 
-std::string engine::process_file_request_responce(const std::string& r, report_level s) const
+std::string engine::process_file_request_response(const std::string& r,
+        report_level s) const
 {
     auto j = nlohmann::json::parse(r);
     std::string q = j["request"]["url"].get<std::string>();
@@ -829,34 +888,45 @@ std::string engine::process_file_request_responce(const std::string& r, report_l
     return q;
 }
 
-std::string engine::process_get_api_key_responce(const std::string& r, report_level s) const
+std::string engine::process_get_api_key_response(const std::string& r,
+        report_level s) const
 {
     auto j = nlohmann::json::parse(r);
-    try {
-        auto r = j["user"]["api_key"].get<std::string>();
-        if (s >= report_level::normal) {
-            io::mout << r << io::endl;
-        }
-        return r;
-    } catch (std::exception) {
-        throw request_error("get_api_key", j["errors"][0].get<std::string>());
+    if (j.find("errors") != j.end()) {
+        throw request_error("get_api_key",
+            j["errors"][0].get<std::string>());
     }
+    std::string api_key;
+    if (j.find("api_key") != j.end() && j["api_key"].is_string()) {
+        api_key = j["api_key"].get<std::string>();
+    } else if (j.find("user") != j.end()
+            && j["user"].find("api_key") != j["user"].end()) {
+        api_key = j["user"]["api_key"].get<std::string>();
+    } else {
+        throw request_error("get_api_key", r);
+    }
+    if (s >= report_level::normal) {
+        io::mout << api_key << io::endl;
+    }
+    return api_key;
 }
 
-std::string engine::process_create_filelink_responce(const std::string& r, report_level s) const
+std::string engine::process_create_filelink_response(const std::string& r,
+        report_level s) const
 {
     auto j = nlohmann::json::parse(r);
     auto q = j["link"]["url"].get<std::string>();
     if (s >= report_level::normal) {
-        io::mout << "Created filelink sucessfully. URL: " << q << io::endl;
+        io::mout << "Created filelink successfully. URL: " << q << io::endl;
     }
     return q;
 }
 
-void engine::process_filedrop_responce(const std::string& r, report_level s) const
+void engine::process_filedrop_response(const std::string& r,
+        report_level s) const
 {
     if (r.empty()) {
-        throw request_error("filedrop", "Empty responce");
+        throw request_error("filedrop", "Empty response");
     }
     auto j = nlohmann::json::parse(r);
     if (j.find("errors") != j.end()) {
@@ -874,8 +944,29 @@ std::string engine::perform()
     if (res != CURLE_OK) {
         throw curl_error(std::string(curl_easy_strerror(res)));
     }
+    long http_code = 0;
+    curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &http_code);
     std::string r = s_data;
     s_data.clear();
+    if (http_code >= 400) {
+        std::string detail = "Server returned status "
+            + base::to_string(http_code);
+        try {
+            auto j = nlohmann::json::parse(r);
+            if (j.find("errors") != j.end() && j["errors"].is_array()
+                    && !j["errors"].empty()) {
+                detail += ": " + j["errors"][0].get<std::string>();
+            } else if (j.find("error") != j.end()) {
+                if (j["error"].is_string()) {
+                    detail += ": " + j["error"].get<std::string>();
+                } else if (j["error"].is_object()) {
+                    detail += ": " + j["error"].dump();
+                }
+            }
+        } catch (const std::exception&) {
+        }
+        throw request_error("HTTP request", detail);
+    }
     return r;
 }
 

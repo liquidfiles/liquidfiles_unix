@@ -19,7 +19,7 @@ class request_error final : public base::exception
 {
 public:
     request_error(const std::string& r, const std::string& a)
-        : base::exception{std::string("Error in liquidfiles during ") + r + ". Responce message:\n" + a, 3}
+        : base::exception{std::string("Error in liquidfiles during ") + r + ". Response message:\n" + a, 3}
     {
     }
 };
@@ -37,7 +37,7 @@ class invalid_message_id final : public base::exception
 {
 public:
     invalid_message_id(const std::string& a)
-        : base::exception{std::string("Messsage with id '") + a + "' does not exist.", 1}
+        : base::exception{std::string("Message with id '") + a + "' does not exist.", 1}
     {
     }
 };

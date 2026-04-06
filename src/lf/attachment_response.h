@@ -9,27 +9,27 @@
 namespace lf {
 
 /**
- * @class attachment_responce.
- * @brief Class for handling attachments of message responce.
+ * @class attachment_response.
+ * @brief Class for handling attachments of message response.
  */
-class attachment_responce final
+class attachment_response final
 {
 public:
     /**
-     * @brief Generates attachment_responce from json object.
+     * @brief Generates attachment_response from json object.
      * @param j Json object
      */
     void read(const nlohmann::json& j);
 
 public:
     /**
-     * @brief Gets the string of responce to print.
+     * @brief Gets the string of response to print.
      * @param f Format of output string.
      */
     std::string to_string(output_format f) const;
 
 public:
-    /// @brief Access to filiename.
+    /// @brief Access to filename.
     const std::string& filename() const
     {
         return filename_;

@@ -40,7 +40,7 @@ void send_command::execute(const cmd::arguments& args)
     ui::file_type sending_file_type = m_file_type_argument.value(args);
 
     if (!message.empty() && !message_file.empty()) {
-        throw cmd::dublicate_argument(m_message_argument.name() + " and " + m_message_file_argument.name());
+        throw cmd::duplicate_argument(m_message_argument.name() + " and " + m_message_file_argument.name());
     }
     if (message.empty() && !message_file.empty()) {
         message = base::filesystem::read_file(message_file);

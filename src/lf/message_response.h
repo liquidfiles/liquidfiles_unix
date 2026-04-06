@@ -1,6 +1,6 @@
 #pragma once
 
-#include "attachment_responce.h"
+#include "attachment_response.h"
 #include "declarations.h"
 
 #include <string>
@@ -11,22 +11,22 @@
 namespace lf {
 
 /**
- * @class message_responce
- * @brief Class for handling message responce from server and printing
+ * @class message_response
+ * @brief Class for handling message response from server and printing
  *        it for user.
  */
-class message_responce final
+class message_response final
 {
 public:
     /**
-     * @brief Generates message_responce from json object.
+     * @brief Generates message_response from json object.
      * @param j Json object.
      */
     void read(const nlohmann::json& j);
 
 public:
     /**
-     * @brief Gets the string of responce to print.
+     * @brief Gets the string of response to print.
      * @param f Format of string.
      */
     std::string to_string(output_format f) const;
@@ -99,7 +99,7 @@ public:
     }
 
     /// @brief Access to attachments.
-    const std::vector<attachment_responce>& attachments() const
+    const std::vector<attachment_response>& attachments() const
     {
         return m_attachments;
     }
@@ -119,7 +119,7 @@ private:
     std::string m_authorization_description;
     std::string m_subject;
     std::string m_message;
-    std::vector<attachment_responce> m_attachments;
+    std::vector<attachment_response> m_attachments;
     int m_authorization;
 };
 

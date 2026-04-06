@@ -1,11 +1,11 @@
-#include "messages_responce.h"
+#include "messages_response.h"
 
 #include <io/csv_stream.h>
 #include <io/table_printer.h>
 
 namespace lf {
 
-void messages_responce::read(const nlohmann::json& j)
+void messages_response::read(const nlohmann::json& j)
 {
     auto ms = j["messages"].get<std::vector<nlohmann::json>>();
     for (const auto& mm : ms) {
@@ -22,7 +22,7 @@ void messages_responce::read(const nlohmann::json& j)
     }
 }
 
-std::string messages_responce::to_string(output_format f) const
+std::string messages_response::to_string(output_format f) const
 {
     if (m_messages.empty()) {
         return std::string();
@@ -40,7 +40,7 @@ std::string messages_responce::to_string(output_format f) const
     return m.str();
 }
 
-void messages_responce::write_csv(std::stringstream& m) const
+void messages_response::write_csv(std::stringstream& m) const
 {
     io::csv_ostream cp(&m);
     for (const auto& i : m_messages) {
@@ -53,7 +53,7 @@ void messages_responce::write_csv(std::stringstream& m) const
     }
 }
 
-void messages_responce::write_table(std::stringstream& m) const
+void messages_response::write_table(std::stringstream& m) const
 {
     io::table_printer tp(&m);
     tp.add_column("ID", 24);
