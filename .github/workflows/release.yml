@@ -13,10 +13,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - runner: ubuntu-24.04
+          - runner: ubuntu-22.04
             arch: x86_64
+            label: ubuntu-22.04-x86_64
           - runner: ubuntu-24.04-arm
             arch: arm64
+            label: ubuntu-24.04-arm64
 
     runs-on: ${{ matrix.runner }}
 
@@ -42,12 +44,12 @@ jobs:
           mkdir -p stage dist
           cp build/liquidfiles stage/
           cp README.md CHANGELOG.md test.sh stage/
-          tar czf dist/liquidfiles-${TAG}-linux-${{ matrix.arch }}.tar.gz -C stage .
+          tar czf dist/liquidfiles-${TAG}-${{ matrix.label }}.tar.gz -C stage .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: liquidfiles-linux-${{ matrix.arch }}
+          name: liquidfiles-${{ matrix.label }}
           path: dist/*.tar.gz
 
   release:
